@@ -1,6 +1,6 @@
 ---
-import Base from '../layouts/Base.astro';
-import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import Base from '../../layouts/Base.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -10,13 +10,13 @@ const projects = [
     id: 'cord',
     name: 'CORD',
     desc: t('work.cord.desc'),
-    link: '/work/cord',
+    link: '/es/work/cord',
   },
   {
     id: 'flouvia',
     name: 'FLOUVIA',
     desc: t('work.flouvia.desc'),
-    link: '/work/flouvia',
+    link: '/es/work/flouvia',
   }
 ];
 ---

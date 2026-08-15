@@ -1,14 +1,14 @@
 ---
 /**
- * ── Home (EN) ─────────────────────────────────────────
+ * ── Home (ES) ─────────────────────────────────────────
  *
  * Full-viewport hero. The 3D shader IS the design.
  * Text overlays are pure Helvetica Neue — no boxes,
  * no borders, no decoration. Silence = luxury.
  */
-import Base from '../layouts/Base.astro';
-import HeroShader from '../components/HeroShader.jsx';
-import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import Base from '../../layouts/Base.astro';
+import HeroShader from '../../components/HeroShader.jsx';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -28,10 +28,10 @@ const t = useTranslations(lang);
 
       <!-- CTAs — no borders, pure type -->
       <div class="hero__cta">
-        <a href="/work" class="cta-link hover-fill" id="hero-work-cta">
+        <a href="/es/work" class="cta-link hover-fill" id="hero-work-cta">
           {t('hero.cta.work')}
         </a>
-        <a href="/contact" class="cta-link hover-fill" id="hero-contact-cta">
+        <a href="/es/contact" class="cta-link hover-fill" id="hero-contact-cta">
           {t('hero.cta.contact')}
         </a>
       </div>
@@ -176,13 +176,12 @@ const t = useTranslations(lang);
   }
 
   .work__link {
-    display: block;
+    width: 100%;
     font-size: clamp(3rem, 8vw, 8rem);
     font-weight: 300;
     letter-spacing: -0.03em;
     color: rgba(237, 233, 228, 0.85);
     text-decoration: none;
-    width: 100%;
     padding: 2vh 0.2em 2vh 0;
     transition: color 0.4s ease;
     display: flex;
@@ -207,7 +206,7 @@ const t = useTranslations(lang);
 
   /* When hover-fill active, push text slightly and brighten */
   .work__link:hover {
-    color: #ede9e4;
+    color: #14110F;
   }
 
   /* Descriptor — whisper-weight, high tracking */

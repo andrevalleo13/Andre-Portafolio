@@ -1,0 +1,176 @@
+---
+/**
+ * ── Navbar Component ──────────────────────────────────
+ *
+ * Fixed. Transparent over hero → opaque on scroll.
+ * LEFT:  nav links  |  RIGHT: EN / ES toggle
+ *
+ * Aesthetic: Stealth Wealth — raw Helvetica Neue,
+ * no borders, no decoration. The type IS the design.
+ */
+import { navItems, languages, type Lang } from '../i18n/ui';
+import { getLangFromUrl, useTranslations, getLocalePath, getAlternateLangPath } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const alternate = getAlternateLangPath(Astro.url.pathname);
+---
+
+<nav class="navbar" id="navbar">
+
+  <!-- Left: page links -->
+  <ul class="navbar__links">
+    {navItems.map((item) => (
+      <li>
+        <a
+          href={getLocalePath(item.href, lang)}
+          class:list={[
+            'navbar__link', 
+            item.id === 'contact' ? 'navbar__contact-btn' : 'hover-fill'
+          ]}
+          id={`nav-${item.id}`}
+        >
+          {t(`nav.${item.id}` as any)}
+          {item.id === 'contact' && (
+            <svg class="contact-arrow" width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.8"/>
+            </svg>
+          )}
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <!-- Right: language switch -->
+  <div class="navbar__lang">
+    {Object.entries(languages).map(([code, label]) => {
+      const isActive = code === lang;
+      const href = code === alternate.lang
+        ? alternate.href
+        : Astro.url.pathname;
+      return (
+        <a
+          href={href}
+          class:list={['lang-link hover-fill', { active: isActive }]}
+          id={`lang-${code}`}
+        >
+          {label}
+        </a>
+      );
+    })}
+  </div>
+
+</nav>
+
+<style>
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 5vw;
+    background: transparent;
+    transition: background 0.5s ease, backdrop-filter 0.5s ease;
+  }
+
+  .navbar.scrolled {
+    background: rgba(20, 17, 15, 0.75);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    padding: 1.25rem 5vw;
+  }
+
+  /* ── Left links ─────────────────────────── */
+  .navbar__links {
+    list-style: none;
+    display: flex;
+    gap: 2px;
+  }
+
+  .navbar__link {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.62rem;
+    font-weight: 300;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: rgba(237, 233, 228, 0.5);
+    padding: 0.5rem 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navbar__contact-btn {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.62rem;
+    font-weight: 400; /* Bold enough to pop on dark background */
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #14110F;
+    background: rgba(237, 233, 228, 0.95); /* Bone white */
+    border-radius: 2px;
+    padding: 0.5rem 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem; /* Tighter space */
+    transition: background 0.4s ease;
+  }
+
+  .navbar__contact-btn:hover {
+    background: #FFFFFF;
+  }
+
+  .contact-arrow {
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .navbar__contact-btn:hover .contact-arrow {
+    transform: translate(3px, -3px);
+  }
+
+  /* ── Right lang ─────────────────────────── */
+  .navbar__lang {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+  }
+
+  .lang-link {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.62rem;
+    font-weight: 300;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: rgba(237, 233, 228, 0.35);
+    padding: 0.5rem 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lang-link.active {
+    color: rgba(237, 233, 228, 0.95);
+    font-weight: 400;
+  }
+
+  @media (max-width: 600px) {
+    .navbar__links { gap: 1px; }
+    .navbar__link,
+    .lang-link { font-size: 0.58rem; }
+  }
+</style>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    if (nav) nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+</script>

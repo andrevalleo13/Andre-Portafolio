@@ -1,18 +1,17 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
-import { z } from 'astro/zod';
+
+const journalCollection = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/journal" }),
+  schema: z.object({
+    title: z.string(),
+    date: z.date(),
+    readTime: z.string(),
+    lang: z.enum(['en', 'es']).default('en'),
+    draft: z.boolean().default(false),
+  }),
+});
 
 export const collections = {
-	work: defineCollection({
-		// Load Markdown files in the src/content/work directory.
-		loader: glob({ base: './src/content/work', pattern: '**/*.md' }),
-		schema: z.object({
-			title: z.string(),
-			description: z.string(),
-			publishDate: z.coerce.date(),
-			tags: z.array(z.string()),
-			img: z.string(),
-			img_alt: z.string().optional(),
-		}),
-	}),
+  'journal': journalCollection,
 };

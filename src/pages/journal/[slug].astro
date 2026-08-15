@@ -1,0 +1,145 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const allMemos = await getCollection('journal', ({ data }) => data.lang === 'en');
+  return allMemos.map(memo => ({
+    params: { slug: memo.id },
+    props: { memo },
+  }));
+}
+
+const { memo } = Astro.props;
+const { Content } = await render(memo);
+
+const dateStr = memo.data.date.toISOString().split('T')[0].replace(/-/g, '.');
+---
+
+<Base title={`${memo.data.title} — André Valle Ortega`}>
+  <article class="memo-article">
+    <div class="container memo-container">
+      <header class="memo-header">
+        <a href="/journal" class="back-link">← Back to Memos</a>
+        <h1 class="memo-title">{memo.data.title}</h1>
+        <div class="memo-meta">
+          <span>{dateStr}</span>
+          <span>{memo.data.readTime}</span>
+        </div>
+      </header>
+      
+      <div class="memo-content prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style is:global>
+  .memo-article {
+    padding-top: 20vh;
+    padding-bottom: 15vh;
+    min-height: 100vh;
+  }
+
+  .memo-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .memo-header {
+    margin-bottom: 6rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-family: monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(237, 233, 228, 0.5);
+    text-decoration: none;
+    margin-bottom: 3rem;
+    transition: color 0.3s ease;
+  }
+
+  .back-link:hover {
+    color: var(--bone-light);
+  }
+
+  .memo-title {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0 0 2rem 0;
+  }
+
+  .memo-meta {
+    display: flex;
+    gap: 2rem;
+    font-family: monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: rgba(237, 233, 228, 0.6);
+  }
+
+  /* Prose Styling */
+  .prose {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    line-height: 1.8;
+    color: rgba(237, 233, 228, 0.85);
+  }
+
+  .prose p {
+    margin-bottom: 2rem;
+  }
+
+  .prose h2 {
+    font-size: clamp(1.8rem, 3vw, 2.2rem);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--bone-light);
+    margin: 4rem 0 1.5rem 0;
+  }
+
+  .prose h3 {
+    font-size: clamp(1.3rem, 2vw, 1.5rem);
+    font-weight: 300;
+    color: var(--bone-light);
+    margin: 3rem 0 1rem 0;
+  }
+
+  .prose a {
+    color: var(--bone-light);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(237, 233, 228, 0.3);
+    transition: border-color 0.3s ease;
+  }
+
+  .prose a:hover {
+    border-color: var(--bone-light);
+  }
+
+  .prose strong {
+    font-weight: 500;
+    color: var(--bone-light);
+  }
+
+  .prose ol, .prose ul {
+    margin-bottom: 2rem;
+    padding-left: 1.5rem;
+  }
+
+  .prose li {
+    margin-bottom: 0.5rem;
+  }
+
+  .prose blockquote {
+    border-left: 2px solid rgba(237, 233, 228, 0.3);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    opacity: 0.8;
+  }
+</style>

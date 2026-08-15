@@ -1,0 +1,118 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const allMemos = await getCollection('journal', ({ data }) => {
+  return data.lang === lang && data.draft !== true;
+});
+
+allMemos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Base title={`${t('nav.journal')} — André Valle Ortega`}>
+  <section class="journal-section">
+    <div class="container journal-container">
+      <h1 class="section__heading">Memos & Essays</h1>
+      
+      <div class="memo-list">
+        {allMemos.map((memo) => {
+          const dateStr = memo.data.date.toISOString().split('T')[0].replace(/-/g, '.');
+          return (
+            <a href={`/journal/${memo.id}`} class="memo-row">
+              <span class="memo-date">{dateStr}</span>
+              <h2 class="memo-title">{memo.data.title}</h2>
+              <span class="memo-time">[ {memo.data.readTime} ]</span>
+            </a>
+          );
+        })}
+        {allMemos.length === 0 && (
+          <p style="opacity: 0.5; font-family: monospace;">No memos published yet.</p>
+        )}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .journal-section {
+    padding-top: 15vh;
+    padding-bottom: 15vh;
+    min-height: 100vh;
+  }
+
+  .journal-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .memo-list {
+    margin-top: 6rem;
+    border-top: 1px solid rgba(237, 233, 228, 0.2);
+  }
+
+  .memo-row {
+    display: flex;
+    align-items: baseline;
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(237, 233, 228, 0.2);
+    text-decoration: none;
+    color: var(--bone-light);
+    transition: color 0.3s ease, padding-left 0.3s ease;
+  }
+
+  .memo-row:hover {
+    color: #fff;
+    padding-left: 1rem;
+  }
+
+  .memo-date {
+    font-family: monospace;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    flex: 0 0 120px;
+  }
+
+  .memo-title {
+    flex: 1;
+    font-size: clamp(1.2rem, 2vw, 2rem);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    margin: 0;
+    padding-right: 2rem;
+  }
+
+  .memo-time {
+    font-family: monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+  }
+
+  .memo-row:hover .memo-time {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    .memo-row {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .memo-date {
+      flex: auto;
+      font-size: 0.8rem;
+    }
+    .memo-title {
+      padding-right: 0;
+    }
+    .memo-row:hover {
+      padding-left: 0;
+    }
+  }
+</style>

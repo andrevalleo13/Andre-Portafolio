@@ -1,0 +1,313 @@
+---
+/**
+ * ── Base Layout ───────────────────────────────────────
+ * 
+ * Wraps every page with <head>, Navbar, and Footer.
+ * Receives `title` and optional `description` as props.
+ */
+import { ClientRouter } from 'astro:transitions';
+import Navbar from '../components/Navbar.astro';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'André Valle Ortega — Finance, Entrepreneurship & Technology.' } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <ClientRouter />
+  <meta name="description" content={description} />
+  <style is:global>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --dark:        #1c1917;
+      --dark-mid:    #332E29;
+      --bone:        #d6cfc6;
+      --bone-light:  #ede9e4;
+      --taupe:       #8c8078;
+      --ecru:        #a89e94;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      width: 100%;
+      min-height: 100vh;
+      background-color: var(--dark);
+      color: var(--bone-light);
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    /* ── Shared Section Styles ──── */
+    .section {
+      padding: 6rem 5vw;
+      border-top: 1px solid rgba(140, 128, 120, 0.15);
+    }
+
+    .section__eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--taupe);
+      margin-bottom: 2rem;
+    }
+
+    .section__heading {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 200;
+      line-height: 1.15;
+      color: var(--bone-light);
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+
+    .section__text {
+      font-size: 0.85rem;
+      line-height: 1.9;
+      color: var(--ecru);
+      max-width: 600px;
+    }
+
+    .section__text + .section__text {
+      margin-top: 1.2rem;
+    }
+
+    /* ── Footer ──────────────────── */
+    .footer {
+      padding: 5rem 5vw 3rem 5vw;
+      display: flex;
+      flex-direction: column;
+      gap: 4rem;
+      border-top: 1px solid rgba(237, 233, 228, 0.1);
+      
+      /* Block shader overlap */
+      position: relative;
+      z-index: 10;
+      background-color: var(--dark);
+    }
+
+    .footer__top {
+      width: 100%;
+    }
+
+    .copy-email {
+      font-size: clamp(1.5rem, 3vw, 3rem);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--bone-light);
+      background: none;
+      border: none;
+      border-bottom: 1px solid rgba(237, 233, 228, 0.2);
+      font-family: inherit;
+      padding: 0.2em 0.4em 0.3em 0;
+      cursor: pointer;
+      text-align: left;
+      text-transform: lowercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .copy-email :global(.fill-text) {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .email-arrow {
+      margin-left: 1.5rem;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .copy-email:hover .email-arrow {
+      transform: translate(0.1em, -0.1em);
+    }
+
+    .footer__bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 100%;
+    }
+
+    .footer__links {
+      display: flex;
+      gap: 3rem;
+    }
+
+    .footer__links a,
+    .footer__links button {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(237, 233, 228, 0.6);
+      transition: color 0.3s ease;
+      background: none;
+      border: none;
+      font-family: inherit;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .footer__links a:hover,
+    .footer__links button:hover {
+      color: var(--bone-light);
+    }
+
+    .footer__socials {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .social-icon {
+      width: 18px;
+      height: 18px;
+      stroke: rgba(237, 233, 228, 0.6);
+      transition: stroke 0.3s ease, transform 0.3s ease;
+    }
+
+    .footer__links a:hover .social-icon {
+      stroke: var(--bone-light);
+      transform: translateY(-2px);
+    }
+
+    .footer__copy {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: rgba(237, 233, 228, 0.3);
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 768px) {
+      .footer {
+        padding: 4rem 5vw 2rem 5vw;
+        gap: 3rem;
+      }
+      .footer__bottom {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        gap: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <Navbar />
+  <slot />
+  <footer class="footer">
+    <div class="footer__top">
+      <button class="hover-fill copy-email" data-email="andrevalleo13@gmail.com" data-copied={lang === 'es' ? '¡Copiado!' : 'Copied!'}>
+        <span class="email-text">andrevalleo13@gmail.com</span>
+        <svg class="email-arrow" width="0.8em" height="0.8em" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.5"/>
+        </svg>
+      </button>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copy">{t('footer.copy')}</p>
+      <nav class="footer__links">
+        <div class="footer__socials">
+        <a href="https://www.linkedin.com/in/andrevalleo" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+            <rect x="2" y="9" width="4" height="12"></rect>
+            <circle cx="4" cy="4" r="2"></circle>
+          </svg>
+        </a>
+        <a href="https://x.com/andrevalleee" target="_blank" rel="noopener" aria-label="X (Twitter)">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4l11.733 16h4.267l-11.733 -16z"></path>
+            <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/andre.valleee/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+        </a>
+      </div>
+    </nav>
+    </div>
+  </footer>
+
+    <script>
+    import { initHoverFill } from '../scripts/hoverFill';
+    import { initHeroAnimation } from '../scripts/splitText';
+    import { initScrollReveal } from '../scripts/scrollReveal';
+    import { initHoverImage } from '../scripts/hoverImage';
+
+    function initAll() {
+      initHoverFill();
+      initHeroAnimation();
+      initScrollReveal();
+      initHoverImage();
+    }
+
+    // Initialize on load
+    initAll();
+
+    // Re-initialize on Astro view transitions
+    document.addEventListener('astro:page-load', () => {
+      initAll();
+    });
+
+    // Lógica para el botón de copiar email
+    document.addEventListener('DOMContentLoaded', () => {
+      const emailBtn = document.querySelector('.copy-email');
+      if (emailBtn) {
+        emailBtn.addEventListener('click', () => {
+          const email = emailBtn.getAttribute('data-email');
+          const copiedText = emailBtn.getAttribute('data-copied');
+          
+          navigator.clipboard.writeText(email || '').then(() => {
+            // Si ya corrió el hoverFill script, tendrá spans dentro
+            const spans = emailBtn.querySelectorAll('.email-text');
+            const originalText = email;
+            if (spans.length > 0) {
+              spans.forEach(span => span.textContent = copiedText);
+              setTimeout(() => {
+                spans.forEach(span => span.textContent = originalText);
+              }, 2000);
+            } else {
+              const rootSpan = emailBtn.querySelector('.email-text');
+              if(rootSpan) rootSpan.textContent = copiedText;
+              setTimeout(() => {
+                if(rootSpan) rootSpan.textContent = originalText;
+              }, 2000);
+            }
+          });
+        });
+      }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Base title="About — André Valle">
+  <main class="about-page">
+    <div class="content-section">
+      <div class="container">
+        
+        <!-- Manifesto Section -->
+        <section class="about__manifesto">
+          <p class="manifesto__text split-text">
+            {t('about.p1')} {t('about.p2')}
+          </p>
+        </section>
+
+        <!-- Experience Section -->
+        <section class="about__experience">
+          <h2 class="section-title split-text">{t('about.experience.title')}</h2>
+          
+          <div class="experience__list">
+            <div class="experience__item scroll-reveal">
+              <div class="experience__meta">
+                <h3>Cord</h3>
+                <span class="role">Founder & Lead Architect</span>
+                <span class="date">2026 — Present</span>
+              </div>
+              <p class="experience__desc">
+                Designed the core monetization and operational architecture for an infrastructure SaaS platform. Managed initial capital allocation and cloud infrastructure burn rates. Deployed the MVP and validated market fit through strategic product-led acquisition channels.
+              </p>
+            </div>
+
+            <div class="experience__item scroll-reveal">
+              <div class="experience__meta">
+                <h3>Flouvia</h3>
+                <span class="role">Founder & Engineering Lead</span>
+                <span class="date">2024 — Present</span>
+              </div>
+              <p class="experience__desc">
+                Private Growth Boutique based in CDMX. Built Shopify Plus architectures, private B2B portals, and automated business logic for established brands with a rigorous focus on maximizing conversion rates and revenue infrastructure.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Education & Credentials Section -->
+        <section class="about__credentials scroll-reveal">
+          <h2 class="section-title split-text">{t('about.education.title')}</h2>
+          
+          <div class="credentials__grid">
+            <div class="cred__column">
+              <h4 class="cred__eyebrow">Education</h4>
+              <ul class="cred__list">
+                <li>
+                  <span class="cred__name">Universidad Panamericana</span>
+                  <span class="cred__detail">Finance (2024 — 2028)</span>
+                </li>
+                <li>
+                  <span class="cred__name">Bolsa Mexicana de Valores</span>
+                  <span class="cred__detail">Financial Markets Seminar (Jan — Jun 2026)</span>
+                </li>
+                <li>
+                  <span class="cred__name">BBVA Mexico</span>
+                  <span class="cred__detail">Investment Seminar (Aug — Dec 2026)</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="cred__column">
+              <h4 class="cred__eyebrow">Core Expertise</h4>
+              <ul class="cred__list">
+                <li>Unit Economics</li>
+                <li>Corporate Finance</li>
+                <li>Capital Allocation</li>
+                <li>System Architecture</li>
+              </ul>
+            </div>
+
+            <div class="cred__column">
+              <h4 class="cred__eyebrow">Certifications</h4>
+              <ul class="cred__list">
+                <li><a href="https://portal.bloombergforeducation.com/certificates/tgRZzdz3X6Aeo5gvBdLT8tNB" target="_blank" rel="noopener">Bloomberg Spreadsheet Analysis ↗</a></li>
+                <li><a href="https://portal.bloombergforeducation.com/certificates/B2XtqMFCbFDV4Tb9HaBXNze9" target="_blank" rel="noopener">Bloomberg Environmental Social Governance ↗</a></li>
+                <li><a href="https://portal.bloombergforeducation.com/certificates/hm27SBZtruTZ5na6UHsGrDZs" target="_blank" rel="noopener">Bloomberg Market Concepts ↗</a></li>
+                <li><a href="https://portal.bloombergforeducation.com/certificates/DnvidwmcJQSpEmuevbw8HDag" target="_blank" rel="noopener">Bloomberg Finance Fundamentals ↗</a></li>
+                <li><a href="https://www.coursera.org/account/accomplishments/professional-cert/certificate/M78Q3GWTX9ZJ" target="_blank" rel="noopener">Google Data Analytics ↗</a></li>
+                <li><a href="https://www.coursera.org/account/accomplishments/verify/N8MSIAVXK4NH" target="_blank" rel="noopener">Google AI Essentials ↗</a></li>
+                <li><a href="https://www.credly.com/badges/6cd883f6-18ba-498e-a0d6-72f0d03ed20b/linked_in_profile" target="_blank" rel="noopener">Microsoft Office Specialist: Excel ↗</a></li>
+                <li><a href="https://www.coursera.org/account/accomplishments/verify/ZJS4A9GN29GH" target="_blank" rel="noopener">The Art of Negotiation ↗</a></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+</Base>
+
+<style>
+  /* Base Layout */
+  .about-page {
+    background-color: var(--dark);
+    min-height: 100vh;
+    padding-top: 15vh;
+  }
+
+  .container {
+    padding: 0 5vw;
+  }
+
+  /* Manifesto */
+  .about__manifesto {
+    padding-bottom: 15vh;
+    border-bottom: 1px solid rgba(237, 233, 228, 0.1);
+  }
+
+  .manifesto__text {
+    font-size: clamp(2rem, 4vw, 4rem);
+    line-height: 1.1;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    max-width: 30ch;
+    color: var(--light);
+  }
+
+  /* Section Titles */
+  .section-title {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(237, 233, 228, 0.5);
+    margin-bottom: 5vh;
+  }
+
+  /* Experience */
+  .about__experience {
+    padding: 10vh 0;
+    border-bottom: 1px solid rgba(237, 233, 228, 0.1);
+  }
+
+  .experience__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .experience__item {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    padding: 5vh 0;
+    border-top: 1px solid rgba(237, 233, 228, 0.05);
+  }
+  .experience__item:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .experience__meta h3 {
+    font-size: clamp(2rem, 3vw, 3rem);
+    font-weight: 300;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .experience__meta .role,
+  .experience__meta .date {
+    display: block;
+    font-size: 0.85rem;
+    color: rgba(237, 233, 228, 0.6);
+    margin-bottom: 0.25rem;
+  }
+
+  .experience__desc {
+    font-size: clamp(1.1rem, 1.5vw, 1.5rem);
+    line-height: 1.5;
+    font-weight: 300;
+    color: rgba(237, 233, 228, 0.8);
+    max-width: 55ch;
+  }
+
+  /* Credentials */
+  .about__credentials {
+    padding: 10vh 0 15vh 0;
+  }
+
+  .credentials__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .cred__eyebrow {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(237, 233, 228, 0.4);
+    margin-bottom: 2rem;
+  }
+
+  .cred__list {
+    list-style: none;
+  }
+
+  .cred__list li {
+    font-size: 0.9rem;
+    color: rgba(237, 233, 228, 0.8);
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cred__name {
+    font-weight: 400;
+  }
+
+  .cred__list a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+  }
+
+  .cred__list a:hover {
+    color: var(--bone-light);
+  }
+
+  .cred__detail {
+    font-size: 0.75rem;
+    color: rgba(237, 233, 228, 0.4);
+    margin-top: 0.2rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .experience__item {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .experience__desc {
+      max-width: 100%;
+    }
+    .credentials__grid {
+      grid-template-columns: 1fr;
+      gap: 4rem;
+    }
+  }
+</style>

@@ -1,22 +1,24 @@
-## Development
+# André Valle Ortega — Portafolio
+## Golden Rules (Aesthetics & Code)
+1. **Stealth Wealth Técnico**: Estética inspirada en lujo discreto (Maison Margiela, The Row, Porsche). Menos es más.
+2. **Minimalismo Absoluto**: NO bordes redondeados (solo ligeros 2px en botones), NO cajas visibles, NO sombras baratas. Todo debe sentirse editorial y tipográfico.
+3. **Interacciones Cinematográficas**: Las animaciones (gsap) deben ser fluidas (`expo.out`), elegantes y tener un propósito. Nada de rebotes infantiles.
+4. **Código Artesanal**: Evitamos librerías pesadas (UI libs, Tailwind) a menos que sea necesario. CSS vanilla con variables bien estructuradas en `Base.astro`.
 
-When starting the dev server, use background mode:
+## Quick Start
+- `npm run dev` - Levantar servidor local
+- `npm run build` - Compilar para producción
 
-```
-astro dev --background
-```
+## Índice de Documentación Extensa
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+Toda la documentación técnica profunda del proyecto vive en `docs/`. Cada tema tiene su propio archivo.
 
-## Documentation
-
-Full documentation: https://docs.astro.build
-
-Consult these guides before working on related tasks:
-
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+| Archivo | Contenido |
+|---|---|
+| [estructura.md](./estructura.md) | Árbol de archivos y organización del proyecto |
+| [stack.md](./stack.md) | Tecnologías, dependencias y configuración |
+| [design.md](./design.md) | Sistema de diseño — estética, tokens, tipografía, principios |
+| [i18n.md](./i18n.md) | Sistema de internacionalización EN/ES |
+| [components.md](./components.md) | Documentación de cada componente |
+| [pages.md](./pages.md) | Estado y descripción de cada página |
+| [changelog.md](./changelog.md) | Historial de cambios cronológico |

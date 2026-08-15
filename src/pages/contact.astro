@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import TypeformContact from '../components/TypeformContact.astro';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Base title={`${t('nav.contact')} — André Valle Ortega`}>
+  <TypeformContact />
+</Base>
