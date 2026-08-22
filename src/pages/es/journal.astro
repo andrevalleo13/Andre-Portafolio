@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Newsletter from '../../components/Newsletter.astro';
 import { getCollection } from 'astro:content';
 import { getLangFromUrl, useTranslations } from '../../i18n/utils';
 
@@ -21,11 +22,12 @@ allMemos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
       <div class="memo-list">
         {allMemos.map((memo) => {
           const dateStr = memo.data.date.toISOString().split('T')[0].replace(/-/g, '.');
+          const cleanSlug = memo.id.replace(/^es-|-es$/g, '');
           return (
-            <a href={`/es/journal/${memo.id}`} class="memo-row">
+            <a href={`/es/journal/${cleanSlug}`} class="memo-item">
               <span class="memo-date">{dateStr}</span>
-              <h2 class="memo-title">{memo.data.title}</h2>
-              <span class="memo-time">[ {memo.data.readTime} ]</span>
+              <h3 class="memo-title">{memo.data.title}</h3>
+              <span class="memo-time">{memo.data.readTime}</span>
             </a>
           );
         })}
@@ -33,6 +35,7 @@ allMemos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
           <p style="opacity: 0.5; font-family: monospace;">No hay memos publicados aún.</p>
         )}
       </div>
+      <Newsletter />
     </div>
   </section>
 </Base>
@@ -50,69 +53,127 @@ allMemos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
   }
 
   .memo-list {
-    margin-top: 6rem;
-    border-top: 1px solid rgba(237, 233, 228, 0.2);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4rem 2rem;
+    padding-top: 2rem;
   }
 
-  .memo-row {
+  .memo-item {
     display: flex;
-    align-items: baseline;
-    padding: 2rem 0;
-    border-bottom: 1px solid rgba(237, 233, 228, 0.2);
+    flex-direction: column;
+    justify-content: flex-start;
     text-decoration: none;
-    color: var(--bone-light);
-    transition: color 0.3s ease, padding-left 0.3s ease;
+    transition: transform 0.4s ease;
   }
 
-  .memo-row:hover {
-    color: #fff;
-    padding-left: 1rem;
+  .memo-item:hover {
+    transform: translateY(-4px);
   }
 
   .memo-date {
-    font-family: monospace;
-    font-size: 0.9rem;
-    letter-spacing: 0.05em;
-    opacity: 0.6;
-    flex: 0 0 120px;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: rgba(237, 233, 228, 0.4);
+    margin-bottom: 1.5rem;
   }
 
   .memo-title {
-    flex: 1;
-    font-size: clamp(1.2rem, 2vw, 2rem);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
     font-weight: 300;
-    letter-spacing: -0.01em;
-    margin: 0;
-    padding-right: 2rem;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0 0 2rem 0;
+    color: rgba(237, 233, 228, 0.85);
+    transition: color 0.4s ease;
+  }
+
+  .memo-item:hover .memo-title {
+    color: #ffffff;
   }
 
   .memo-time {
-    font-family: monospace;
-    font-size: 0.8rem;
-    letter-spacing: 0.1em;
+    margin-top: auto;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    opacity: 0.4;
-    transition: opacity 0.3s ease;
+    color: rgba(237, 233, 228, 0.3);
   }
 
-  .memo-row:hover .memo-time {
-    opacity: 1;
+  /* ── Asymmetrical Bento Logic ── */
+  
+  .memo-item:nth-child(6n + 1),
+  .memo-item:nth-child(6n + 2) {
+    grid-column: span 1;
+  }
+  .memo-item:nth-child(6n + 1) .memo-title,
+  .memo-item:nth-child(6n + 2) .memo-title {
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
   }
 
-  @media (max-width: 768px) {
-    .memo-row {
-      flex-direction: column;
-      gap: 0.5rem;
+  .memo-item:nth-child(6n + 3) {
+    grid-column: span 2;
+  }
+
+  .memo-item:nth-child(6n + 4) {
+    grid-column: span 4;
+    padding: 6rem 0;
+    align-items: center;
+    text-align: center;
+  }
+  .memo-item:nth-child(6n + 4) .memo-title {
+    font-size: clamp(3rem, 6vw, 6rem);
+    max-width: 14ch;
+  }
+  .memo-item:nth-child(6n + 4) .memo-date {
+    margin-bottom: 2rem;
+  }
+
+  .memo-item:nth-child(6n + 5),
+  .memo-item:nth-child(6n + 6) {
+    grid-column: span 2;
+  }
+  .memo-item:nth-child(6n + 5) .memo-title,
+  .memo-item:nth-child(6n + 6) .memo-title {
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+  }
+
+  @media (max-width: 1024px) {
+    .memo-list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3rem 1.5rem;
     }
-    .memo-date {
-      flex: auto;
-      font-size: 0.8rem;
+    .memo-item:nth-child(n) {
+      grid-column: span 1;
+      padding: 0;
+      align-items: flex-start;
+      text-align: left;
     }
-    .memo-title {
-      padding-right: 0;
+    .memo-item:nth-child(n) .memo-title {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      max-width: none;
     }
-    .memo-row:hover {
-      padding-left: 0;
+    .memo-item:nth-child(n) .memo-date {
+      margin-bottom: 1.5rem;
+    }
+    .memo-item:nth-child(6n + 4) {
+      grid-column: span 2;
+      padding: 3rem 0;
+    }
+    .memo-item:nth-child(6n + 4) .memo-title {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .memo-list {
+      grid-template-columns: 1fr;
+    }
+    .memo-item:nth-child(n) {
+      grid-column: span 1;
+    }
+    .memo-item:nth-child(6n + 4) {
+      padding: 2rem 0;
     }
   }
 </style>

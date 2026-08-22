@@ -14,12 +14,21 @@ import { getLangFromUrl, useTranslations, getLocalePath, getAlternateLangPath } 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const alternate = getAlternateLangPath(Astro.url.pathname);
+
+const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '/es' || Astro.url.pathname === '/es/';
 ---
 
 <nav class="navbar" id="navbar">
 
   <!-- Left: page links -->
   <ul class="navbar__links">
+    {!isHome && (
+      <li>
+        <a href={getLocalePath('/', lang)} class="navbar__link hover-fill" id="nav-home">
+          {lang === 'es' ? 'INICIO' : 'HOME'}
+        </a>
+      </li>
+    )}
     {navItems.map((item) => (
       <li>
         <a
@@ -72,7 +81,7 @@ const alternate = getAlternateLangPath(Astro.url.pathname);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2rem 5vw;
+    padding: 2rem 12vw;
     background: transparent;
     transition: background 0.5s ease, backdrop-filter 0.5s ease;
   }
@@ -81,7 +90,7 @@ const alternate = getAlternateLangPath(Astro.url.pathname);
     background: rgba(20, 17, 15, 0.75);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    padding: 1.25rem 5vw;
+    padding: 1.25rem 12vw;
   }
 
   /* ── Left links ─────────────────────────── */

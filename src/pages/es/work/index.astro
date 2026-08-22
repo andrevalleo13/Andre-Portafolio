@@ -1,0 +1,143 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { getLangFromUrl, useTranslations } from '../../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const allWork = await getCollection('work', ({ data }) => {
+  return data.lang === lang && data.draft !== true;
+});
+---
+
+<Base title={`${t('nav.work' as any)} — André Valle Ortega`}>
+  <section class="work-section wrapper">
+    <h1 class="section__heading" transition:name="work-heading">Proyectos</h1>
+    
+    <div class="work-grid">
+      {allWork.map((project) => {
+        const slug = project.id.replace(/^es-/, '');
+        return (
+        <a href={`/es/work/${slug}`} class="work-item">
+          <div class="work-meta">
+            <div class="meta-col">
+              <span class="meta-label">Periodo</span>
+              <span class="meta-value">{project.data.timeline}</span>
+            </div>
+            <div class="meta-col">
+              <span class="meta-label">Rol</span>
+              <span class="meta-value">{project.data.role}</span>
+            </div>
+          </div>
+          <h2 class="work-title" transition:name={`work-title-${slug}`}>
+            {project.data.title}
+            <svg class="work-arrow" width="0.8em" height="0.8em" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.5"/>
+            </svg>
+          </h2>
+          <p class="work-subtitle">{project.data.subtitle}</p>
+        </a>
+      )})}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .work-section {
+    padding-top: 20vh;
+    padding-bottom: 15vh;
+    min-height: 100vh;
+  }
+
+  .section__heading {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 200;
+    letter-spacing: -0.02em;
+    color: var(--bone);
+    margin-bottom: 4rem;
+  }
+
+  .work-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .work-item {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    border-top: 1px solid rgba(237, 233, 228, 0.1);
+    padding: 4rem 0;
+    transition: border-color 0.4s ease;
+  }
+
+  .work-item:last-child {
+    border-bottom: 1px solid rgba(237, 233, 228, 0.1);
+  }
+
+  .work-item:hover {
+    border-color: rgba(237, 233, 228, 0.3);
+  }
+
+  .work-meta {
+    display: flex;
+    gap: 4rem;
+    margin-bottom: 2rem;
+  }
+
+  .meta-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .meta-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(237, 233, 228, 0.3);
+  }
+
+  .meta-value {
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(237, 233, 228, 0.7);
+  }
+
+  .work-title {
+    font-size: clamp(3rem, 6vw, 6rem);
+    font-weight: 200;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: rgba(237, 233, 228, 0.85);
+    margin: 0 0 1rem 0;
+    transition: color 0.4s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .work-subtitle {
+    font-size: clamp(1rem, 1.5vw, 1.5rem);
+    font-weight: 300;
+    color: rgba(237, 233, 228, 0.6);
+  }
+
+  .work-arrow {
+    opacity: 0;
+    transform: translate(-10px, 10px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .work-item:hover .work-title {
+    color: #ffffff;
+  }
+
+  .work-item:hover .work-arrow {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+</style>

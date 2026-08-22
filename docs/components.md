@@ -2,9 +2,12 @@
 
 Documentación de los componentes de UI reutilizables del portafolio.
 
-## Navbar.astro
-
-Barra de navegación principal.
+## `Navbar.astro`
+El menú de navegación principal.
+- **Posición:** `fixed` arriba, con z-index alto.
+- **Estado scroll:** Al hacer scroll, adquiere un fondo semi-transparente oscuro con `backdrop-filter: blur(18px)`.
+- **Lógica Dinámica:** Si el usuario no está en la página principal (`Astro.url.pathname !== '/'`), se inyecta automáticamente el link "HOME" (o "INICIO") en el lado izquierdo.
+- **Padding:** Utiliza un margen editorial extremo de `12vw` en los laterales.
 
 **Ubicación:** `src/components/Navbar.astro`
 **Uso:** Invocada automáticamente en `src/layouts/Base.astro`.
@@ -37,6 +40,15 @@ Sección inferior global del sitio.
 **Estética:**
 - Separación clara.
 - Subrayado arquitectónico personalizado (`border-bottom`) en lugar del default.
+
+## `VideoPlayer.astro`
+... (Por implementar para el caso de estudio de Cord).
+
+## `Newsletter.astro`
+Componente de captura de correos (suscripción) alojado al final de los artículos en el Journal.
+- **Estética:** Extremo minimalismo. Sin cajas ni bordes de colores. Es una sola línea gris interactiva que se ilumina al hacer *focus*.
+- **Botón:** Un botón sólido color "hueso" con una flecha sutil (`→`) que reacciona en hover.
+- **Interacción:** Al darle submit, se limpia el HTML vía JavaScript y despliega un texto sutil en verde: `SUBSCRIBED.`.
 
 ## HeroShader.jsx
 

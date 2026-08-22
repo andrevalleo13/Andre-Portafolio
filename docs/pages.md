@@ -13,10 +13,10 @@ El idioma Español se sirve desde el subdirectorio `/es/`.
 
 | Ruta (EN) | Ruta (ES) | Estado | Propósito |
 |---|---|---|---|
-| `/` | `/es/` | ✅ Completa | Landing page. Contiene el Hero con el Shader 3D, el nombre, un breve descriptor y llamadas a la acción (CTAs) directas a Trabajo y Contacto. |
+| `/` | `/es/` | ✅ Completa | Landing page. Contiene el Hero con el Shader 3D, declaración de Ethos, CTAs a proyectos y un feed dinámico de "Recent Intelligence" extraído del Journal. |
 | `/work` | `/es/work` | 🔲 Pendiente | Mostrará proyectos seleccionados, emprendimientos y trabajo técnico. |
 | `/about` | `/es/about` | ✅ Completa | Sección "Acerca de". Filosofía, background como estudiante de finanzas y operador, ventures (Cord, Flouvia) y certificaciones. |
-| `/journal` | `/es/journal` | 🔲 Pendiente | Espacio tipo blog/ensayos sobre la intersección de finanzas, estrategia y tecnología. |
+| `/journal` | `/es/journal` | ✅ Completa | Espacio tipo ensayos. Utiliza un diseño asimétrico tipo póster ("Bento Grid" V1) sin cajas visibles, con patrón 3-1-2 y finaliza con `Newsletter.astro`. |
 | `/contact` | `/es/contact` | ✅ Completa | Motor avanzado de calificación de leads. Flujo estilo Typeform dinámico impulsado por JS Vanilla, animaciones GSAP y LocalStorage. |
 
 ## Mantenimiento

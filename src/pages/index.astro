@@ -9,9 +9,16 @@
 import Base from '../layouts/Base.astro';
 import HeroShader from '../components/HeroShader.jsx';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getCollection } from 'astro:content';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+
+const allMemos = await getCollection('journal', ({ data }) => {
+  return data.lang === lang && data.draft !== true;
+});
+allMemos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const recentMemos = allMemos.slice(0, 2);
 ---
 
 <Base title="André Valle Ortega">
@@ -55,21 +62,21 @@ const t = useTranslations(lang);
     <!-- Selected Works (Editorial List) -->
     <div class="work wrapper">
       <div class="work__header">
-        <span class="eyebrow">[ {t('work.eyebrow')} 26' ]</span>
+        <span class="eyebrow">{t('work.eyebrow')} 26'</span>
       </div>
       
       <ul class="work__list">
         <li class="work__item">
-          <a href="https://cordhq.app/" target="_blank" rel="noopener" class="work__link hover-fill" data-image="https://cordhq.app/og-cord.jpg">
-            <span class="work-text">Cord</span>
+          <a href="/work/cord" class="work__link hover-fill" data-image="https://cordhq.app/og-cord.jpg">
+            <span class="work-text" transition:name="work-title-cord">Cord</span>
             <svg class="work-arrow" width="0.8em" height="0.8em" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.5"/>
             </svg>
           </a>
         </li>
         <li class="work__item">
-          <a href="https://flouvia.com/" target="_blank" rel="noopener" class="work__link hover-fill" data-image="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop">
-            <span class="work-text">Flouvia</span>
+          <a href="/work/flouvia" class="work__link hover-fill" data-image="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop">
+            <span class="work-text" transition:name="work-title-flouvia">Flouvia</span>
             <svg class="work-arrow" width="0.8em" height="0.8em" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.5"/>
             </svg>
@@ -77,6 +84,27 @@ const t = useTranslations(lang);
         </li>
       </ul>
     </div>
+
+    <!-- Recent Intelligence -->
+    <div class="memos wrapper">
+      <div class="memos__header">
+        <h2 class="section-heading">{t('home.memos.eyebrow')}</h2>
+      </div>
+      <div class="memo-list">
+        {recentMemos.map((memo) => {
+          const dateStr = memo.data.date.toISOString().split('T')[0].replace(/-/g, '.');
+          return (
+            <a href={`/journal/${memo.id}`} class="memo-row">
+              <span class="memo-date">{dateStr}</span>
+              <h3 class="memo-title">{memo.data.title}</h3>
+              <span class="memo-time">{memo.data.readTime}</span>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+
+
   </section>
 </Base>
 
@@ -98,7 +126,7 @@ const t = useTranslations(lang);
     display: flex;
     flex-direction: column;
     gap: 0;
-    padding: 0 5vw 4.5rem;
+    padding: 0 12vw 4.5rem;
   }
 
   .hero-fade-mask {
@@ -120,15 +148,10 @@ const t = useTranslations(lang);
     padding-bottom: 5rem;
   }
 
-  .wrapper {
-    padding: 0 5vw;
-    margin: 0 auto;
-    max-width: 1400px;
-  }
-
   /* ── Ethos ──────────────────────────────── */
   .ethos {
-    padding: 10rem 0 15rem;
+    padding-top: 10rem;
+    padding-bottom: 15rem;
   }
   
   .ethos__text {
@@ -264,6 +287,89 @@ const t = useTranslations(lang);
   @media (max-width: 600px) {
     .hero__name {
       font-size: clamp(1.8rem, 8vw, 2.8rem);
+    }
+  }
+
+  /* ── New Sections CSS ────────────────────── */
+  .memos {
+    padding-bottom: 15rem;
+  }
+
+  .memos__header {
+    margin-bottom: 4rem;
+  }
+
+  .section-heading {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: rgba(237, 233, 228, 0.85);
+  }
+
+  .memo-list {
+    border-top: 1px solid rgba(237, 233, 228, 0.1);
+  }
+
+  .memo-row {
+    display: flex;
+    align-items: baseline;
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(237, 233, 228, 0.1);
+    text-decoration: none;
+    color: var(--bone-light);
+    transition: color 0.3s ease, padding-left 0.3s ease;
+  }
+
+  .memo-row:hover {
+    color: #fff;
+    padding-left: 1rem;
+  }
+
+  .memo-date {
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    flex: 0 0 120px;
+  }
+
+  .memo-title {
+    flex: 1;
+    font-size: clamp(1.2rem, 2vw, 2rem);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    margin: 0;
+    padding-right: 2rem;
+  }
+
+  .memo-time {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+  }
+
+  .memo-row:hover .memo-time {
+    opacity: 1;
+  }
+
+
+
+
+  @media (max-width: 768px) {
+    .memo-row {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .memo-date {
+      flex: auto;
+      font-size: 0.8rem;
+    }
+    .memo-title {
+      padding-right: 0;
+    }
+    .memo-row:hover {
+      padding-left: 0;
     }
   }
 </style>

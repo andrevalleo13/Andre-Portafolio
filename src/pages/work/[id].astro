@@ -1,0 +1,170 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const allWork = await getCollection('work', ({ data }) => data.lang === 'en');
+  return allWork.map((project) => ({
+    params: { id: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<Base title={`${project.data.title} — Work`}>
+  <article class="case-study wrapper">
+    <header class="case-header">
+      <div class="case-meta">
+        <div class="meta-col">
+          <span class="meta-label">Timeline</span>
+          <span class="meta-value">{project.data.timeline}</span>
+        </div>
+        <div class="meta-col">
+          <span class="meta-label">Role</span>
+          <span class="meta-value">{project.data.role}</span>
+        </div>
+        {project.data.url && (
+          <div class="meta-col">
+            <span class="meta-label">Link</span>
+            <a href={project.data.url} target="_blank" rel="noopener noreferrer" class="meta-value meta-link">Visit Site ↗</a>
+          </div>
+        )}
+      </div>
+      <h1 class="case-title" transition:name={`work-title-${project.id}`}>{project.data.title}</h1>
+      <p class="case-subtitle">{project.data.subtitle}</p>
+      
+      <div class="case-impact">
+        <span class="impact-label">Impact</span>
+        <span class="impact-value">{project.data.impact}</span>
+      </div>
+    </header>
+
+    <div class="case-content">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .case-study {
+    padding-top: 20vh;
+    padding-bottom: 15vh;
+  }
+
+  .case-header {
+    margin-bottom: 6rem;
+    border-bottom: 1px solid rgba(237, 233, 228, 0.1);
+    padding-bottom: 4rem;
+  }
+
+  .case-meta {
+    display: flex;
+    gap: 4rem;
+    margin-bottom: 3rem;
+  }
+
+  .meta-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .meta-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(237, 233, 228, 0.3);
+  }
+
+  .meta-value {
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(237, 233, 228, 0.7);
+  }
+
+  .meta-link {
+    text-decoration: none;
+    border-bottom: 1px solid rgba(237, 233, 228, 0.3);
+    padding-bottom: 0.1em;
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .meta-link:hover {
+    color: #ffffff;
+    border-color: #ffffff;
+  }
+
+  .case-title {
+    font-size: clamp(4rem, 8vw, 8rem);
+    font-weight: 200;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: #ede9e4;
+    margin: 0 0 1rem 0;
+  }
+
+  .case-subtitle {
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
+    font-weight: 300;
+    color: rgba(237, 233, 228, 0.6);
+    margin-bottom: 4rem;
+  }
+
+  .case-impact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .impact-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(237, 233, 228, 0.4);
+  }
+
+  .impact-value {
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: #ede9e4;
+  }
+
+  .case-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: rgba(237, 233, 228, 0.8);
+    max-width: 800px;
+  }
+
+  .case-content :global(h1),
+  .case-content :global(h2),
+  .case-content :global(h3) {
+    color: #ede9e4;
+    font-weight: 300;
+    margin-top: 4rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .case-content :global(h1) { font-size: 2.5rem; }
+  .case-content :global(h2) { font-size: 2rem; }
+  
+  .case-content :global(p) {
+    margin-bottom: 1.5rem;
+  }
+
+  .case-content :global(ul) {
+    margin-bottom: 2rem;
+    padding-left: 1.5rem;
+  }
+
+  .case-content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+</style>

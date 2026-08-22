@@ -25,6 +25,14 @@ Las animaciones separan un sitio web promedio de uno de lujo.
 - **Hover States**: Los botones (`hover-fill`) tienen un efecto magnético de relleno cuadrado y suave controlado por GSAP, asegurando que la entrada y la salida del cursor generen la misma fluidez independientemente de la velocidad del usuario.
 - **Transiciones SPA**: La navegación entre páginas está envuelta en el `ClientRouter` de Astro. No hay pantallas blancas de carga; todo es inmersivo y preserva el estado visual y la memoria de las animaciones.
 
+### Grid Tipográfico (Journal)
+En la sección Journal, se implementó un grid asimétrico ("Bento Grid V1") prescindiendo completamente de contenedores visibles, bordes o divisores. 
+- La tipografía flota en una cuadrícula CSS oculta utilizando lógicas de `:nth-child` para generar ritmos de 3 elementos, 1 gigante, y 2 elementos, creando una composición visual estilo póster.
+
+### Espaciado (Layout & Spacing)
+- **Extremos Margenes:** Los márgenes globales (`.wrapper`, `.navbar`) pasaron de `5vw` a `12vw` (en desktop) para asegurar que el contenido nunca esté pegado al borde y mantenga un aire fuertemente editorial y lujoso. La clase `.wrapper` está definida globalmente en `Base.astro` para mantener la consistencia en todas las páginas (Work, About, Journal, etc).
+- **Flujo:** Uso de `CSS Grid` avanzado y `flexbox`. Se evitan anchos fijos de contenedor en favor de rellenos fluidos.
+
 ## Tokens CSS
 
 Definidos en `src/layouts/Base.astro` como variables globales.

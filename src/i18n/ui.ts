@@ -66,9 +66,23 @@ export const ui = {
     'work.flouvia.desc': 'Private Growth Boutique',
     'work.cta':        'Case Study',
 
+    // ── Home Extensions ──
+    'home.memos.eyebrow': 'Journal',
+    'home.competencies.eyebrow': 'Core Competencies',
+    'home.competencies.list': 'Capital Allocation / GTM Strategy / SaaS Infrastructure / Financial Modeling',
+    'home.status.eyebrow': 'Status',
+    'home.status.building': 'CURRENTLY BUILDING: Flouvia v2',
+    'home.status.researching': 'CURRENTLY RESEARCHING: LatAm B2B Payment Rails',
+    'home.status.reading': 'CURRENTLY READING: The Outsiders (William Thorndike)',
+
     // ── Journal ──
     'journal.eyebrow': 'Journal',
     'journal.heading': 'Memos & Essays',
+
+    // ── Newsletter ──
+    'newsletter.heading': 'Receive new memos.',
+    'newsletter.placeholder': 'Email address',
+    'newsletter.button': 'Subscribe',
     'journal.heading':  'Thoughts & Essays',
 
     // ── Contact ──
@@ -147,9 +161,23 @@ export const ui = {
     'work.flouvia.desc': 'Private Growth Boutique',
     'work.cta':        'Caso de Estudio',
 
+    // ── Home Extensions ──
+    'home.memos.eyebrow': 'Diario',
+    'home.competencies.eyebrow': 'Competencias Centrales',
+    'home.competencies.list': 'Asignación de Capital / Estrategia GTM / Infraestructura SaaS / Modelado Financiero',
+    'home.status.eyebrow': 'Status',
+    'home.status.building': 'CONSTRUYENDO: Flouvia v2',
+    'home.status.researching': 'INVESTIGANDO: Rieles de Pago B2B en LatAm',
+    'home.status.reading': 'LEYENDO: The Outsiders (William Thorndike)',
+
     // ── Journal ──
     'journal.eyebrow': 'Diario',
     'journal.heading': 'Memos & Ensayos',
+
+    // ── Newsletter ──
+    'newsletter.heading': 'Recibe nuevos memos.',
+    'newsletter.placeholder': 'Correo electrónico',
+    'newsletter.button': 'Suscribirse',
     'journal.heading':  'Pensamientos & Ensayos',
 
     // ── Contact ──

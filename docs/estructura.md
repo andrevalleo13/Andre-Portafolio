@@ -22,12 +22,29 @@ André-Portafolio/
 │
 ├── src/
 │   │
+│   ├── content/
+│   │   ├── journal/
+│   │   │   ├── 01-the-economics-of-micro-saas.md
+│   │   │   ├── 02-friction-as-a-catalyst.md
+│   │   │   ├── 03-capital-allocation.md
+│   │   │   ├── 04-private-equity-trends.md
+│   │   │   ├── 05-emerging-markets.md
+│   │   │   ├── 06-operator-playbook.md
+│   │   │   ├── es-01-the-economics-of-micro-saas.md
+│   │   │   ├── es-02-friction-as-a-catalyst.md
+│   │   │   ├── es-03-capital-allocation.md
+│   │   │   ├── es-04-private-equity-trends.md
+│   │   │   ├── es-05-emerging-markets.md
+│   │   │   └── es-06-operator-playbook.md
+│   │
 │   ├── i18n/
 │   │   ├── ui.ts               ← Diccionario central de traducciones EN/ES
 │   │   └── utils.ts            ← Helpers i18n (getLangFromUrl, useTranslations…)
 │   │
 │   ├── components/
-│   │   ├── Navbar.astro        ← Barra de navegación fija
+│   │   ├── MouseFollower.astro    # Cursor personalizado e interacciones gsap
+│   │   ├── Navbar.astro           # Navegación principal adaptativa
+│   │   ├── Newsletter.astro       # Componente de suscripción Stealth Wealth
 │   │   └── HeroShader.jsx      ← Shader 3D raymarching (React + Three.js)
 │   │
 │   ├── layouts/

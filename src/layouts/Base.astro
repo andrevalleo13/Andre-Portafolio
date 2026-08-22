@@ -24,9 +24,35 @@ const t = useTranslations(lang);
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <title>{title}</title>
   <ClientRouter />
   <meta name="description" content={description} />
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content="/og-image.png" />
+  
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content="/og-image.png" />
+  
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "André Valle Ortega",
+    "url": "https://andrevalle.com",
+    "jobTitle": "Founder & Operator",
+    "alumniOf": "Universidad Finanzas",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "Flouvia"
+    }
+  })} />
+  
   <style is:global>
     *, *::before, *::after {
       margin: 0;
@@ -63,6 +89,12 @@ const t = useTranslations(lang);
     }
 
     /* ── Shared Section Styles ──── */
+    .wrapper {
+      padding: 0 12vw;
+      margin: 0 auto;
+      max-width: 1400px;
+    }
+
     .section {
       padding: 6rem 5vw;
       border-top: 1px solid rgba(140, 128, 120, 0.15);

@@ -1,0 +1,100 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<div class="newsletter">
+  <h3 class="newsletter__heading">{t('newsletter.heading' as any)}</h3>
+  <form class="newsletter__form" onsubmit="event.preventDefault(); this.innerHTML = '<p class=\'newsletter__success\'>Subscribed.</p>';">
+    <input type="email" placeholder={t('newsletter.placeholder' as any)} class="newsletter__input" required />
+    <button type="submit" class="newsletter__btn hover-fill">
+      {t('newsletter.button' as any)}
+      <svg class="newsletter__arrow" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 9L9 1M9 1H2.5M9 1V7.5" stroke="currentColor" stroke-width="0.8"/>
+      </svg>
+    </button>
+  </form>
+</div>
+
+<style>
+  .newsletter {
+    margin-top: 8rem;
+    padding-top: 4rem;
+    max-width: 600px;
+  }
+
+  .newsletter__heading {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: rgba(237, 233, 228, 0.95);
+    margin-bottom: 2rem;
+  }
+
+  .newsletter__form {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(237, 233, 228, 0.3);
+    padding-bottom: 0.8rem;
+    transition: border-color 0.4s ease;
+  }
+
+  .newsletter__form:focus-within {
+    border-bottom-color: rgba(237, 233, 228, 0.95);
+  }
+
+  .newsletter__input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: rgba(237, 233, 228, 0.95);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+  }
+
+  .newsletter__input::placeholder {
+    color: rgba(237, 233, 228, 0.3);
+  }
+
+  .newsletter__btn {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 0.62rem;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #14110F;
+    background: rgba(237, 233, 228, 0.95);
+    border-radius: 2px;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: background 0.4s ease;
+  }
+
+  .newsletter__btn:hover {
+    background: #FFFFFF;
+  }
+
+  .newsletter__arrow {
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .newsletter__btn:hover .newsletter__arrow {
+    transform: translate(2px, -2px);
+  }
+
+  .newsletter__success {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: #4ade80;
+    text-transform: uppercase;
+  }
+</style>
