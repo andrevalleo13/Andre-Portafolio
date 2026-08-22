@@ -4,26 +4,36 @@ Documentación de los componentes de UI reutilizables del portafolio.
 
 ## `Navbar.astro`
 El menú de navegación principal.
-- **Posición:** `fixed` arriba, con z-index alto.
-- **Estado scroll:** Al hacer scroll, adquiere un fondo semi-transparente oscuro con `backdrop-filter: blur(18px)`.
-- **Lógica Dinámica:** Si el usuario no está en la página principal (`Astro.url.pathname !== '/'`), se inyecta automáticamente el link "HOME" (o "INICIO") en el lado izquierdo.
-- **Padding:** Utiliza un margen editorial extremo de `12vw` en los laterales.
+- **Posición:** `fixed` arriba, con z-index 200 (overlay mobile: 150, burger y lang: 300).
+- **Estado scroll:** Al hacer scroll, adquiere fondo semi-transparente oscuro con `backdrop-filter: blur(18px)`.
+- **Lógica Dinámica:** Si el usuario no está en la página principal, se inyecta automáticamente el link "HOME" / "INICIO" al inicio.
+- **Padding:** Margen editorial de `12vw` en los laterales (ambos desktop y overlay mobile).
 
 **Ubicación:** `src/components/Navbar.astro`
 **Uso:** Invocada automáticamente en `src/layouts/Base.astro`.
 
 **Comportamiento:**
-- `position: fixed` en la parte superior.
-- **Estado inicial:** Transparente (para integrarse con el Hero).
-- **Estado scrolled (>40px):** Fondo semi-transparente (`rgba(20, 17, 15, 0.75)`) con desenfoque (`backdrop-filter: blur(18px)`).
+- **Estado inicial:** Transparente (integración con el Hero).
+- **Estado scrolled (>40px):** Fondo semi-transparente + `backdrop-filter: blur(18px)`.
 
-**Estructura:**
-- **Izquierda:** Links de navegación (Work, About, Journal, Contact). Mapeados desde `navItems` en `ui.ts`.
-- **Derecha:** Selector de idioma (EN / ES). Usa enlaces de navegación reales a las rutas correspondientes (`/ruta` o `/es/ruta`), no requiere JavaScript para funcionar.
+**Estructura Desktop:**
+- **Izquierda:** Links de navegación mapeados desde `navItems` en `ui.ts`.
+- **Derecha:** Selector de idioma (EN / ES). Navegación real sin JS.
+
+**Estructura Mobile (`≤768px`):**
+- La barra superior muestra solo: **hamburger (izquierda)** + **EN / ES (derecha)**.
+- Los links de desktop se ocultan con `display: none !important`.
+- El botón hamburger muta a una **X** via CSS puro (3 líneas → morph con `rotate` y `scaleX`).
+- Al activar el menú se despliega un **overlay full-screen** (`rgba(20,17,15,0.98)` + blur 24px) por encima de todo el contenido.
+- Los links del overlay se revelan con **stagger** (delay de 50ms por item), con tipo editorial grande (`clamp(1.5rem, 7.5vw, 2.2rem)`, peso 200) y un número de índice a la izquierda.
+- **EN / ES se reubica dinámicamente:** Al abrir el overlay, el selector de idioma se fade-out de la barra superior, se mueve al DOM del overlay (slot inferior) y se fade-in con stagger. Al cerrar, regresa a la barra. Esto evita duplicar elementos y mantiene una sola fuente de verdad.
+- El overlay bloquea el scroll del body (`overflow: hidden`) mientras está abierto.
+- Hacer tap en cualquier link cierra el overlay y navega.
 
 **Estética:**
-- Tipografía pequeña y espaciada (Stealth Wealth).
-- Sin bordes, solo cambios sutiles de opacidad en hover.
+- Paleta bone/taupe exclusiva. Sin colores de acento, sin sombras.
+- Curvas de animación: `cubic-bezier(0.16, 1, 0.3, 1)` (equivalente expo.out) en todos los elementos.
+- El tipo de letra grande en el overlay _es_ el diseño — Stealth Wealth a escala.
 
 ## Footer (en Base.astro)
 
@@ -33,7 +43,7 @@ Sección inferior global del sitio.
 **Uso:** Renderizado automáticamente al final de cada página.
 
 **Estructura y Comportamiento:**
-- **Email Copy Button:** Un botón de bloque masivo a la izquierda. Al hacer clic, usa la API del portapapeles (`navigator.clipboard`) para copiar el correo. El texto se actualiza a "Copied!" (o "¡Copiado!") y vuelve a su estado original después de 2 segundos.
+- **Email → Contact Link:** Un enlace `<a>` de bloque masivo a la izquierda con el email visible. Al hacer clic, navega a la página de Contact (usa `getLocalePath('/contact', lang)` para respetar el idioma activo). Ya no copia al portapapeles.
 - **Flechas Dinámicas:** Usa iconos SVG en lugar de texto para las flechas (↗). Están separadas del texto mediante flexbox (`gap` o `margin-left`) para mantener un margen perfecto y tienen padding lateral invisible para evitar cortes en la animación `hoverFill`.
 - **Redes Sociales:** Iconos en SVG limpio abajo a la derecha.
 

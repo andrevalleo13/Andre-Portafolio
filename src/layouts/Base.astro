@@ -7,7 +7,7 @@
  */
 import { ClientRouter } from 'astro:transitions';
 import Navbar from '../components/Navbar.astro';
-import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getLangFromUrl, useTranslations, getLocalePath } from '../i18n/utils';
 
 interface Props {
   title: string;
@@ -160,6 +160,7 @@ const t = useTranslations(lang);
       cursor: pointer;
       text-align: left;
       text-transform: lowercase;
+      text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 1.5rem;
@@ -255,12 +256,12 @@ const t = useTranslations(lang);
   <slot />
   <footer class="footer">
     <div class="footer__top">
-      <button class="hover-fill copy-email" data-email="andrevalleo13@gmail.com" data-copied={lang === 'es' ? '¡Copiado!' : 'Copied!'}>
+      <a href={getLocalePath('/contact', lang)} class="hover-fill copy-email" id="footer-contact-link">
         <span class="email-text">andrevalleo13@gmail.com</span>
         <svg class="email-arrow" width="0.8em" height="0.8em" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.5"/>
         </svg>
-      </button>
+      </a>
     </div>
     <div class="footer__bottom">
       <p class="footer__copy">{t('footer.copy')}</p>
@@ -312,34 +313,6 @@ const t = useTranslations(lang);
       initAll();
     });
 
-    // Lógica para el botón de copiar email
-    document.addEventListener('DOMContentLoaded', () => {
-      const emailBtn = document.querySelector('.copy-email');
-      if (emailBtn) {
-        emailBtn.addEventListener('click', () => {
-          const email = emailBtn.getAttribute('data-email');
-          const copiedText = emailBtn.getAttribute('data-copied');
-          
-          navigator.clipboard.writeText(email || '').then(() => {
-            // Si ya corrió el hoverFill script, tendrá spans dentro
-            const spans = emailBtn.querySelectorAll('.email-text');
-            const originalText = email;
-            if (spans.length > 0) {
-              spans.forEach(span => span.textContent = copiedText);
-              setTimeout(() => {
-                spans.forEach(span => span.textContent = originalText);
-              }, 2000);
-            } else {
-              const rootSpan = emailBtn.querySelector('.email-text');
-              if(rootSpan) rootSpan.textContent = copiedText;
-              setTimeout(() => {
-                if(rootSpan) rootSpan.textContent = originalText;
-              }, 2000);
-            }
-          });
-        });
-      }
-    });
     </script>
 </body>
 </html>

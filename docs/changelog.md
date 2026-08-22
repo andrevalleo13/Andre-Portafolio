@@ -2,6 +2,18 @@
 
 Registro cronológico de modificaciones mayores y evolución del proyecto.
 
+## [0.2.0] - 2026-08-22
+
+### Añadido
+- **Mobile overlay menu full-screen**: El Navbar en móvil (≤768px) ahora despliega un overlay full-screen con links editoriales grandes, números de índice, y stagger animado (expo.out). Reemplaza el dropdown simple anterior.
+- **Hamburger → X morph**: Botón de 3 líneas con transformación CSS pura a X (rotate + scaleX). Sin outlines de browser ni tap-highlight.
+- **Reubicación dinámica de EN/ES**: Al abrir el overlay, el selector de idioma se fade-out del navbar, se mueve al DOM del overlay (slot inferior), y se fade-in con stagger. Al cerrar, regresa a la barra superior. Evita duplicación de elementos.
+- **Fix ↗ emoji en iOS**: Agregado `&#xFE0E;` (variation selector) a todos los caracteres ↗ para forzar renderizado como texto plano en móvil.
+
+### Modificado
+- **Footer email → Contact link**: El botón de copiar email en el footer ahora es un `<a>` que navega a `/contact` (respetando idioma con `getLocalePath`). Se eliminó la lógica de clipboard.
+- Navbar z-index reestructurado: navbar 200, overlay 150, burger y lang 300.
+
 ## [0.1.0] - 2026-08-15
 
 ### Añadido
