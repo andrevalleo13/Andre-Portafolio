@@ -52,7 +52,7 @@ export const ui = {
 
     // ── About ──
     'about.eyebrow':   'About',
-    'about.heading':   'Finance student. Operator by instinct.',
+    'about.heading':   'Finance student.<br>Infrastructure operator.',
     'about.p1':        'Operating at the intersection of strategic capital allocation, market arbitrage, and scalable software infrastructure deployment.',
     'about.p2':        'My focus is on building scalable assets, optimizing unit economics, and designing high-performance commercial models to maximize free cash flow.',
     
@@ -148,7 +148,7 @@ export const ui = {
 
     // ── About ──
     'about.eyebrow':   'Acerca',
-    'about.heading':   'Estudiante de finanzas. Operador por instinto.',
+    'about.heading':   'Estudiante de finanzas.<br>Operador de infraestructura.',
     'about.p1':        'Operando en la intersección de la asignación estratégica de capital, el arbitraje de mercados y el despliegue de infraestructura digital escalable.',
     'about.p2':        'Mi enfoque está en la construcción de activos escalables, optimización de unit economics y el diseño de modelos comerciales de alto rendimiento para maximizar el flujo de caja libre.',
     

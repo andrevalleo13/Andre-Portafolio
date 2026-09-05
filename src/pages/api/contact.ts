@@ -15,6 +15,7 @@ import {
   isEmail,
   json,
 } from '../../lib/resend';
+import { contactNotificationEmail } from '../../emails/contact-notification';
 
 export const prerender = false;
 
@@ -42,22 +43,20 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (!name || !isEmail(email)) return json({ error: 'invalid_input' }, 422);
 
-  const text = [
-    `Nombre:    ${name}`,
-    `Email:     ${email}`,
-    `Intención: ${intent}`,
-    subIntent && `Contexto:  ${subIntent}`,
-    '',
-    details || '(sin mensaje)',
-  ]
-    .filter(Boolean)
-    .join('\n');
+  const { subject, html, text } = contactNotificationEmail({
+    name,
+    email,
+    intent,
+    subIntent,
+    details,
+  });
 
   const { error } = await resend.emails.send({
     from: RESEND_FROM,
     to: [CONTACT_TO],
     replyTo: email,
-    subject: `Nuevo contacto — ${name} · ${intent}`,
+    subject,
+    html,
     text,
   });
 
