@@ -2,6 +2,12 @@
 
 Registro cronológico de modificaciones mayores y evolución del proyecto.
 
+## [0.3.1] - 2026-09-05
+
+### Añadido
+- **Plantillas de correo (`src/emails/`).** `layout.ts` con `emailShell()` reutilizable (table-based, estilos inline, sin web fonts, paleta carbón del sitio) + `contact-notification.ts`. El correo del formulario ahora llega como HTML + texto plano (antes solo texto).
+- **DMARC.** `TXT _dmarc.andrevalle.xyz` = `v=DMARC1; p=none; rua=mailto:andrevalleo13@gmail.com`. Junto con SPF + DKIM (Resend) resuelve el envío a spam de Gmail.
+
 ## [0.3.0] - 2026-09-05
 
 ### Añadido

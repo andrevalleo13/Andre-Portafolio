@@ -20,10 +20,14 @@
 ## Backend / Formularios (Resend)
 
 - `src/lib/resend.ts` — cliente Resend + validación + helper JSON. Solo server-side; lee de `import.meta.env`.
-- **`POST /api/contact`** — formulario de contacto (`TypeformContact.astro`). Envía email transaccional a `RESEND_CONTACT_TO` con `replyTo` del remitente. **No** es marketing.
+- `src/emails/` — plantillas de correo **puras** (sin env ni red; reciben datos → devuelven `{ subject, html, text }`). Table-based, estilos inline, sin web fonts: la estética "carbón" del sitio (`#1c1917`, hueso, Helvetica Neue thin, hairlines). Reutilizables por endpoints y scripts.
+  - `layout.ts` — `emailShell()` + helpers (`field`, `hairline`, `escapeHtml`) y tokens `EMAIL`.
+  - `contact-notification.ts` — el correo que le llega a André desde el formulario.
+- **`POST /api/contact`** — formulario de contacto (`TypeformContact.astro`). Envía email transaccional (HTML + texto) a `RESEND_CONTACT_TO` con `replyTo` del remitente. **No** es marketing.
 - **`POST /api/subscribe`** — newsletter (`Newsletter.astro`). Alta en la audiencia de marketing (`RESEND_AUDIENCE_ID`) con `unsubscribed: false`.
 - **Audiencias en Resend:** `Newsletter` = única lista de marketing (broadcasts). `Leads · Formulario` (opcional, `RESEND_LEADS_AUDIENCE_ID`) = registro de quien usa el form de contacto, siempre `unsubscribed: true`.
 - **Variables de entorno** (Vercel + `.env` local): `RESEND_API_KEY` (Full access), `RESEND_FROM` (dominio verificado), `RESEND_CONTACT_TO`, `RESEND_AUDIENCE_ID`, `RESEND_LEADS_AUDIENCE_ID` (opcional). Ver `.env.example`.
+- **DNS / deliverability:** `andrevalle.xyz` verificado en Resend (SPF + DKIM). DMARC activo: `TXT _dmarc.andrevalle.xyz` = `v=DMARC1; p=none; rua=mailto:andrevalleo13@gmail.com`. Los correos nuevos que caigan en spam: "no es spam" + agregar el `from` a contactos (patrón dominio-propio→Gmail).
 
 ## Índice de Documentación Extensa
 
