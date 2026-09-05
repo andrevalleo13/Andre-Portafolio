@@ -7,7 +7,12 @@ const t = useTranslations(lang);
 
 <div class="newsletter">
   <h3 class="newsletter__heading">{t('newsletter.heading' as any)}</h3>
-  <form class="newsletter__form" onsubmit="event.preventDefault(); this.innerHTML = '<p class=\'newsletter__success\'>Subscribed.</p>';">
+  <form
+    class="newsletter__form"
+    id="newsletter-form"
+    data-success={t('newsletter.success' as any)}
+    data-error={t('newsletter.error' as any)}
+  >
     <input type="email" placeholder={t('newsletter.placeholder' as any)} class="newsletter__input" required />
     <button type="submit" class="newsletter__btn hover-fill">
       {t('newsletter.button' as any)}
@@ -16,7 +21,50 @@ const t = useTranslations(lang);
       </svg>
     </button>
   </form>
+  <p class="newsletter__msg" id="newsletter-msg" hidden></p>
 </div>
+
+<script>
+  function initNewsletter() {
+    const form = document.getElementById('newsletter-form') as HTMLFormElement | null;
+    if (!form || form.dataset.bound === 'true') return;
+    form.dataset.bound = 'true';
+
+    const input = form.querySelector('input') as HTMLInputElement;
+    const btn = form.querySelector('button') as HTMLButtonElement;
+    const msg = document.getElementById('newsletter-msg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = input.value.trim();
+      if (!email) return;
+
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        form.hidden = true;
+        if (msg) {
+          msg.textContent = form.dataset.success || 'Subscribed.';
+          msg.hidden = false;
+        }
+      } catch {
+        btn.disabled = false;
+        if (msg) {
+          msg.textContent = form.dataset.error || 'Something went wrong.';
+          msg.hidden = false;
+        }
+      }
+    });
+  }
+
+  initNewsletter();
+  document.addEventListener('astro:page-load', initNewsletter);
+</script>
 
 <style>
   .newsletter {
@@ -91,10 +139,10 @@ const t = useTranslations(lang);
     transform: translate(2px, -2px);
   }
 
-  .newsletter__success {
+  .newsletter__msg {
+    margin-top: 1.5rem;
     font-size: 0.85rem;
     letter-spacing: 0.1em;
-    color: #4ade80;
-    text-transform: uppercase;
+    color: rgba(237, 233, 228, 0.6);
   }
 </style>

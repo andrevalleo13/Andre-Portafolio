@@ -15,9 +15,36 @@ interface Props {
   description?: string;
 }
 
-const { title, description = 'André Valle Ortega — Finance, Entrepreneurship & Technology.' } = Astro.props;
+const { title, description = 'André Valle Ortega — Ventures, capital allocation & digital infrastructure.' } = Astro.props;
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+
+const siteUrl = Astro.site ?? new URL('https://andrevalle.xyz');
+const canonical = new URL(Astro.url.pathname, siteUrl).href;
+const ogImage = new URL('/og-image.jpg', siteUrl).href;
+const ogImageAlt = 'André Valle Ortega';
+const ogLocale = lang === 'es' ? 'es_MX' : 'en_US';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'André Valle Ortega',
+  url: siteUrl.href,
+  jobTitle: 'Founder & Operator',
+  alumniOf: {
+    '@type': 'CollegeOrUniversity',
+    name: 'Universidad Panamericana',
+  },
+  worksFor: {
+    '@type': 'Organization',
+    name: 'Flouvia',
+  },
+  sameAs: [
+    'https://www.linkedin.com/in/andrevalleo',
+    'https://x.com/andrevalleee',
+    'https://www.instagram.com/andre.valleee/',
+  ],
+};
 ---
 
 <!DOCTYPE html>
@@ -27,33 +54,34 @@ const t = useTranslations(lang);
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <title>{title}</title>
-  <ClientRouter />
   <meta name="description" content={description} />
-  
+  <link rel="canonical" href={canonical} />
+
   <!-- Open Graph / Social Media -->
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="André Valle Ortega" />
+  <meta property="og:locale" content={ogLocale} />
+  <meta property="og:url" content={canonical} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:image" content="/og-image.png" />
-  
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:secure_url" content={ogImage} />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="675" />
+  <meta property="og:image:alt" content={ogImageAlt} />
+
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:creator" content="@andrevalleee" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content="/og-image.png" />
-  
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "André Valle Ortega",
-    "url": "https://andrevalle.com",
-    "jobTitle": "Founder & Operator",
-    "alumniOf": "Universidad Finanzas",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "Flouvia"
-    }
-  })} />
-  
+  <meta name="twitter:image" content={ogImage} />
+  <meta name="twitter:image:alt" content={ogImageAlt} />
+
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+  <ClientRouter />
+
   <style is:global>
     *, *::before, *::after {
       margin: 0;

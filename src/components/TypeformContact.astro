@@ -29,7 +29,12 @@ const dict = {
 };
 ---
 
-<div class="typeform-container" id="typeform-app" data-dict={JSON.stringify(dict)}>
+<div
+  class="typeform-container"
+  id="typeform-app"
+  data-dict={JSON.stringify(dict)}
+  data-error={t('typeform.error')}
+>
   <div class="progress-bar">
     <div class="progress-fill" id="progress-fill"></div>
   </div>
@@ -107,6 +112,7 @@ const dict = {
           <input type="email" id="tf-email" class="tf-input" placeholder={t('typeform.q5.placeholder')} autocomplete="off" />
           <button id="tf-submit" class="tf-submit">{t('typeform.submit')}</button>
         </div>
+        <p class="tf-error" id="tf-error" hidden></p>
       </div>
     </div>
 
@@ -332,6 +338,13 @@ const dict = {
     background: var(--bone-light);
     color: var(--dark);
     transform: translateY(-2px);
+  }
+
+  .tf-error {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: #e0a89a;
   }
 
   .tf-submit.loading {
@@ -591,7 +604,8 @@ const dict = {
 
     [inputName, inputDetails, inputEmail].forEach(input => {
       if (!input) return;
-      input.addEventListener('keydown', (e) => {
+      input.addEventListener('keydown', (evt) => {
+        const e = evt as KeyboardEvent;
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
           if (input === inputEmail && btnSubmit) {
@@ -652,20 +666,46 @@ const dict = {
     });
 
     // Submit
+    const errorEl = document.getElementById('tf-error');
+
     if (btnSubmit) {
-      btnSubmit.addEventListener('click', () => {
-        state.email = inputEmail.value;
-        if (!state.email.trim() || !state.email.includes('@')) return;
-        
+      btnSubmit.addEventListener('click', async () => {
+        state.email = inputEmail.value.trim();
+        if (!state.email || !state.email.includes('@')) return;
+
+        if (errorEl) errorEl.hidden = true;
         btnSubmit.classList.add('loading');
-        
-        setTimeout(() => {
+
+        const payload = {
+          name: state.name,
+          email: state.email,
+          details: state.details,
+          intent: state.intent,
+          subIntent: state.subIntent,
+          subIntentLabel: dict[state.intent]?.[state.subIntent] || state.subIntent,
+        };
+
+        try {
+          const res = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error(String(res.status));
+
           currentStep = 6; // Success step
           if (progressFill) progressFill.style.width = '100%';
           localStorage.removeItem(STORAGE_KEY);
           updateDisplay(1);
-          console.log('Form Submitted with Branching:', state);
-        }, 1500);
+        } catch (err) {
+          console.error('[typeform] submit failed', err);
+          btnSubmit.classList.remove('loading');
+          if (errorEl) {
+            errorEl.textContent =
+              container?.getAttribute('data-error') || 'Something went wrong.';
+            errorEl.hidden = false;
+          }
+        }
       });
     }
   });

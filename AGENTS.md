@@ -6,8 +6,24 @@
 4. **Código Artesanal**: Evitamos librerías pesadas (UI libs, Tailwind) a menos que sea necesario. CSS vanilla con variables bien estructuradas en `Base.astro`.
 
 ## Quick Start
-- `npm run dev` - Levantar servidor local
-- `npm run build` - Compilar para producción
+- `npm run dev` — Levantar servidor local (Astro dev; los endpoints `/api/*` corren aquí)
+- `npm run build` — Compilar para producción
+- `npm run check` — Type-check de Astro/TS (debe salir en 0 errores)
+- Copia `.env.example` → `.env` y rellena las claves de Resend para probar formularios en local.
+
+## Arquitectura de Deploy
+
+- **Hosting:** Vercel. Dominio de producción: **`https://andrevalle.xyz`** (definido en `astro.config.mjs` → `site`).
+- **Render:** el sitio es **estático**. El adapter `@astrojs/vercel` solo convierte en función serverless los archivos con `export const prerender = false` (hoy: `src/pages/api/contact.ts` y `src/pages/api/subscribe.ts`).
+- **Deploy:** push a `main` → Vercel construye y publica automáticamente.
+
+## Backend / Formularios (Resend)
+
+- `src/lib/resend.ts` — cliente Resend + validación + helper JSON. Solo server-side; lee de `import.meta.env`.
+- **`POST /api/contact`** — formulario de contacto (`TypeformContact.astro`). Envía email transaccional a `RESEND_CONTACT_TO` con `replyTo` del remitente. **No** es marketing.
+- **`POST /api/subscribe`** — newsletter (`Newsletter.astro`). Alta en la audiencia de marketing (`RESEND_AUDIENCE_ID`) con `unsubscribed: false`.
+- **Audiencias en Resend:** `Newsletter` = única lista de marketing (broadcasts). `Leads · Formulario` (opcional, `RESEND_LEADS_AUDIENCE_ID`) = registro de quien usa el form de contacto, siempre `unsubscribed: true`.
+- **Variables de entorno** (Vercel + `.env` local): `RESEND_API_KEY` (Full access), `RESEND_FROM` (dominio verificado), `RESEND_CONTACT_TO`, `RESEND_AUDIENCE_ID`, `RESEND_LEADS_AUDIENCE_ID` (opcional). Ver `.env.example`.
 
 ## Índice de Documentación Extensa
 
@@ -15,10 +31,10 @@ Toda la documentación técnica profunda del proyecto vive en `docs/`. Cada tema
 
 | Archivo | Contenido |
 |---|---|
-| [estructura.md](./estructura.md) | Árbol de archivos y organización del proyecto |
-| [stack.md](./stack.md) | Tecnologías, dependencias y configuración |
-| [design.md](./design.md) | Sistema de diseño — estética, tokens, tipografía, principios |
-| [i18n.md](./i18n.md) | Sistema de internacionalización EN/ES |
-| [components.md](./components.md) | Documentación de cada componente |
-| [pages.md](./pages.md) | Estado y descripción de cada página |
-| [changelog.md](./changelog.md) | Historial de cambios cronológico |
+| [estructura.md](./docs/estructura.md) | Árbol de archivos y organización del proyecto |
+| [stack.md](./docs/stack.md) | Tecnologías, dependencias y configuración |
+| [design.md](./docs/design.md) | Sistema de diseño — estética, tokens, tipografía, principios |
+| [i18n.md](./docs/i18n.md) | Sistema de internacionalización EN/ES |
+| [components.md](./docs/components.md) | Documentación de cada componente |
+| [pages.md](./docs/pages.md) | Estado y descripción de cada página |
+| [changelog.md](./docs/changelog.md) | Historial de cambios cronológico |

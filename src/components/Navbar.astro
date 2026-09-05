@@ -420,57 +420,62 @@ const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '/es' || Ast
 
 <script>
   /* ── Scroll class ─────────────────────── */
+  /* Re-queries #navbar each event, so it survives view transitions. */
   window.addEventListener('scroll', () => {
     const nav = document.getElementById('navbar');
     if (nav) nav.classList.toggle('scrolled', window.scrollY > 40);
   }, { passive: true });
 
   /* ── Mobile menu toggle ───────────────── */
-  const menuBtn = document.getElementById('menu-btn') as HTMLButtonElement | null;
-  const overlay = document.getElementById('mobile-overlay') as HTMLElement | null;
-  const navbarLang = document.getElementById('navbar-lang') as HTMLElement | null;
-  const overlayLangSlot = document.getElementById('overlay-lang-slot') as HTMLElement | null;
+  /* The DOM is replaced on every Astro view transition, so bind on each
+     `astro:page-load` (guarded against double-binding). */
+  function initNavbarMenu() {
+    const menuBtn = document.getElementById('menu-btn') as HTMLButtonElement | null;
+    const overlay = document.getElementById('mobile-overlay') as HTMLElement | null;
+    if (!menuBtn || !overlay || menuBtn.dataset.bound === 'true') return;
+    menuBtn.dataset.bound = 'true';
 
-  let isOpen = false;
+    const overlayLangSlot = document.getElementById('overlay-lang-slot');
+    let isOpen = false;
 
-  function openMenu() {
-    if (!menuBtn || !overlay) return;
-    isOpen = true;
-    menuBtn.classList.add('is-open');
-    menuBtn.setAttribute('aria-expanded', 'true');
-    overlay.classList.add('is-open');
-    overlay.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    /* Move lang switch into overlay */
-    if (navbarLang && overlayLangSlot) {
-      navbarLang.classList.add('is-hidden');
-      setTimeout(() => {
-        overlayLangSlot.appendChild(navbarLang);
-        navbarLang.classList.remove('is-hidden');
-      }, 150);
+    const lang = () => document.getElementById('navbar-lang');
+
+    function openMenu() {
+      isOpen = true;
+      menuBtn!.classList.add('is-open');
+      menuBtn!.setAttribute('aria-expanded', 'true');
+      overlay!.classList.add('is-open');
+      overlay!.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      const navbarLang = lang();
+      if (navbarLang && overlayLangSlot) {
+        navbarLang.classList.add('is-hidden');
+        setTimeout(() => {
+          overlayLangSlot.appendChild(navbarLang);
+          navbarLang.classList.remove('is-hidden');
+        }, 150);
+      }
     }
-  }
 
-  function closeMenu() {
-    if (!menuBtn || !overlay) return;
-    isOpen = false;
-    menuBtn.classList.remove('is-open');
-    menuBtn.setAttribute('aria-expanded', 'false');
-    overlay.classList.remove('is-open');
-    overlay.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    /* Move lang switch back to navbar */
-    if (navbarLang && overlayLangSlot) {
+    function closeMenu() {
+      isOpen = false;
+      menuBtn!.classList.remove('is-open');
+      menuBtn!.setAttribute('aria-expanded', 'false');
+      overlay!.classList.remove('is-open');
+      overlay!.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      const navbarLang = lang();
       const navbar = document.getElementById('navbar');
-      if (navbar) {
+      if (navbarLang && navbar) {
         navbar.appendChild(navbarLang);
         navbarLang.classList.remove('is-hidden');
       }
     }
+
+    menuBtn.addEventListener('click', () => (isOpen ? closeMenu() : openMenu()));
+    overlay.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
   }
 
-  if (menuBtn && overlay) {
-    menuBtn.addEventListener('click', () => isOpen ? closeMenu() : openMenu());
-    overlay.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
-  }
+  initNavbarMenu();
+  document.addEventListener('astro:page-load', initNavbarMenu);
 </script>

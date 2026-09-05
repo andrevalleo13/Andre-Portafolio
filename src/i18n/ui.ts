@@ -83,7 +83,8 @@ export const ui = {
     'newsletter.heading': 'Receive new memos.',
     'newsletter.placeholder': 'Email address',
     'newsletter.button': 'Subscribe',
-    'journal.heading':  'Thoughts & Essays',
+    'newsletter.success': 'Subscribed. Look out for the next memo.',
+    'newsletter.error': 'Could not subscribe. Try again in a moment.',
 
     // ── Contact ──
     'contact.eyebrow':  'Contact',
@@ -178,7 +179,8 @@ export const ui = {
     'newsletter.heading': 'Recibe nuevos memos.',
     'newsletter.placeholder': 'Correo electrónico',
     'newsletter.button': 'Suscribirse',
-    'journal.heading':  'Pensamientos & Ensayos',
+    'newsletter.success': 'Suscrito. Atento al próximo memo.',
+    'newsletter.error': 'No se pudo completar. Inténtalo de nuevo.',
 
     // ── Contact ──
     'contact.eyebrow':  'Contacto',

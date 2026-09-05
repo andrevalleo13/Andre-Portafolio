@@ -153,6 +153,17 @@ const recentMemos = allMemos.slice(0, 2);
   .ethos {
     padding-top: 10rem;
     padding-bottom: 15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  @media (min-width: 768px) {
+    .ethos {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
   }
   
   .ethos__text {
@@ -162,7 +173,7 @@ const recentMemos = allMemos.slice(0, 2);
     line-height: 1.1;
     color: rgba(237, 233, 228, 0.95);
     max-width: 20ch;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
   }
 
   .ethos__subtext {

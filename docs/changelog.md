@@ -2,6 +2,26 @@
 
 Registro cronológico de modificaciones mayores y evolución del proyecto.
 
+## [0.3.0] - 2026-09-05
+
+### Añadido
+- **Backend serverless (Resend).** Adapter `@astrojs/vercel` en modo estático + endpoints on-demand:
+  - `POST /api/contact` — el formulario Typeform ahora envía un email transaccional real (antes solo hacía `console.log` y mostraba éxito falso). Incluye `replyTo` del remitente y estado de error en la UI.
+  - `POST /api/subscribe` — el newsletter da de alta el correo en una audiencia de marketing de Resend (antes el submit era un `innerHTML` fingido).
+- `src/lib/resend.ts` — cliente + validación de email + helper de respuesta JSON.
+- `.env.example` con las variables de Resend (`RESEND_API_KEY`, `RESEND_FROM`, `RESEND_CONTACT_TO`, `RESEND_AUDIENCE_ID`, `RESEND_LEADS_AUDIENCE_ID`).
+- `astro.config.mjs`: `site: 'https://andrevalle.xyz'` (canónicas, OG, sitemap).
+- Meta tags sociales ampliados: `og:site_name`, `og:locale`, `og:url`, `og:image:width/height/type/alt`, `twitter:creator`, `link[rel=canonical]`.
+- `npm run check` (`@astrojs/check` + `typescript` como devDependencies).
+
+### Modificado
+- **Navbar:** el menú hamburguesa se re-inicializa en `astro:page-load`; antes dejaba de abrir tras navegar por transiciones de vista (SPA).
+- **`og-image`:** era un PNG de 10 MB (1920×1080, 16-bit) que X rechazaba por superar el límite de 5 MB. Ahora `og-image.jpg` de 160 KB (1200×675, 8-bit). La URL pasó de relativa a absoluta.
+- **`favicon.png`:** 3.5 MB (1000×1000) → 96 KB (256×256).
+- **`Base.astro`:** `<ClientRouter />` movido al final del `<head>`; JSON-LD con datos reales (fuera el placeholder "Universidad Finanzas"; `alumniOf` = Universidad Panamericana; `sameAs` con redes reales); `description` por defecto alineada con el hero.
+- **`i18n/ui.ts`:** eliminada la clave duplicada `journal.heading`; añadidas `newsletter.success` / `newsletter.error` (EN + ES).
+- `TypeformContact.astro`: corregido el tipado del handler `keydown` (`astro check` pasaba de 4 errores a 0).
+
 ## [0.2.0] - 2026-08-22
 
 ### Añadido

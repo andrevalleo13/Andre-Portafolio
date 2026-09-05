@@ -3,7 +3,7 @@ title: "Cord"
 subtitle: "Proposal to Payment in a Single Link"
 role: "Founder & CEO"
 timeline: "2026 — Present"
-impact: "$16k MRR"
+impact: "$1k MRR"
 url: "https://cordhq.app"
 lang: "en"
 draft: false
