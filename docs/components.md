@@ -23,7 +23,7 @@ Cada página de `src/pages` (y `src/pages/es`) es un envoltorio de una línea; e
 | `CaseFlouvia.astro` | `/work/flouvia` — página propia: la carta de servicios, pósters de clientes, boceto de Flouvia OS, el taller y la etiqueta de composición. Texto en `src/data/cases/flouvia.ts` |
 | `WorkCase.astro` | `/work/[id]` de cualquier otro proyecto — portada collage, ficha, índice lateral de H2, lote siguiente |
 | `About.astro` | `/about` — manifiesto, experiencia, competencias como etiquetas cosidas arrastrables, Debilidades (The 6, tequila y el 911 sueltos, sin lista), formación y certificaciones (datos en `src/data/about.ts`) |
-| `JournalIndex.astro` | `/journal` — primera plana: memos colgados como cuadros (clavo, marco, paspartú, dibujo de portada y cédula de museo) y suscripción |
+| `JournalIndex.astro` | `/journal` — primera plana: memos colgados como cuadros (clavo, marco delgado, pintura de portada y cédula de museo) y suscripción |
 | `JournalPost.astro` | `/journal/[slug]` — barra roja de lectura, capitular, memo siguiente. Los memos son MDX y llevan ilustraciones de `src/components/memo/` |
 | `TypeformContact.astro` | `/contact` — formulario paso a paso (nombre → intención → sub-intención → detalles → email → `POST /api/contact`). Guarda avance en localStorage, teclado Enter/A/B/C. El dibujo cambia según la intención. |
 | `Newsletter.astro` | Suscripción a los memos sin caja: titular, paloma mensajera, campo subrayado a pluma y sello (`POST /api/subscribe`) |
@@ -45,7 +45,7 @@ Cada página de `src/pages` (y `src/pages/es`) es un envoltorio de una línea; e
 
 Todos aceptan `draw` (`load` · `scroll` · `manual` · `none`), `delay`, `label`, `class`.
 
-**Animales y objetos:** `Lobo` (gruñendo, con cadena), `LoboCorona` (cabeza tipo Basquiat), `Caballo`, `CaballoAcuarela`, `CaballosRojos`, `Galope`, `Dalmata`, `Tigre` (naranja con rayas), `Pulpo`, `Sardinas`, `Manga` (reloj de acero asomando por un agujero roto de una manga de suéter), `Reglas` (las reglas de la casa pintadas a brocha), `Reloj`, `Porsche`, `Puro`, `Taza`, `Velero` (Flouvia), `Cuerda` (Cord), `Estampilla`, `Paloma` (paloma mensajera con carta; suscripción). **Portadas de memos** (frontmatter `cover`): `Bota` (bootstrapping, jalador rojo), `Lapiz` (garabato que se endereza; UX), `Cubeta` (gotea = churn).
+**Animales y objetos:** `Lobo` (gruñendo, con cadena), `LoboCorona` (cabeza tipo Basquiat), `Caballo`, `CaballoAcuarela`, `CaballosRojos`, `Galope`, `Dalmata`, `Tigre` (naranja con rayas), `Pulpo`, `Sardinas`, `Manga` (reloj de acero asomando por un agujero roto de una manga de suéter), `Reglas` (las reglas de la casa pintadas a brocha), `Reloj`, `Porsche`, `Puro`, `Taza`, `Velero` (Flouvia), `Cuerda` (Cord), `Estampilla`, `Paloma` (paloma mensajera con carta; suscripción). **Cuadros de portada de los memos** (frontmatter `cover`), pintados a lo neoexpresionista sobre lino, con palabras a barra de óleo, tachones, chorreados y parches de papel: `CuadroBootstrap` (BUILD©, la bota con jalador, Kanban WIP 5, VC tachado), `CuadroFriccion` (FRICTION tachado, la cabeza del usuario, cámara KYC, zigzag → $), `CuadroChurn` (LTV > CAC, cubeta que gotea, estrella $300, fila NPS, POWERED BY CORD). Las letras salen de `mano.ts`: mayúsculas de un solo trazo, chuecas, que se dibujan con `data-s` (no es una fuente).
 
 **Lo que le gusta a André:** `Barca` (camiseta blaugrana "VALLE 10", sin escudo), `TheSix` (Drake: CN Tower con un 6 naranja), `Cafe` (espresso con cigarro), `Tequila`.
 

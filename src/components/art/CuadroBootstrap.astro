@@ -1,0 +1,125 @@
+---
+/**
+ * ── Cuadro: Build without asking ──────────────────────
+ *
+ * Portada del memo de Agile, Lean y bootstrapping, pintada a lo
+ * neoexpresionista sobre lino crudo: bloque azul con "BUILD©" a barra
+ * de óleo, la bota con su jalador rojo ("pull yourself up"), el ciclo
+ * con "MVP", un Kanban a mano con WIP 5, el parche de papel "PIVOT",
+ * "VC" tachado sobre negro ($0 raised) y "SHIP IT" sobre naranja.
+ */
+import { escribir } from './mano';
+
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Pintura: bloque azul con BUILD, una bota con jalador rojo, un Kanban a mano y VC tachado',
+  class: className,
+} = Astro.props;
+
+const W = (t: string, x: number, y: number, size: number, tilt = 0, seed = 1) => escribir(t, x, y, { size, tilt, seed });
+const drip = (x: number, y: number, l: number) => `M${x} ${y} C${x + 1.5} ${y + l * 0.4} ${x - 1.5} ${y + l * 0.7} ${x} ${y + l}`;
+const blue = [[34, 166, 96, 5], [236, 146, 104, 4], [150, 156, 14, 3]] as const;
+const boot = 'M96 216 L164 210 C166 250 168 290 172 330 C214 330 248 348 262 376 C270 394 260 404 242 405 L92 408 C82 408 80 398 82 386 C86 330 90 270 96 216 Z';
+const laces = [238, 260, 282, 304].map((y) => `M148 ${y} L166 ${y + 11} M166 ${y} L148 ${y + 11}`).join(' ');
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 400 500"
+  preserveAspectRatio="xMidYMid slice"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <!-- lino crudo y manos de gesso -->
+  <rect width="400" height="500" fill="#E6DCC6" />
+  <g filter="url(#acuarela)" fill="#F2EDE2">
+    <path d="M232 8 L396 14 L392 168 L240 176 Z" />
+    <path d="M262 186 L396 190 L392 318 L268 312 Z" />
+    <path d="M8 182 L240 178 L250 424 L10 430 Z" opacity="0.6" />
+  </g>
+
+  <!-- bloque azul, con aguada de cielo encima -->
+  <path data-fill filter="url(#pintura)" style="fill: var(--azul)" d="M-14 -14 L258 -14 C266 40 246 96 256 148 C196 166 120 156 58 168 C28 172 2 162 -14 166 Z" />
+  <g filter="url(#pintura)" fill="none" stroke-linecap="round" style="stroke: var(--cielo)" opacity="0.75">
+    <path data-s stroke-width="14" d="M14 132 C70 120 130 140 206 124" />
+    <path data-s stroke-width="8" d="M214 18 C226 60 218 96 232 128" />
+  </g>
+  <g filter="url(#ink-fino)" stroke-linecap="round" style="stroke: var(--azul); fill: var(--azul)">
+    {blue.map(([x, y, l, w]) => (
+      <>
+        <path data-s d={drip(x, y, l)} stroke-width={w} fill="none" />
+        <circle data-pop cx={x} cy={y + l + w * 0.5} r={w * 0.85} stroke="none" />
+      </>
+    ))}
+  </g>
+  <g fill="none" stroke="#F4F0E6" stroke-linecap="round" stroke-linejoin="round" filter="url(#ink-fino)">
+    <path data-s stroke-width="6" d={W('BUILD©', 22, 24, 40, -3, 2)} />
+    <path data-s stroke-width="2.6" d={W('WITHOUT ASKING', 26, 94, 15, -2, 5)} />
+  </g>
+
+  <!-- la bota: blanca, parche cognac, doble contorno -->
+  <g transform="translate(-16 0)">
+  <path data-fill filter="url(#ink)" fill="#F4F0E6" d={boot} />
+  <path data-fill filter="url(#pintura)" style="fill: var(--cognac)" opacity="0.92" d="M106 238 L154 232 L158 318 L110 322 Z" />
+  <g filter="url(#ink)" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--tinta-fija)">
+    <path data-s stroke-width="5" d={boot} />
+    <path data-s stroke-width="1.6" d={boot} transform="translate(5 4)" />
+    <path data-s stroke-width="11" d="M74 414 L266 410" />
+    <path data-s stroke-width="2.2" d={W('PULL', 128, 178, 13, 0, 3)} />
+    <path data-s stroke-width="2.4" d="M190 196 L190 170 M183 179 L190 168 L197 179" />
+  </g>
+  <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" class="lv-art-red" stroke="currentColor">
+    <path data-s stroke-width="3" d={laces} />
+    <path data-s stroke-width="7" d="M100 222 C70 202 70 166 100 168 C122 170 120 200 106 216" />
+  </g>
+  </g>
+
+  <!-- ciclo con MVP -->
+  <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--tinta-fija)">
+    <path data-s stroke-width="3.5" d="M330 46 C360 46 376 70 376 92 C376 120 356 138 330 138 C302 138 284 118 284 92 C284 70 296 54 314 48 M305 41 L316 48 L307 57" />
+    <path data-s stroke-width="1.8" d={W('LEARN', 304, 150, 11, 2, 9)} />
+  </g>
+  <path data-s filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" d={W('MVP', 304, 82, 20, -4, 7)} />
+
+  <!-- Kanban a mano, WIP 5 -->
+  <path data-fill filter="url(#pintura)" style="fill: var(--pint-naranja)" d="M356 234 L388 233 L389 264 L357 265 Z" />
+  <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" style="stroke: var(--tinta-fija)">
+    <path data-s stroke-width="2.4" d="M282 196 L283 300 M318 195 L317 301 M354 196 L355 300 M390 195 L389 301 M281 196 L391 195 M282 231 L390 232 M281 266 L390 265 M282 300 L391 301" />
+    <path data-s stroke-width="2" d="M288 202 L312 226 M312 202 L288 226 M288 237 L312 261 M312 237 L288 261 M324 202 L348 226 M348 202 L324 226 M324 252 L332 260 L348 238" />
+  </g>
+  <path data-s filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d={W('WIP 5', 284, 174, 13, -2, 4)} />
+
+  <!-- parche de papel: PIVOT -->
+  <g transform="rotate(-6 221 299)">
+    <rect data-fill x="184" y="282" width="74" height="34" fill="#FBF8F0" />
+    <path data-s filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d={W('PIVOT', 192, 291, 14, 0, 12)} />
+  </g>
+
+  <!-- negro: VC tachado, $0 raised -->
+  <path data-fill filter="url(#pintura)" style="fill: var(--tinta-fija)" d="M256 340 C296 328 350 340 414 330 L414 514 L248 514 C254 450 248 392 256 340 Z" />
+  <g fill="none" stroke="#F4F0E6" stroke-linecap="round" stroke-linejoin="round" filter="url(#ink-fino)">
+    <path data-s stroke-width="5" d={W('VC', 284, 360, 34, -4, 11)} />
+    <path data-s stroke-width="2.2" d={W('$0 RAISED', 272, 432, 14, -2, 6)} />
+  </g>
+  <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" class="lv-art-red" stroke="currentColor">
+    <path data-s stroke-width="6" d="M272 372 L352 360 M276 392 L350 380" />
+    <path data-s stroke-width="3" d={drip(318, 392, 30)} />
+  </g>
+
+  <!-- naranja: SHIP IT y la cuenta -->
+  <path data-fill filter="url(#pintura)" style="fill: var(--pint-naranja)" d="M-14 432 C60 424 150 438 236 428 C234 460 238 490 232 514 L-14 514 Z" />
+  <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--tinta-fija)">
+    <path data-s stroke-width="3.4" d={W('SHIP IT', 22, 452, 22, -2, 8)} />
+    <path data-s stroke-width="2.6" d="M160 452 L158 476 M168 452 L167 476 M176 452 L175 476 M184 452 L183 476 M152 471 L192 455" />
+  </g>
+</svg>

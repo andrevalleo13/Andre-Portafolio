@@ -5,7 +5,10 @@ Registro cronológico de modificaciones mayores y evolución del proyecto.
 ## [0.4.3] - 2026-10-25
 
 ### Modificado
-- **Índice del Journal:** sin nota principal gigante; los memos cuelgan como cuadros del mismo tamaño (clavo y alambre, marcos negro, nogal y roble claro, paspartú) con su dibujo de portada (campo `cover` en el frontmatter: `Bota`, `Lapiz`, `Cubeta`) y una cédula de museo abajo. Cuelgan chuecos y se enderezan al pasar el cursor.
+- **Índice del Journal:** sin nota principal gigante; los memos cuelgan como cuadros del mismo tamaño (clavo y alambre, marcos negro, nogal y roble claro), cada uno con su pintura neoexpresionista relacionada con el tema (campo `cover`: `CuadroBootstrap`, `CuadroFriccion`, `CuadroChurn`) y una cédula de museo abajo. Cuelgan chuecos y se enderezan al pasar el cursor.
+
+### Añadido
+- `mano.ts`: letra de palo a mano (mayúsculas de un trazo, chuecas) para escribir sobre los cuadros sin una tercera fuente.
 
 ### Eliminado
 - El dibujo `Signos` (sol, estrella, pez…).

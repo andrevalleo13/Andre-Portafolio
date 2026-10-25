@@ -1,0 +1,115 @@
+---
+/**
+ * ── Cuadro: Friction costs money ──────────────────────
+ *
+ * Portada del memo de Design Thinking y UX: campo naranja con
+ * "FRICTION" tachado, la cámara del KYC con su X roja, la cabeza del
+ * usuario a lo Basquiat (pelo en picos, dientes en rejilla, un ojo
+ * rojo), la línea que llega en zigzag y sale recta hacia el "$",
+ * los pasos 3, 4 y 5 tachados y "FLOW" sobre negro.
+ */
+import { escribir } from './mano';
+
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Pintura: FRICTION tachado sobre naranja, la cabeza de un usuario y una línea en zigzag que se endereza hacia el signo de pesos',
+  class: className,
+} = Astro.props;
+
+const W = (t: string, x: number, y: number, size: number, tilt = 0, seed = 1) => escribir(t, x, y, { size, tilt, seed });
+const drip = (x: number, y: number, l: number) => `M${x} ${y} C${x + 1.5} ${y + l * 0.4} ${x - 1.5} ${y + l * 0.7} ${x} ${y + l}`;
+const drips = [[60, 182, 64, 4], [262, 176, 30, 3], [372, 166, 70, 5]] as const;
+const head = 'M142 236 C136 206 250 196 262 238 C272 286 266 344 222 362 C182 378 140 352 134 304 C130 280 138 258 142 236 Z';
+const teeth = [181, 193, 205, 217, 229].map((x) => `M${x} ${321 - (x - 168) * 0.05} L${x + 1} ${347 - (x - 168) * 0.05}`).join(' ');
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 400 500"
+  preserveAspectRatio="xMidYMid slice"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <!-- gesso y aguada de cielo -->
+  <rect width="400" height="500" fill="#EFE9DD" />
+  <path filter="url(#acuarela)" style="fill: var(--cielo)" opacity="0.5" d="M0 202 L122 196 L128 330 L0 338 Z" />
+
+  <!-- campo naranja con chorreados -->
+  <path data-fill filter="url(#pintura)" style="fill: var(--pint-naranja)" d="M-14 -14 L414 -14 L414 172 C340 186 260 170 180 184 C110 194 40 178 -14 186 Z" />
+  <g filter="url(#pintura)" fill="none" stroke-linecap="round" style="stroke: var(--pint-2)">
+    <path data-s stroke-width="16" d="M18 150 C120 136 220 160 384 140" />
+    <path data-s stroke-width="9" d="M262 16 C278 52 270 96 286 150" />
+  </g>
+  <g filter="url(#ink-fino)" stroke-linecap="round" style="stroke: var(--pint-2); fill: var(--pint-2)">
+    {drips.map(([x, y, l, w]) => (
+      <>
+        <path data-s d={drip(x, y, l)} stroke-width={w} fill="none" />
+        <circle data-pop cx={x} cy={y + l + w * 0.5} r={w * 0.85} stroke="none" />
+      </>
+    ))}
+  </g>
+
+  <!-- FRICTION, tachado -->
+  <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--tinta-fija)">
+    <path data-s stroke-width="4.6" d={W('FRICTION', 20, 28, 34, -2, 3)} />
+    <path data-s stroke-width="6" d="M12 54 C90 46 170 56 254 42" />
+    <path data-s stroke-width="2.8" d={W('COSTS', 24, 100, 18, -1, 4)} />
+  </g>
+  <path data-s filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" d="M14 64 C40 40 60 76 84 52 C108 34 124 72 150 50 C176 32 196 70 220 46 C236 34 248 58 258 48" />
+  <path data-s filter="url(#ink-fino)" fill="none" stroke="#F4F0E6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d={W('$$$', 122, 94, 26, -6, 6)} />
+
+  <!-- la cámara del KYC, bloqueada -->
+  <g filter="url(#ink)">
+    <path data-fill style="fill: var(--tinta-fija)" d="M298 54 L376 50 L380 106 L300 110 Z M304 42 L324 41 L324 52 L304 53 Z" />
+    <circle data-fill cx="339" cy="80" r="18" fill="#F4F0E6" />
+    <circle data-fill cx="339" cy="80" r="8" style="fill: var(--azul)" />
+  </g>
+  <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s class="lv-art-red" stroke="currentColor" stroke-width="6" d="M290 40 L390 118 M388 38 L292 120" />
+    <path data-s style="stroke: var(--tinta-fija)" stroke-width="2.2" d={W('KYC', 314, 126, 13, 2, 5)} />
+  </g>
+
+  <!-- el usuario -->
+  <path data-fill filter="url(#ink)" fill="#F4F0E6" d={head} />
+  <path data-fill filter="url(#pintura)" class="lv-art-red-fill" opacity="0.9" d="M146 300 L170 296 L172 316 L148 318 Z" />
+  <circle data-fill filter="url(#ink-fino)" class="lv-art-red-fill" cx="228" cy="266" r="15" />
+  <g filter="url(#ink)" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--tinta-fija)">
+    <path data-s stroke-width="5" d={head} />
+    <path data-s stroke-width="3" d="M150 232 L136 204 M170 218 L162 188 M192 212 L194 182 M216 212 L226 184 M240 220 L256 194 M256 238 L278 220" />
+    <path data-s stroke-width="3" d="M178 256 C194 256 194 284 178 284 C162 284 162 256 178 256 Z M228 251 C246 251 246 281 228 281 C210 281 210 251 228 251 Z" />
+    <path data-s stroke-width="3" d="M204 282 L196 308 L213 307" />
+    <path data-s stroke-width="3" d={`M168 322 L242 318 L244 344 L170 348 Z M169 335 L243 331 ${teeth}`} />
+  </g>
+  <circle data-pop cx="178" cy="271" r="4.5" style="fill: var(--tinta-fija)" />
+  <circle data-pop cx="230" cy="267" r="4" style="fill: var(--tinta-fija)" />
+  <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--tinta-fija)">
+    <path data-s stroke-width="2.4" d={W('USER', 26, 246, 15, -3, 9)} />
+    <path data-s stroke-width="2.4" d="M84 254 C100 254 112 258 128 266 M117 258 L130 267 L118 275" />
+  </g>
+
+  <!-- la línea: llega en zigzag, sale recta hacia el $ -->
+  <path data-s filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d={W('PAIN POINT', 18, 370, 11, -2, 13)} />
+  <path data-s filter="url(#ink-fino)" fill="none" style="stroke: var(--tinta-fija)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" d="M14 418 L26 398 L36 432 L48 396 L58 430 L70 400 L80 428 L92 404 L102 424 L114 408 L124 420 L136 412 L150 416" />
+  <path data-s filter="url(#ink-fino)" fill="none" style="stroke: var(--azul)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" d="M150 416 C200 414 260 412 318 410 M304 398 L322 410 L304 422" />
+  <path data-s filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d={W('$', 336, 386, 36, 6, 2)} />
+
+  <!-- los pasos: 3, 4 y 5 tachados -->
+  <path data-fill filter="url(#pintura)" style="fill: var(--cielo)" d="M-14 452 C60 444 140 456 214 448 L218 514 L-14 514 Z" />
+  <path data-s filter="url(#ink-fino)" fill="none" style="stroke: var(--tinta-fija)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" d={W('1 2 3 4 5', 22, 466, 18, -1, 10)} />
+  <path data-s filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="5" d="M68 474 C90 482 120 468 148 478" />
+  <path data-s filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M27 460 C42 460 44 488 26 490 C10 490 8 462 32 457" />
+
+  <!-- negro: FLOW -->
+  <path data-fill filter="url(#pintura)" style="fill: var(--tinta-fija)" d="M232 446 C290 440 350 452 414 442 L414 514 L226 514 Z" />
+  <path data-s filter="url(#ink-fino)" fill="none" stroke="#F4F0E6" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" d={W('FLOW', 262, 466, 20, -2, 14)} />
+</svg>

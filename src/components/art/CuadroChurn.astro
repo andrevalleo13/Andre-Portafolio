@@ -1,0 +1,121 @@
+---
+/**
+ * ── Cuadro: What a customer is worth ──────────────────
+ *
+ * Portada del memo de métricas de cliente: "LTV > CAC" a barra de
+ * óleo con el 5× encerrado, la cubeta que gotea sobre verde olivo
+ * (churn 8 %), la estrella de precio con "$300" (guiño al 59¢), la
+ * fila NPS del 0 al 10, el parche "POWERED BY CORD" y "STAY" en negro.
+ */
+import { escribir } from './mano';
+
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Pintura: LTV mayor que CAC, una cubeta que gotea sobre verde olivo y una estrella de precio con 300 dólares',
+  class: className,
+} = Astro.props;
+
+const W = (t: string, x: number, y: number, size: number, tilt = 0, seed = 1) => escribir(t, x, y, { size, tilt, seed });
+const drip = (x: number, y: number, l: number) => `M${x} ${y} C${x + 1.5} ${y + l * 0.4} ${x - 1.5} ${y + l * 0.7} ${x} ${y + l}`;
+const drop = (x: number, y: number, r: number) =>
+  `M${x} ${y - r * 1.8} C${x + r} ${y - r * 0.4} ${x + r} ${y + r} ${x} ${y + r} C${x - r} ${y + r} ${x - r} ${y - r * 0.4} ${x} ${y - r * 1.8} Z`;
+const bucket = 'M78 218 L214 218 L198 360 C196 374 98 374 96 360 Z';
+
+/* estrella de precio: 18 picos, chuecos */
+const burst = Array.from({ length: 36 }, (_, i) => {
+  const a = (i / 36) * Math.PI * 2 - Math.PI / 2;
+  const r = i % 2 ? 42 + (i % 3) * 2 : 64 - (i % 5) * 2.4;
+  return `${i ? 'L' : 'M'}${(330 + Math.cos(a) * r).toFixed(1)} ${(226 + Math.sin(a) * r * 0.92).toFixed(1)}`;
+}).join(' ') + ' Z';
+
+/* fila NPS 0–10: promotores (9 y 10) en rojo */
+const nps = Array.from({ length: 11 }, (_, i) => ({ x: 222 + i * 15.6, y: 326 - i * 0.4 }));
+const box = (x: number, y: number) => `M${x} ${y} L${x + 13} ${y - 0.4} L${x + 13.4} ${y + 15} L${x + 0.4} ${y + 15.2} Z`;
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 400 500"
+  preserveAspectRatio="xMidYMid slice"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <!-- lino y gesso -->
+  <rect width="400" height="500" fill="#E8E0CE" />
+  <path filter="url(#acuarela)" fill="#F3EEE3" d="M240 118 L396 114 L398 332 L236 338 Z" />
+
+  <!-- LTV > CAC, 5× encerrado -->
+  <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--tinta-fija)">
+    <path data-s stroke-width="4.4" d={W('LTV > CAC', 18, 20, 32, -2, 3)} />
+    <path data-s stroke-width="2.4" d={W('$1,500', 24, 86, 16, -1, 8)} />
+  </g>
+  <path data-s filter="url(#pintura)" class="lv-art-red" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" d="M14 70 C90 62 180 72 262 60" />
+  <g filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s stroke-width="4" d={W('5×', 300, 28, 28, -6, 5)} />
+    <path data-s stroke-width="2.6" d="M322 18 C354 18 364 50 346 70 C328 88 292 80 290 54 C288 32 304 16 328 20" />
+  </g>
+
+  <!-- verde olivo y la cubeta -->
+  <path data-fill filter="url(#pintura)" style="fill: var(--verde)" d="M-14 128 C60 118 170 132 262 124 C270 200 258 300 266 420 C190 430 90 418 -14 428 Z" />
+  <path data-s filter="url(#pintura)" fill="none" stroke="#7C9468" stroke-width="12" stroke-linecap="round" d="M18 160 C80 150 160 170 238 156" />
+  <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" style="stroke: var(--verde)">
+    <path data-s stroke-width="4" d={drip(40, 422, 40)} />
+    <path data-s stroke-width="3" d={drip(132, 420, 22)} />
+  </g>
+  <path data-fill filter="url(#ink)" fill="#F4F0E6" d={bucket} />
+  <path data-fill filter="url(#pintura)" style="fill: var(--azul)" d="M84 250 C120 240 170 258 210 246 L198 360 C196 374 98 374 96 360 Z" />
+  <g filter="url(#ink)" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--tinta-fija)">
+    <path data-s stroke-width="5" d={bucket} />
+    <path data-s stroke-width="4" d="M78 218 C78 206 214 206 214 218 C214 230 78 230 78 218 Z" />
+    <path data-s stroke-width="4" d="M84 222 C70 150 222 150 208 222" />
+    <path data-s stroke-width="1.6" d="M100 300 L204 296 M96 336 L200 334" />
+  </g>
+  <circle data-pop cx="186" cy="344" r="4.5" style="fill: var(--tinta-fija)" />
+  <g filter="url(#ink-fino)" style="fill: var(--azul)">
+    <path data-pop d={drop(194, 382, 5)} />
+    <path data-pop d={drop(204, 404, 4.2)} />
+    <path data-pop d={drop(210, 426, 3.6)} />
+    <ellipse data-fill cx="218" cy="450" rx="42" ry="7" opacity="0.55" />
+  </g>
+  <path data-s filter="url(#ink-fino)" fill="none" style="stroke: var(--tinta-fija)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d={W('CHURN', 214, 368, 15, -4, 6)} />
+  <path data-s filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" d={W('8%', 226, 392, 22, -4, 9)} />
+
+  <!-- estrella de precio: CAC $300 -->
+  <path data-fill filter="url(#ink-fino)" fill="#FBF8F0" d={burst} />
+  <path data-s filter="url(#ink-fino)" fill="none" style="stroke: var(--tinta-fija)" stroke-width="3.4" stroke-linejoin="round" d={burst} />
+  <path data-s filter="url(#ink-fino)" fill="none" style="stroke: var(--tinta-fija)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d={W('CAC', 313, 194, 13, 0, 4)} />
+  <path data-s filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" d={W('$300', 296, 214, 22, -4, 7)} />
+
+  <!-- fila NPS -->
+  <g filter="url(#ink-fino)">
+    {nps.slice(9).map((b) => <path data-fill d={box(b.x, b.y)} class="lv-art-red-fill" />)}
+  </g>
+  <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--tinta-fija)">
+    <path data-s stroke-width="2.2" d={W('NPS', 222, 302, 14, -2, 11)} />
+    <path data-s stroke-width="1.8" d={nps.map((b) => box(b.x, b.y)).join(' ')} />
+    <path data-s stroke-width="1.5" d={`${W('0', 225, 348, 9, 0, 2)} ${W('10', 375, 344, 9, 0, 3)}`} />
+  </g>
+
+  <!-- parche de papel: POWERED BY CORD -->
+  <g transform="rotate(4 102 460)">
+    <rect data-fill x="18" y="436" width="168" height="50" fill="#FBF8F0" />
+    <g filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path data-s stroke-width="2" d={W('POWERED BY', 28, 443, 11, 0, 3)} />
+      <path data-s stroke-width="3" d={W('CORD©', 28, 460, 18, 0, 5)} />
+    </g>
+  </g>
+
+  <!-- negro: STAY -->
+  <path data-fill filter="url(#pintura)" style="fill: var(--tinta-fija)" d="M262 452 C310 446 360 456 414 448 L414 514 L256 514 Z" />
+  <path data-s filter="url(#ink-fino)" fill="none" stroke="#F4F0E6" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" d={W('STAY', 292, 466, 20, -3, 12)} />
+</svg>
