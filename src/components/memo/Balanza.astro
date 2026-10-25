@@ -1,0 +1,54 @@
+---
+/**
+ * ── Balanza ───────────────────────────────────────────
+ *
+ * Una balanza a pluma: el platillo con más valor baja. Para LTV vs.
+ * CAC o cualquier comparación de dos cifras.
+ */
+import Fig from './Fig.astro';
+
+interface Props {
+  n: number;
+  caption: string;
+  left: { label: string; value: string; weight: number };
+  right: { label: string; value: string; weight: number };
+  verdict?: string;
+}
+
+const { n, caption, left, right, verdict } = Astro.props;
+const diff = left.weight - right.weight;
+const tilt = Math.max(-14, Math.min(14, diff * 4));
+const rad = (tilt * Math.PI) / 180;
+const ends = { lx: 220 - Math.cos(rad) * 140, ly: 80 + Math.sin(rad) * 140, rx: 220 + Math.cos(rad) * 140, ry: 80 - Math.sin(rad) * 140 };
+const pan = (x: number, y: number) => `M${x - 50} ${y + 60} C${x - 40} ${y + 84} ${x + 40} ${y + 84} ${x + 50} ${y + 60} Z`;
+---
+
+<Fig n={n} caption={caption}>
+  <svg class="lv-art balanza" viewBox="0 0 440 280" role="img" aria-label={`${left.label} ${left.value} · ${right.label} ${right.value}`} data-draw="scroll">
+    <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path data-s d="M220 80 L220 250 M170 254 L270 254" stroke-width="3" />
+      <path data-s d={`M${ends.lx} ${ends.ly} L${ends.rx} ${ends.ry}`} stroke-width="3" />
+      <path data-s d={`M${ends.lx} ${ends.ly} L${ends.lx - 50} ${ends.ly + 60} M${ends.lx} ${ends.ly} L${ends.lx + 50} ${ends.ly + 60}`} stroke-width="1.4" />
+      <path data-s d={`M${ends.rx} ${ends.ry} L${ends.rx - 50} ${ends.ry + 60} M${ends.rx} ${ends.ry} L${ends.rx + 50} ${ends.ry + 60}`} stroke-width="1.4" />
+    </g>
+    <g filter="url(#ink-fino)">
+      <path data-fill d={pan(ends.lx, ends.ly)} style="fill: var(--azul)" />
+      <path data-fill d={pan(ends.rx, ends.ry)} class="lv-art-red-fill" />
+    </g>
+    <circle data-pop cx="220" cy="80" r="6" fill="currentColor" />
+    <g text-anchor="middle">
+      <text x={ends.lx} y={ends.ly + 112} class="balanza__label">{left.label}</text>
+      <text x={ends.lx} y={ends.ly + 138} class="balanza__value">{left.value}</text>
+      <text x={ends.rx} y={ends.ry + 112} class="balanza__label">{right.label}</text>
+      <text x={ends.rx} y={ends.ry + 138} class="balanza__value">{right.value}</text>
+    </g>
+  </svg>
+  {verdict && <span class="balanza__verdict">{verdict}</span>}
+</Fig>
+
+<style>
+  .balanza { max-width: 480px; margin-inline: auto; color: var(--tinta); overflow: visible; }
+  .balanza :global(.balanza__label) { font-family: var(--f-grot); font-size: 13px; font-weight: 900; letter-spacing: 0.08em; fill: var(--grafito); }
+  .balanza :global(.balanza__value) { font-family: var(--f-grot); font-size: 26px; font-weight: 900; font-stretch: 75%; fill: var(--tinta); }
+  .balanza__verdict { display: block; text-align: center; font-family: var(--f-serif); font-style: italic; font-size: 1.05rem; color: var(--rojo); }
+</style>

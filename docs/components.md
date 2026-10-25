@@ -23,10 +23,10 @@ Cada página de `src/pages` (y `src/pages/es`) es un envoltorio de una línea; e
 | `CaseFlouvia.astro` | `/work/flouvia` — página propia: la carta de servicios, pósters de clientes, boceto de Flouvia OS, el taller y la etiqueta de composición. Texto en `src/data/cases/flouvia.ts` |
 | `WorkCase.astro` | `/work/[id]` de cualquier otro proyecto — portada collage, ficha, índice lateral de H2, lote siguiente |
 | `About.astro` | `/about` — manifiesto, experiencia, competencias como etiquetas cosidas arrastrables, Debilidades (The 6, tequila y el 911 sueltos, sin lista), formación y certificaciones (datos en `src/data/about.ts`) |
-| `JournalIndex.astro` | `/journal` — primera plana: nota principal, recortes, cupón |
-| `JournalPost.astro` | `/journal/[slug]` — barra roja de lectura, capitular, memo siguiente |
+| `JournalIndex.astro` | `/journal` — primera plana: nota principal, recortes y suscripción |
+| `JournalPost.astro` | `/journal/[slug]` — barra roja de lectura, capitular, memo siguiente. Los memos son MDX y llevan ilustraciones de `src/components/memo/` |
 | `TypeformContact.astro` | `/contact` — formulario paso a paso (nombre → intención → sub-intención → detalles → email → `POST /api/contact`). Guarda avance en localStorage, teclado Enter/A/B/C. El dibujo cambia según la intención. |
-| `Newsletter.astro` | Cupón de suscripción (`POST /api/subscribe`) |
+| `Newsletter.astro` | Suscripción a los memos sin caja: titular, paloma mensajera, campo subrayado a pluma y sello (`POST /api/subscribe`) |
 
 ## Home (`components/home/`)
 
@@ -56,6 +56,10 @@ Todos aceptan `draw` (`load` · `scroll` · `manual` · `none`), `delay`, `label
 **Marcas:** `Trazo` con `kind`: `rojo`, `ocre`, `salpicadura`, `garabato`, `estrella`, `twombly`, `verde`, `puntos`, `rayas`, `sol`, `zigzag`, `espiral`, `tachas`, `cadena`, `estrellas`, `cielo`, `corona`, y las pinturas de fondo `grafiti` y `brochazo` (con `tone`). Van detrás del texto, nunca encima. A André no le gustaron el chorreado tipo peine ni el salpicado tipo Pollock: no volver a usarlos. La pincelada naranja es la firma de la portada; en el resto del sitio se usan otras marcas para no repetir. A André no le gusta la mancha azul circular (`acuarela`): no usarla.
 
 **Marca:** `Etiqueta` (`mini` · `full` con numeración 0–23). **Filtros SVG:** `InkDefs` (`#ink`, `#ink-fino`, `#pintura`, `#acuarela`, `#sello-f`, `#flor`), montado una vez por página.
+
+## Ilustraciones de memos (`components/memo/`)
+
+Diagramas a tinta para los memos del Journal (MDX). Cada uno recibe `n` y `caption` (cédula "Fig. n") y sus textos, así sirven en EN y ES: `Triada` (tres preguntas), `Ciclo` (pasos en círculo), `Tablero` (Kanban con WIP), `Pasos` (etapas con regreso), `Venn`, `Iceberg` (UI vs. UX), `Journey` (recorrido con ánimo y pain points), `Embudo`, `Balanza` (LTV vs. CAC), `Escala` (NPS), `Cuenta` (cálculo a mano), `Red` (multicanal vs. omnicanal) y `Ojo` (nota al margen). Van al ancho del texto y no cortan la lectura.
 
 ## Helpers (`src/lib/`)
 

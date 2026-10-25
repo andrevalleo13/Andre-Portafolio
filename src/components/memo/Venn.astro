@@ -1,0 +1,47 @@
+---
+/**
+ * ── Venn ──────────────────────────────────────────────
+ *
+ * Tres círculos a pluma (rojo, azul, naranja) que se cruzan; al
+ * centro, la palabra que solo vive donde coinciden los tres.
+ */
+import Fig from './Fig.astro';
+
+interface Props {
+  n: number;
+  caption: string;
+  sets: [string, string, string];
+  notes?: [string, string, string];
+  center: string;
+}
+
+const { n, caption, sets, notes, center } = Astro.props;
+const circles = [
+  { cx: 170, cy: 120, color: 'var(--rojo)', lx: 120, ly: 58 },
+  { cx: 270, cy: 120, color: 'var(--azul)', lx: 320, ly: 58 },
+  { cx: 220, cy: 205, color: 'var(--pint-naranja)', lx: 220, ly: 300 },
+];
+---
+
+<Fig n={n} caption={caption}>
+  <svg class="lv-art venn" viewBox="0 0 440 320" role="img" aria-label={`${sets.join(', ')} → ${center}`} data-draw="scroll">
+    <g filter="url(#ink-fino)">
+      {circles.map((c) => <circle data-fill cx={c.cx} cy={c.cy} r="88" style={`fill: ${c.color}`} fill-opacity="0.1" />)}
+      {circles.map((c) => <circle data-s cx={c.cx} cy={c.cy} r="88" fill="none" style={`stroke: ${c.color}`} stroke-width="2.6" />)}
+    </g>
+    {circles.map((c, i) => (
+      <g text-anchor="middle">
+        <text x={c.lx} y={i === 2 ? c.ly - 14 : c.ly} class="venn__set" style={`fill: ${c.color}`}>{sets[i]}</text>
+        {notes && <text x={c.lx} y={(i === 2 ? c.ly - 14 : c.ly) + 16} class="venn__note">{notes[i]}</text>}
+      </g>
+    ))}
+    <text x="220" y="156" text-anchor="middle" class="venn__center">{center}</text>
+  </svg>
+</Fig>
+
+<style>
+  .venn { max-width: 480px; margin-inline: auto; }
+  .venn :global(.venn__set) { font-family: var(--f-grot); font-size: 14px; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; }
+  .venn :global(.venn__note) { font-family: var(--f-serif); font-style: italic; font-size: 12px; fill: var(--grafito); }
+  .venn :global(.venn__center) { font-family: var(--f-serif); font-style: italic; font-size: 17px; fill: var(--tinta); }
+</style>

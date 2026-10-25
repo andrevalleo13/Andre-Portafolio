@@ -1,0 +1,98 @@
+---
+/**
+ * ── Pasos ─────────────────────────────────────────────
+ *
+ * Etapas en fila, numeradas en rojo, unidas por flechas; abajo, una
+ * flecha a pluma que regresa al inicio (las etapas se repiten). Para
+ * Design Thinking y cualquier proceso que no es línea recta.
+ */
+import Fig from './Fig.astro';
+
+interface Props {
+  n: number;
+  caption: string;
+  steps: Array<{ name: string; note?: string }>;
+  back?: string;
+}
+
+const { n, caption, steps, back } = Astro.props;
+---
+
+<Fig n={n} caption={caption}>
+  <div class="ps" style={`--count:${steps.length}`}>
+    <div class="ps__row">
+      {steps.map((s, i) => (
+        <div class="ps__step">
+          <span class="ps__n">{i + 1}</span>
+          <span class="ps__name">{s.name}</span>
+          {s.note && <span class="ps__note">{s.note}</span>}
+        </div>
+      ))}
+    </div>
+    {back && (
+      <div class="ps__back">
+        <svg viewBox="0 0 600 40" preserveAspectRatio="none" aria-hidden="true" data-draw="scroll">
+          <path data-s class="lv-art-red" filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+            d="M570 4 C572 30 540 34 300 34 C80 34 30 32 28 8 M18 18 L28 6 L38 18" vector-effect="non-scaling-stroke" />
+        </svg>
+        <span>{back}</span>
+      </div>
+    )}
+  </div>
+</Fig>
+
+<style>
+  .ps { display: grid; gap: 4px; }
+
+  .ps__row {
+    display: grid;
+    grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .ps__step {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding-right: 10px;
+  }
+
+  .ps__step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -10px;
+    top: 2px;
+    font-family: var(--f-grot);
+    font-weight: 900;
+    color: var(--grafito);
+  }
+
+  .ps__n {
+    display: inline-grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    background: var(--rojo);
+    color: var(--hoja);
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-size: 0.85rem;
+  }
+
+  .ps__name { font-family: var(--f-serif); font-size: 1.15rem; line-height: 1.1; }
+  .ps__note { font-family: var(--f-grot); font-size: 0.72rem; line-height: 1.4; color: var(--grafito); }
+
+  .ps__back { display: grid; gap: 2px; justify-items: center; }
+  .ps__back svg { width: 100%; height: 34px; overflow: visible; }
+  .ps__back span { font-family: var(--f-serif); font-style: italic; font-size: 0.98rem; color: var(--rojo); }
+
+  @media (max-width: 640px) {
+    .ps__row { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .ps__step { grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; }
+    .ps__step::after { display: none; }
+    .ps__note { grid-column: 2; }
+    .ps__back svg { display: none; }
+  }
+</style>

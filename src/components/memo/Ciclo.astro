@@ -1,0 +1,80 @@
+---
+/**
+ * ── Ciclo ─────────────────────────────────────────────
+ *
+ * Un círculo a pluma con flechas en sentido del reloj y los pasos
+ * alrededor (Scrum, Construir → Medir → Aprender…). Al centro, lo
+ * que el ciclo produce. Se dibuja al entrar en pantalla.
+ */
+import Fig from './Fig.astro';
+
+interface Props {
+  n: number;
+  caption: string;
+  steps: Array<{ name: string; note?: string }>;
+  center?: string;
+}
+
+const { n, caption, steps, center } = Astro.props;
+
+const C = { x: 220, y: 150 };
+const R = 92;
+const angle = (i: number) => -Math.PI / 2 + (i / steps.length) * Math.PI * 2;
+const pt = (a: number, r: number) => ({ x: C.x + Math.cos(a) * r, y: C.y + Math.sin(a) * r });
+
+/* Círculo a mano: un poco ovalado y sin cerrar del todo */
+const circle = Array.from({ length: 73 }, (_, i) => {
+  const a = -Math.PI / 2 + (i / 72) * Math.PI * 1.96;
+  const r = R + Math.sin(i * 0.9) * 1.6;
+  const p = pt(a, r);
+  return `${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
+});
+
+/* Flecha entre cada par de pasos: punta tangente al círculo, sentido del reloj */
+const arrows = steps.map((_, i) => {
+  const a = angle(i) + Math.PI / steps.length;
+  const p = pt(a, R);
+  const tx = -Math.sin(a);
+  const ty = Math.cos(a);
+  const wing = (th: number) => {
+    const vx = -tx, vy = -ty;
+    const wx = vx * Math.cos(th) - vy * Math.sin(th);
+    const wy = vx * Math.sin(th) + vy * Math.cos(th);
+    return `${(p.x + wx * 11).toFixed(1)} ${(p.y + wy * 11).toFixed(1)}`;
+  };
+  return `M${wing(0.45)} L${p.x.toFixed(1)} ${p.y.toFixed(1)} L${wing(-0.45)}`;
+});
+
+const labels = steps.map((s, i) => {
+  const a = angle(i);
+  const p = pt(a, R + 22);
+  const cos = Math.cos(a);
+  const anchor = Math.abs(cos) < 0.25 ? 'middle' : cos > 0 ? 'start' : 'end';
+  const dot = pt(a, R);
+  return { ...s, x: p.x, y: p.y + (Math.sin(a) > 0.5 ? 10 : Math.sin(a) < -0.5 ? -4 : 4), anchor, dot };
+});
+---
+
+<Fig n={n} caption={caption}>
+  <svg class="lv-art ciclo" viewBox="0 0 440 300" role="img" aria-label={`${caption}: ${steps.map((s) => s.name).join(' → ')}`} data-draw="scroll">
+    <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path data-s d={`M${circle.join(' L')}`} stroke-width="2.4" />
+      {arrows.map((d) => <path data-s d={d} stroke-width="2.4" class="lv-art-red" />)}
+    </g>
+    {labels.map((l) => (
+      <g>
+        <circle data-pop cx={l.dot.x.toFixed(1)} cy={l.dot.y.toFixed(1)} r="5" class="lv-art-red-fill" />
+        <text x={l.x.toFixed(1)} y={l.y.toFixed(1)} text-anchor={l.anchor} class="ciclo__name">{l.name}</text>
+        {l.note && <text x={l.x.toFixed(1)} y={(l.y + 15).toFixed(1)} text-anchor={l.anchor} class="ciclo__note">{l.note}</text>}
+      </g>
+    ))}
+    {center && <text x={C.x} y={C.y + 6} text-anchor="middle" class="ciclo__center">{center}</text>}
+  </svg>
+</Fig>
+
+<style>
+  .ciclo { max-width: 560px; margin-inline: auto; }
+  .ciclo :global(.ciclo__name) { font-family: var(--f-grot); font-size: 13px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; fill: var(--tinta); }
+  .ciclo :global(.ciclo__note) { font-family: var(--f-serif); font-style: italic; font-size: 12px; fill: var(--grafito); }
+  .ciclo :global(.ciclo__center) { font-family: var(--f-serif); font-style: italic; font-size: 19px; fill: var(--rojo); }
+</style>

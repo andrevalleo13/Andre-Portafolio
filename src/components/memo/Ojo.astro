@@ -1,0 +1,43 @@
+---
+/**
+ * ── Ojo ───────────────────────────────────────────────
+ *
+ * Nota al margen a pluma roja para lo que se confunde fácil o lo que
+ * aprendí a la mala. Va dentro del texto, angosta y con una raya roja
+ * a la izquierda: se lee de pasada y no corta la lectura.
+ */
+interface Props {
+  label?: string;
+}
+
+const { label = 'Ojo' } = Astro.props;
+---
+
+<aside class="ojo" data-reveal="fade">
+  <span class="ojo__label">{label}</span>
+  <div class="ojo__body"><slot /></div>
+</aside>
+
+<style>
+  .ojo {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 4px 14px;
+    margin: 1.8em 0;
+    padding: 4px 0 4px 16px;
+    border-left: 3px solid var(--rojo);
+  }
+
+  .ojo__label {
+    font-family: var(--f-grot);
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--rojo);
+    padding-top: 0.35em;
+  }
+
+  .ojo__body { font-family: var(--f-serif); font-style: italic; font-size: 1.08rem; line-height: 1.5; color: var(--tinta); }
+  .ojo__body :global(p) { margin: 0; font-size: inherit; line-height: inherit; }
+</style>

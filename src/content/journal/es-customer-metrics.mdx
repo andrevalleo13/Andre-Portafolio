@@ -1,0 +1,130 @@
+---
+title: "Lo que vale un cliente: NPS, churn, LTV y CAC desde Flouvia y Cord"
+date: 2026-10-25
+readTime: "12 MIN DE LECTURA"
+lang: "es"
+draft: false
+---
+
+import Escala from '../../components/memo/Escala.astro';
+import Cuenta from '../../components/memo/Cuenta.astro';
+import Balanza from '../../components/memo/Balanza.astro';
+import Red from '../../components/memo/Red.astro';
+import Embudo from '../../components/memo/Embudo.astro';
+import Ojo from '../../components/memo/Ojo.astro';
+
+Estudio finanzas, así que cuando la clase llegó a las métricas de cliente me sentí en casa: al final, un cliente es un activo con flujos futuros, un costo de adquisición y una probabilidad de irse. Esta sesión fue de customer centric, omnicanalidad y mercadotecnia. Este memo es cómo leo esas métricas en mis dos negocios, que no podrían ser más distintos: Flouvia, un estudio con pocos clientes al año, y Cord, un software que quiere miles.
+
+## Cuatro números para saber si el cliente está bien
+
+La clase propone cuatro métricas de customer centric. Cada una responde algo diferente:
+
+- **NPS** (*Net Promoter Score*): ¿te recomendarían?
+- **CSAT** (*Customer Satisfaction*): ¿quedaron satisfechos con *esta* interacción?
+- **LTV o CLV** (*Customer Lifetime Value*): ¿cuánto valor genera un cliente durante toda la relación?
+- **Churn**: ¿qué porcentaje de clientes se va en un periodo?
+
+La trampa típica es confundir NPS con CSAT. NPS mide lealtad: la disposición a recomendarte. CSAT mide un momento: qué tan bien salió una llamada a soporte o una entrega.
+
+## NPS: la pregunta que dice más de lo que parece
+
+El NPS se basa en una sola pregunta: del 0 al 10, ¿qué tan probable es que nos recomiendes? Las respuestas se agrupan en tres.
+
+<Escala
+  n={1}
+  caption="Detractores, pasivos y promotores en la escala del NPS"
+  groups={['Detractores · 0 a 6', 'Pasivos', 'Promotores']}
+  formula="NPS = % de promotores − % de detractores"
+/>
+
+En Flouvia el NPS no es una encuesta, es la conversación. Trabajamos con un número limitado de clientes al año y por aplicación, así que cada cliente que nos recomienda vale muchísimo y cada detractor se nota. Por eso me importa más el patrón de por qué alguien daría un 6 que el número exacto.
+
+<Ojo>Los pasivos (7 y 8) no cuentan en la fórmula, pero son los que se van primero con la competencia. No los ignores.</Ojo>
+
+## Churn: la fuga que se come el crecimiento
+
+El churn es el porcentaje de clientes que abandonan en un periodo. La fórmula mensual de clase es simple:
+
+<Cuenta
+  n={2}
+  caption="Churn mensual, con el ejemplo de clase"
+  lines={[['Clientes al inicio del mes', '1,000'], ['Clientes que se fueron', '80']]}
+  result={['Churn mensual', '8%']}
+  note="80 ÷ 1,000 = 0.08"
+/>
+
+Un 8% mensual suena manejable hasta que haces la cuenta: en un año pierdes más de la mitad de tus clientes si no los repones. Por eso el churn es la métrica que más vigilo en Cord. Y hay un matiz que aprendí con el modelo freemium: no todos los que se van pesan igual. Que se vaya una cuenta gratis que nunca cotizó no es lo mismo que pierdas una cuenta que paga y cobra por la plataforma cada mes. Mide el churn de las cuentas que pagan por separado, y mídelo por cohortes: cuántos de los que entraron en un mes siguen ahí tres meses después.
+
+## CAC y LTV: la regla que sostiene todo
+
+**CAC** (*Customer Acquisition Cost*) es lo que cuesta conseguir un cliente. La forma básica:
+
+<Cuenta
+  n={3}
+  caption="CAC, con el ejemplo de clase"
+  lines={[['Gasto de adquisición', '$30,000'], ['Clientes nuevos', '100']]}
+  result={['CAC', '$300']}
+  note="30,000 ÷ 100 = 300"
+/>
+
+**LTV** es el valor que ese cliente genera durante toda la relación. Una estimación simple: si un cliente deja $100 de margen al mes y se queda 20 meses, su LTV es de $2,000. La regla de la clase es una sola:
+
+<Balanza
+  n={4}
+  caption="El cliente tiene que valer más de lo que costó conseguirlo"
+  left={{ label: 'LTV', value: '$1,500', weight: 5 }}
+  right={{ label: 'CAC', value: '$300', weight: 1 }}
+  verdict="LTV > CAC · aquí, cinco veces"
+/>
+
+<Ojo>LTV mayor que CAC es necesario, pero no suficiente. El negocio todavía tiene que pagar todo lo demás: equipo, infraestructura, soporte.</Ojo>
+
+Aquí es donde el modelo de Cord me gusta, viéndolo como financiero. Su LTV tiene dos motores: la suscripción y un porcentaje del volumen que cada negocio cobra por Cord Payments. Eso significa que el LTV crece cuando al cliente le va bien: si una agencia cierra más ventas, Cord gana más sin cobrarle un plan más caro. Los incentivos apuntan al mismo lado.
+
+En Flouvia la cuenta es la inversa: el CAC es alto, porque cada cliente llega por relación y por aplicación, pero el LTV también, porque los proyectos son grandes y la relación sigue después de entregar. Dos modelos, la misma regla.
+
+## Multicanal no es omnicanal
+
+**Multicanal** es tener varios canales. **Omnicanal** es que esos canales estén conectados y compartan contexto e historial. El ejemplo de clase: empiezas a abrir una cuenta en la app, sigues por WhatsApp, y el agente ya sabe en qué ibas. No vuelves a empezar.
+
+<Red
+  n={5}
+  caption="Los mismos canales, sueltos o conectados por un historial"
+  channels={['Link', 'Correo', 'Panel', 'API']}
+  left="Multicanal"
+  right="Omnicanal"
+  center="historial"
+/>
+
+En Cord la cotización vive en un solo lugar y todos los canales la leen de ahí: el link que ve el cliente, los correos de cobranza, el panel del negocio y la API. Si el cliente pagó, nadie le vuelve a mandar un recordatorio. En Flouvia hicimos lo mismo con la comunicación: en lugar de pedidos regados entre correo, WhatsApp y llamadas, cada cliente tiene un solo canal de Conversaciones en su portal, con los términos de soporte acordados.
+
+<Ojo>Tener muchos canales no te hace omnicanal. Si en cada uno el cliente tiene que explicar todo otra vez, solo multiplicaste la fricción.</Ojo>
+
+## Mercadotecnia: medir para poder optimizar
+
+La clase compara la mercadotecnia tradicional (TV, radio, impresos: unidireccional, cara por impacto y difícil de medir) con la digital (redes, buscadores, apps: bidireccional, segmentable y medible en tiempo real). No dice que una sea siempre mejor; se combinan. Lo distintivo de lo digital es que puedes medir y bajar tu CAC con cada ajuste.
+
+El embudo explica cómo alguien pasa de no conocerte a recomendarte. Así lo veo en Cord:
+
+<Embudo
+  n={6}
+  caption="El embudo de conversión de Cord (las anchuras son ilustrativas)"
+  stages={[
+    { name: 'Atracción', note: 'contenido, docs y links compartidos' },
+    { name: 'Interés', note: 'casos de uso y precios' },
+    { name: 'Conversión', note: 'cuenta gratis → primera venta cobrada' },
+    { name: 'Lealtad', note: 'plan de pago y recomendación' },
+  ]}
+/>
+
+De los cuatro canales que vimos (contenido y redes, referidos, SEO/SEM y performance), el de menor CAC suele ser **referidos**, y Cord lo trae integrado al producto. En el plan gratuito, cada link público lleva un "Powered by Cord". Cada cotización que una agencia manda es un anuncio que ve otro negocio, justo en el momento en que está viviendo la experiencia. No hay campaña más barata que esa.
+
+El contenido es el otro canal que trabajo: blog, documentación para desarrolladores, casos de uso y una comunidad. Sirve para **SEO**, para aparecer cuando alguien busca cómo cobrar una propuesta, y para generar confianza antes de que alguien entregue sus cobros a una plataforma nueva. El **SEM** y el *performance marketing* (anuncios pagados y medibles) son útiles, pero los dejo para cuando la cuenta de LTV contra CAC está probada.
+
+## Lo que me llevo
+
+1. Un cliente es un activo: tiene costo de adquisición, flujos y probabilidad de irse. Mídelo así.
+2. NPS para la lealtad, CSAT para el momento. No los mezcles.
+3. En freemium, mide el churn de quien paga por separado y por cohortes.
+4. Diseña tu modelo para que tu LTV crezca cuando a tu cliente le va bien.
+5. El mejor canal de adquisición es un producto que se enseña solo cada vez que alguien lo usa.

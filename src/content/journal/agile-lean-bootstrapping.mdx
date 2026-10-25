@@ -1,0 +1,136 @@
+---
+title: "Build Without Asking: Agile, Lean and Bootstrapping from Cord"
+date: 2026-10-20
+readTime: "10 MIN READ"
+lang: "en"
+draft: false
+---
+
+import Triada from '../../components/memo/Triada.astro';
+import Ciclo from '../../components/memo/Ciclo.astro';
+import Tablero from '../../components/memo/Tablero.astro';
+import Ojo from '../../components/memo/Ojo.astro';
+import Balanza from '../../components/memo/Balanza.astro';
+
+In class we covered Agile, Lean Startup and bootstrapping as three separate topics. Building Cord taught me they're the same conversation seen from three angles: how you work, how you know you're on the right track, and how you pay for the track. This memo is what has worked for me, what hasn't, and what I'd tell anyone about to start something.
+
+## Three questions, not three camps
+
+The first thing to get is that they don't compete. A company can, and almost should, use all three at once, because each one answers a different question.
+
+<Triada
+  n={1}
+  caption="Three approaches, three different questions"
+  items={[
+    { tag: 'Agile', q: 'How do I organize the work?', note: 'Short cycles, value bit by bit.' },
+    { tag: 'Lean', q: 'How do I prove my idea works?', note: 'Experiments before spending.' },
+    { tag: 'Bootstrapping', q: 'How do I fund my growth?', note: 'Own revenue before outside capital.' },
+  ]}
+/>
+
+Mix up the questions and you make bad calls. I've seen teams believe that "being agile" means not planning, or that "being lean" means shipping something broken. Neither is true.
+
+## Agile: what actually matters in the Manifesto
+
+The Agile Manifesto was signed by 17 developers in 2001. It isn't a tool; it's a set of values. It favors individuals over processes, working software over comprehensive documentation, customer collaboration over contract negotiation, and responding to change over following a plan.
+
+The key word is *over*. It doesn't say processes or documentation don't matter; it says which one wins when they collide. At Cord documentation matters a lot, because several computers and several working sessions touch the same repository, but never above the product working. Every push to production has to pass security checks; if it doesn't, it doesn't ship. That's "working software" turned into a rule.
+
+<Ojo label="Watch out">Agile isn't "no plan". It's a plan you revise every cycle with what you learned in the last one.</Ojo>
+
+## Scrum: the roles people mix up
+
+Scrum splits work into sprints of one to four weeks, and every sprint ends with something that works. It has three roles: the **Product Owner** decides what gets built and in what order; the **Scrum Master** removes obstacles so the team can work; and the **team** builds the increment.
+
+Its events form a loop:
+
+<Ciclo
+  n={2}
+  caption="A Scrum sprint, from planning to retrospective"
+  center="increment"
+  steps={[
+    { name: 'Planning', note: 'what gets done' },
+    { name: 'Daily', note: '15 min, sync up' },
+    { name: 'Review', note: 'show what was built' },
+    { name: 'Retro', note: 'improve how we work' },
+  ]}
+/>
+
+The classic trap: the **Review** shows the product; the **Retrospective** improves the process. And the artifacts: the *Product Backlog* is everything pending, prioritized; the *Sprint Backlog* is what goes into this sprint; the *Increment* is what already works.
+
+## Why I run Cord more on Kanban than on Scrum
+
+Scrum shines when you have a new product and a team with goals per cycle. Kanban shines when the work is a continuous flow: support, improvements, things that show up every day. Cord has a bit of both, but its day-to-day looks more like a flow. Every change that's ready gets merged and deployed; it doesn't wait for the end of a sprint.
+
+<Tablero
+  n={3}
+  caption="An example of the flow: few things in progress, everything done actually done"
+  wip="WIP ≤ 3: nothing new starts until one closes"
+  columns={[
+    { title: 'To do', cards: ['Open a new country', 'Email templates'] },
+    { title: 'In progress', cards: ['Recurring payments', 'KYC improvements'] },
+    { title: 'Done', cards: ['Closing link', 'CFDI 4.0', 'Verifactu'], done: true },
+  ]}
+/>
+
+The Kanban metric that has helped me most is the **WIP** limit (*work in progress*). Starting lots of things feels productive and is exactly the opposite. My limit is almost literal: I work with several development sessions in parallel and never more than about five at once. And a rule I copy from my own repository: what's finished gets merged, what isn't ready gets said out loud. No branches left hanging "for later".
+
+<Ojo label="My advice">If you're one or two people, don't perform Scrum with all its rituals. Put a WIP limit on your board and respect it. It'll give you more than any ceremony.</Ojo>
+
+## Lean Startup: Cord's MVP was another product
+
+Lean Startup, Eric Ries's 2011 book, proposes validating ideas with experiments before overspending. Its loop is **build → measure → learn**, repeated until the idea holds up or the evidence tells you to change course.
+
+<Ciclo
+  n={4}
+  caption="The Lean Startup loop: the goal is to learn fast, not to build a lot"
+  center="validated learning"
+  steps={[
+    { name: 'Build', note: 'the minimum to test' },
+    { name: 'Measure', note: 'what users do' },
+    { name: 'Learn', note: 'persevere or pivot' },
+  ]}
+/>
+
+Cord's MVP wasn't called Cord. It was a Flouvia Shopify app for B2B quotes: a minimal version that already solved something real (quoting with negotiated prices) inside stores that already existed. What we learned there was that the pain wasn't Shopify's, and it wasn't only B2B: any business that closes sales with proposals suffers the same thing. Send a PDF, wait for the signature, chase the transfer, invoice by hand, reconcile in Excel.
+
+In June 2026 Cord started as a standalone product. That was a **pivot**: not a whim, but a change of direction backed by what we saw. We went from an app inside Shopify to a horizontal platform, from proposal to payment, for any business.
+
+<Ojo label="Watch out">An MVP isn't a bad product. It's the smallest version that already delivers value and lets you learn with real users. If nobody would use it, it isn't an MVP: it's a prototype.</Ojo>
+
+The other piece of validated learning that marked me was in Latin America. Cord Payments runs on Stripe Connect, which doesn't cover every country we wanted to offer the same way. Instead of promising what we couldn't sustain, in Brazil, Colombia, Argentina, Chile and Peru online payment runs through the business's own Mercado Pago account. Deciding that was listening to the evidence, not to ambition.
+
+## What we didn't have to build
+
+A fintech doesn't need to stand up its entire infrastructure to validate. Class sums it up in four pieces:
+
+- **Cloud:** the site and the app run on Vercel and the database on Neon. I don't buy servers; I pay for what I use and it scales on its own.
+- **Third-party APIs:** Stripe for payments, subscriptions and identity verification (KYC); Facturapi to stamp CFDI invoices in Mexico; Resend for email; Anthropic for AI.
+- **No-code / low-code:** good for testing screens and flows without programming. If you don't code, it's your best tool to validate before hiring anyone.
+- **Analytics:** PostHog to see what people do inside the product.
+
+KYC means *Know Your Customer*: verifying who the customer is before moving their money. Building it from scratch would have taken months. With the right API, it's one screen inside Cord.
+
+## Bootstrapping: growing on what you generate
+
+Bootstrapping is funding growth with your own resources and reinvested revenue instead of outside capital. Venture capital is the opposite: investor money in exchange for part of the company.
+
+<Balanza
+  n={5}
+  caption="Bootstrapping versus venture capital: there's no universal answer"
+  left={{ label: 'CONTROL', value: 'Bootstrapping', weight: 1 }}
+  right={{ label: 'SPEED', value: 'Venture capital', weight: 1 }}
+  verdict="it depends on how much money you need, how fast, and how much control you want to keep"
+/>
+
+Cord grows on what it generates: it's at $5k MRR today and that revenue funds the next step. That forces a discipline no class teaches quite the same way. Every cost has to make sense against revenue, which is why almost everything in the infrastructure is pay-as-you-go. The business model is designed for it: a freemium subscription plus a share of the volume processed through Cord Payments. When the customer does well, Cord does well.
+
+I'm not saying venture capital is bad. If your business needs a lot of money before it charges its first dollar, you probably need it. But if you can charge early, keeping control is worth a lot.
+
+## What I take with me
+
+1. Agile, Lean and bootstrapping answer different questions. Use them together.
+2. If you're a small team, Kanban with a WIP limit beats textbook Scrum.
+3. Your first MVP can be a different product. Listen to what people use, not what they say.
+4. Don't build what an API already solves. Build what makes you different.
+5. Charge early. Your customers' money is the cheapest money you'll ever get.

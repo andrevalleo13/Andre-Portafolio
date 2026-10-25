@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 
 import vercel from '@astrojs/vercel';
+import mdx from '@astrojs/mdx';
 
 // https://astro.build/config
 export default defineConfig({
@@ -10,4 +11,6 @@ export default defineConfig({
   // El sitio sigue siendo estático; solo los endpoints con `export const prerender = false`
   // (src/pages/api/*) corren como funciones serverless en Vercel.
   adapter: vercel(),
+  // MDX: los memos del Journal llevan ilustraciones (src/components/memo/).
+  integrations: [mdx()],
 });

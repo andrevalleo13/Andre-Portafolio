@@ -1,0 +1,77 @@
+---
+/**
+ * ── Escala NPS ────────────────────────────────────────
+ *
+ * Los once números de la pregunta "¿qué tan probable es que nos
+ * recomiendes?" agrupados en detractores, pasivos y promotores, con
+ * la fórmula debajo.
+ */
+import Fig from './Fig.astro';
+
+interface Props {
+  n: number;
+  caption: string;
+  groups: [string, string, string];
+  formula: string;
+}
+
+const { n, caption, groups, formula } = Astro.props;
+const nums = Array.from({ length: 11 }, (_, i) => i);
+const groupOf = (i: number) => (i <= 6 ? 0 : i <= 8 ? 1 : 2);
+---
+
+<Fig n={n} caption={caption}>
+  <div class="nps">
+    <div class="nps__nums">
+      {nums.map((i) => <span class:list={['nps__n', `g${groupOf(i)}`]}>{i}</span>)}
+    </div>
+    <div class="nps__groups">
+      <span class="g0" style="grid-column: span 7">{groups[0]}</span>
+      <span class="g1" style="grid-column: span 2">{groups[1]}</span>
+      <span class="g2" style="grid-column: span 2">{groups[2]}</span>
+    </div>
+    <span class="nps__formula">{formula}</span>
+  </div>
+</Fig>
+
+<style>
+  .nps { display: grid; gap: 10px; }
+
+  .nps__nums, .nps__groups {
+    display: grid;
+    grid-template-columns: repeat(11, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .nps__n {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-size: clamp(0.8rem, 2vw, 1.1rem);
+    color: var(--hoja);
+  }
+
+  .nps__n.g0 { background: var(--rojo); }
+  .nps__n.g1 { background: var(--grafito); }
+  .nps__n.g2 { background: var(--azul); }
+  .nps__n:nth-child(odd) { rotate: -2deg; }
+  .nps__n:nth-child(even) { rotate: 1.5deg; }
+
+  .nps__groups span {
+    padding-top: 4px;
+    border-top: 2px solid;
+    font-family: var(--f-grot);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .nps__groups .g0 { color: var(--rojo); }
+  .nps__groups .g1 { color: var(--grafito); }
+  .nps__groups .g2 { color: var(--azul); }
+
+  .nps__formula { font-family: var(--f-serif); font-style: italic; font-size: 1.15rem; text-align: center; }
+</style>

@@ -2,37 +2,52 @@
 /**
  * ── Newsletter ────────────────────────────────────────
  *
- * Cupón de suscripción recortable, como el de un periódico:
- * borde punteado con tijeras, el titular en negra condensada y
- * el campo de email subrayado. Al enviar, alta en POST /api/subscribe.
+ * Suscripción a los memos, en la estética del sitio y sin caja:
+ * el titular en Redaction grande, la paloma mensajera con su carta,
+ * el campo de correo subrayado (la pluma roja lo recorre al
+ * escribir), un sello azul y una nota a pluma. Al enviar, alta en
+ * POST /api/subscribe.
  */
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import Paloma from './art/Paloma.astro';
+import Timbre from './art/Timbre.astro';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+const note = lang === 'es' ? 'sin spam. solo memos.' : 'no spam. just memos.';
 ---
 
-<div class="cupon">
-  <span class="cupon__tijeras" aria-hidden="true">✂</span>
-  <p class="lv-kicker">{lang === 'es' ? 'Cupón de suscripción · Gratis' : 'Subscription coupon · Free'}</p>
-  <h3 class="cupon__heading">{t('newsletter.heading')}</h3>
+<section class="nl" aria-labelledby="nl-title">
+  <div class="nl__bird"><Paloma /></div>
+  <div class="nl__stamp" aria-hidden="true">
+    <Timbre top={lang === 'es' ? 'Memos · por correo' : 'Memos · by mail'} center="MMXXVI" tone="azul" />
+  </div>
+
+  <p class="lv-kicker" data-reveal="fade">{lang === 'es' ? 'Correo · Gratis' : 'Mail · Free'}</p>
+  <h3 class="nl__title" id="nl-title" data-reveal="lines">
+    <span class="lv-line"><span>{t('newsletter.heading')}</span></span>
+  </h3>
+
   <form
-    class="cupon__form"
+    class="nl__form"
     id="newsletter-form"
     data-success={t('newsletter.success')}
     data-error={t('newsletter.error')}
   >
     <label class="lv-sr-only" for="newsletter-email">{t('newsletter.placeholder')}</label>
-    <input type="email" id="newsletter-email" placeholder={t('newsletter.placeholder')} class="cupon__input" required />
-    <button type="submit" class="lv-btn cupon__btn">
+    <span class="nl__field">
+      <input type="email" id="newsletter-email" placeholder={t('newsletter.placeholder')} class="nl__input" required />
+    </span>
+    <button type="submit" class="lv-btn nl__btn">
       {t('newsletter.button')}
       <svg width="9" height="9" viewBox="0 0 8 8" fill="none" aria-hidden="true">
         <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.9" />
       </svg>
     </button>
   </form>
-  <p class="cupon__msg" id="newsletter-msg" hidden></p>
-</div>
+  <p class="lv-pen-note nl__note" data-reveal="write" data-delay="0.4">{note}</p>
+  <p class="nl__msg" id="newsletter-msg" hidden></p>
+</section>
 
 <script>
   function initNewsletter() {
@@ -77,47 +92,73 @@ const t = useTranslations(lang);
 </script>
 
 <style>
-  .cupon {
+  .nl {
     position: relative;
     display: grid;
-    gap: 16px;
-    max-width: 640px;
-    padding: clamp(24px, 3vw, 40px);
-    border: 2px dashed var(--tinta);
-    background: var(--hoja);
-    rotate: -1deg;
+    gap: 18px;
+    width: min(100%, 760px);
+    padding: clamp(40px, 5vw, 72px) 0 clamp(24px, 3vw, 40px);
   }
 
-  .cupon__tijeras {
+  .nl__bird {
     position: absolute;
-    top: -0.85em;
-    left: 28px;
-    padding: 0 6px;
-    background: var(--papel);
-    font-size: 1.3rem;
-    line-height: 1;
-    color: var(--rojo);
+    right: -4%;
+    top: -12%;
+    width: clamp(150px, 20vw, 250px);
+    color: var(--tinta);
+    rotate: -6deg;
+    pointer-events: none;
   }
 
-  .cupon__heading {
-    font-family: var(--f-grot);
-    font-weight: 900;
-    font-stretch: 75%;
-    font-size: clamp(2.2rem, 4.6vw, 4.4rem);
-    line-height: 0.88;
-    text-transform: uppercase;
+  .nl__stamp {
+    position: absolute;
+    right: 0;
+    bottom: 6%;
+    width: clamp(84px, 9vw, 120px);
+    rotate: 12deg;
+    opacity: 0.9;
+    pointer-events: none;
   }
 
-  .cupon__form {
+  .nl__title {
+    max-width: 14ch;
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(2.6rem, 6vw, 5.4rem);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .nl__title .lv-line > span { display: inline; }
+
+  .nl__form {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
-    gap: 16px 20px;
+    gap: 16px 24px;
+    max-width: 620px;
   }
 
-  .cupon__input {
-    flex: 1 1 240px;
-    min-width: 0;
+  /* La pluma roja recorre el renglón al escribir */
+  .nl__field { position: relative; flex: 1 1 260px; min-width: 0; }
+
+  .nl__field::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 2px;
+    background: var(--rojo);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.9s var(--ease-expo);
+  }
+
+  .nl__field:focus-within::after { transform: scaleX(1); }
+
+  .nl__input {
+    width: 100%;
     padding: 0.5rem 0;
     border: 0;
     border-bottom: 1px solid var(--tinta);
@@ -127,16 +168,22 @@ const t = useTranslations(lang);
     color: var(--tinta);
     font-family: var(--f-serif);
     font-style: italic;
-    font-size: 1.4rem;
+    font-size: clamp(1.3rem, 2vw, 1.7rem);
   }
 
-  .cupon__input:focus { border-bottom-color: var(--rojo); }
-  .cupon__input::placeholder { color: var(--linea); }
+  .nl__input::placeholder { color: var(--linea); }
 
-  .cupon__msg {
+  .nl__note { justify-self: start; rotate: -2deg; }
+
+  .nl__msg {
     font-family: var(--f-serif);
     font-style: italic;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: var(--rojo);
+  }
+
+  @media (max-width: 640px) {
+    .nl__bird { position: relative; right: auto; top: auto; justify-self: end; margin-bottom: -40px; }
+    .nl__stamp { right: 2%; bottom: -2%; }
   }
 </style>

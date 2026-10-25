@@ -1,0 +1,130 @@
+---
+title: "What a Customer Is Worth: NPS, Churn, LTV and CAC from Flouvia and Cord"
+date: 2026-10-25
+readTime: "12 MIN READ"
+lang: "en"
+draft: false
+---
+
+import Escala from '../../components/memo/Escala.astro';
+import Cuenta from '../../components/memo/Cuenta.astro';
+import Balanza from '../../components/memo/Balanza.astro';
+import Red from '../../components/memo/Red.astro';
+import Embudo from '../../components/memo/Embudo.astro';
+import Ojo from '../../components/memo/Ojo.astro';
+
+I study finance, so when class got to customer metrics I felt at home: in the end, a customer is an asset with future cash flows, an acquisition cost and a probability of leaving. This session was customer centricity, omnichannel and marketing. This memo is how I read those metrics in my two businesses, which couldn't be more different: Flouvia, a studio with a few clients a year, and Cord, software that wants thousands.
+
+## Four numbers to know whether the customer is okay
+
+Class proposes four customer-centric metrics. Each one answers something different:
+
+- **NPS** (*Net Promoter Score*): would they recommend you?
+- **CSAT** (*Customer Satisfaction*): were they satisfied with *this* interaction?
+- **LTV or CLV** (*Customer Lifetime Value*): how much value does a customer generate over the whole relationship?
+- **Churn**: what share of customers leaves in a given period?
+
+The usual trap is mixing up NPS and CSAT. NPS measures loyalty: the willingness to recommend you. CSAT measures a moment: how well a support call or a delivery went.
+
+## NPS: the question that says more than it seems
+
+NPS rests on a single question: from 0 to 10, how likely are you to recommend us? Answers fall into three groups.
+
+<Escala
+  n={1}
+  caption="Detractors, passives and promoters on the NPS scale"
+  groups={['Detractors · 0 to 6', 'Passives', 'Promoters']}
+  formula="NPS = % promoters − % detractors"
+/>
+
+At Flouvia, NPS isn't a survey, it's the conversation. We work with a limited number of clients a year, by application, so every client who recommends us is worth a lot and every detractor shows. That's why I care more about the pattern behind why someone would give a 6 than about the exact number.
+
+<Ojo label="Watch out">Passives (7s and 8s) don't count in the formula, but they're the first to leave for a competitor. Don't ignore them.</Ojo>
+
+## Churn: the leak that eats growth
+
+Churn is the share of customers who leave in a period. The monthly formula from class is simple:
+
+<Cuenta
+  n={2}
+  caption="Monthly churn, with the class example"
+  lines={[['Customers at the start of the month', '1,000'], ['Customers who left', '80']]}
+  result={['Monthly churn', '8%']}
+  note="80 ÷ 1,000 = 0.08"
+/>
+
+8% a month sounds manageable until you do the math: in a year you lose more than half your customers if you don't replace them. That's why churn is one of the metrics I watch most at Cord. And there's a nuance I learned with the freemium model: not everyone who leaves weighs the same. A free account that never sent a quote leaving isn't the same as losing an account that pays and collects through the platform every month. Measure paid churn separately, and measure it by cohort: how many of the people who joined in a given month are still there three months later.
+
+## CAC and LTV: the rule that holds everything up
+
+**CAC** (*Customer Acquisition Cost*) is what it costs to get a customer. The basic form:
+
+<Cuenta
+  n={3}
+  caption="CAC, with the class example"
+  lines={[['Acquisition spend', '$30,000'], ['New customers', '100']]}
+  result={['CAC', '$300']}
+  note="30,000 ÷ 100 = 300"
+/>
+
+**LTV** is the value that customer generates over the whole relationship. A simple estimate: if a customer leaves $100 of margin a month and stays 20 months, their LTV is $2,000. Class has a single rule:
+
+<Balanza
+  n={4}
+  caption="A customer has to be worth more than it cost to get them"
+  left={{ label: 'LTV', value: '$1,500', weight: 5 }}
+  right={{ label: 'CAC', value: '$300', weight: 1 }}
+  verdict="LTV > CAC · here, five times over"
+/>
+
+<Ojo label="Watch out">LTV above CAC is necessary, not sufficient. The business still has to pay for everything else: team, infrastructure, support.</Ojo>
+
+This is where I like Cord's model, looking at it as a finance person. Its LTV has two engines: the subscription and a share of the volume each business collects through Cord Payments. That means LTV grows when the customer does well: if an agency closes more sales, Cord earns more without charging it a pricier plan. The incentives point the same way.
+
+At Flouvia the math is the reverse: CAC is high, because every client arrives through a relationship and by application, but so is LTV, because projects are large and the relationship continues after delivery. Two models, same rule.
+
+## Multichannel isn't omnichannel
+
+**Multichannel** means having several channels. **Omnichannel** means those channels are connected and share context and history. The class example: you start opening an account in the app, continue on WhatsApp, and the agent already knows where you left off. You don't start over.
+
+<Red
+  n={5}
+  caption="The same channels, loose or connected by a shared history"
+  channels={['Link', 'Email', 'Dashboard', 'API']}
+  left="Multichannel"
+  right="Omnichannel"
+  center="history"
+/>
+
+At Cord the quote lives in one place and every channel reads it from there: the link the client sees, the collection emails, the business's dashboard and the API. If the client already paid, nobody sends them another reminder. At Flouvia we did the same with communication: instead of requests scattered across email, WhatsApp and calls, every client has a single Conversations channel in their portal, under agreed support terms.
+
+<Ojo label="Watch out">Having lots of channels doesn't make you omnichannel. If the customer has to explain everything again in each one, you just multiplied the friction.</Ojo>
+
+## Marketing: measure so you can optimize
+
+Class compares traditional marketing (TV, radio, print: one-way, expensive per impression, hard to measure) with digital (social, search, apps: two-way, targetable and measurable in real time). It doesn't say one is always better; they combine. What sets digital apart is that you can measure and push your CAC down with every adjustment.
+
+The funnel explains how someone goes from not knowing you to recommending you. Here's how I see it at Cord:
+
+<Embudo
+  n={6}
+  caption="Cord's conversion funnel (widths are illustrative)"
+  stages={[
+    { name: 'Attraction', note: 'content, docs and shared links' },
+    { name: 'Interest', note: 'use cases and pricing' },
+    { name: 'Conversion', note: 'free account → first paid sale' },
+    { name: 'Loyalty', note: 'paid plan and referrals' },
+  ]}
+/>
+
+Of the four channels we covered (content and social, referrals, SEO/SEM and performance), the one with the lowest CAC is usually **referrals**, and Cord has it built into the product. On the free plan, every public link carries a "Powered by Cord". Every quote an agency sends is an ad another business sees, right while it's living the experience. There's no cheaper campaign than that.
+
+Content is the other channel I work: a blog, developer documentation, use cases and a community. It feeds **SEO**, so Cord shows up when someone searches for how to get paid on a proposal, and it builds trust before anyone hands their collections to a new platform. **SEM** and *performance marketing* (paid, measurable ads) are useful, but I save them for when the LTV-to-CAC math is proven.
+
+## What I take with me
+
+1. A customer is an asset: it has an acquisition cost, cash flows and a probability of leaving. Measure it that way.
+2. NPS for loyalty, CSAT for the moment. Don't mix them.
+3. In freemium, measure paid churn separately and by cohort.
+4. Design your model so your LTV grows when your customer does well.
+5. The best acquisition channel is a product that shows itself off every time someone uses it.

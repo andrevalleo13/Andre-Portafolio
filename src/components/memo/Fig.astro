@@ -1,0 +1,48 @@
+---
+/**
+ * ── Figura de memo ────────────────────────────────────
+ *
+ * Marco común de las ilustraciones de los memos: el dibujo y su
+ * cédula ("Fig. 2 · …"). Discreto a propósito: mismo ancho que el
+ * texto, aire arriba y abajo, sin cajas. Todas las figuras de
+ * src/components/memo/ se envuelven en este.
+ */
+interface Props {
+  n: number;
+  caption: string;
+  class?: string;
+}
+
+const { n, caption, class: className } = Astro.props;
+---
+
+<figure class:list={['mfig', className]} data-reveal="fade">
+  <div class="mfig__body"><slot /></div>
+  <figcaption class="mfig__cap"><span>Fig. {n}</span>{caption}</figcaption>
+</figure>
+
+<style>
+  .mfig {
+    display: grid;
+    gap: 14px;
+    margin: 2.6em 0;
+    color: var(--tinta);
+  }
+
+  .mfig__body { min-width: 0; }
+
+  .mfig__cap {
+    display: flex;
+    gap: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--linea);
+    font-family: var(--f-grot);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--grafito);
+  }
+
+  .mfig__cap span { color: var(--rojo); }
+</style>

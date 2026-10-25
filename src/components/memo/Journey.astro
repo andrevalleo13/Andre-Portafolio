@@ -1,0 +1,112 @@
+---
+/**
+ * ── Recorrido del cliente ─────────────────────────────
+ *
+ * Una o dos filas de fases. En cada fase: el nombre, una nota y el
+ * ánimo del cliente (−2 a 2) trazado como una línea a pluma. Donde
+ * el ánimo cae se marca una X roja (pain point); donde sube, un punto
+ * azul. Sirve para comparar "antes" y "después".
+ */
+import Fig from './Fig.astro';
+
+interface Phase {
+  name: string;
+  note: string;
+  mood: number;
+}
+
+interface Props {
+  n: number;
+  caption: string;
+  rows: Array<{ label: string; tone?: 'rojo' | 'azul'; phases: Phase[] }>;
+}
+
+const { n, caption, rows } = Astro.props;
+
+const W = 600;
+const H = 96;
+const yOf = (m: number) => 48 - m * 18;
+const curve = (phases: Phase[]) => {
+  const step = W / phases.length;
+  const pts = phases.map((p, i) => [step * i + step / 2, yOf(p.mood)]);
+  return pts.reduce((d, [x, y], i) => {
+    if (i === 0) return `M${x} ${y}`;
+    const [px, py] = pts[i - 1];
+    const cx = (px + x) / 2;
+    return `${d} C${cx} ${py} ${cx} ${y} ${x} ${y}`;
+  }, '');
+};
+---
+
+<Fig n={n} caption={caption}>
+  <div class="jr">
+    {rows.map((row) => {
+      const step = W / row.phases.length;
+      return (
+        <div class="jr__row">
+          <span class:list={['jr__label', `is-${row.tone ?? 'rojo'}`]}>{row.label}</span>
+          <div class="jr__names" style={`--count:${row.phases.length}`}>
+            {row.phases.map((p) => <span>{p.name}</span>)}
+          </div>
+          <svg class="lv-art jr__curve" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true" data-draw="scroll">
+            <path d={`M0 48 L${W} 48`} stroke="var(--linea)" stroke-width="1" stroke-dasharray="4 5" vector-effect="non-scaling-stroke" fill="none" />
+            <path data-s d={curve(row.phases)} filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+            {row.phases.map((p, i) => {
+              const x = step * i + step / 2;
+              const y = yOf(p.mood);
+              return p.mood < 0 ? (
+                <path data-pop d={`M${x - 6} ${y - 6} L${x + 6} ${y + 6} M${x + 6} ${y - 6} L${x - 6} ${y + 6}`} class="lv-art-red" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none" vector-effect="non-scaling-stroke" />
+              ) : (
+                <circle data-pop cx={x} cy={y} r="5" style="fill: var(--azul)" />
+              );
+            })}
+          </svg>
+          <div class="jr__notes" style={`--count:${row.phases.length}`}>
+            {row.phases.map((p) => <span class:list={{ 'is-pain': p.mood < 0 }}>{p.note}</span>)}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</Fig>
+
+<style>
+  .jr { display: grid; gap: 26px; }
+  .jr__row { display: grid; gap: 6px; }
+
+  .jr__label {
+    font-family: var(--f-grot);
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .jr__label.is-rojo { color: var(--rojo); }
+  .jr__label.is-azul { color: var(--azul); }
+
+  .jr__names, .jr__notes {
+    display: grid;
+    grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+    gap: 6px;
+    text-align: center;
+  }
+
+  .jr__names span {
+    font-family: var(--f-grot);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .jr__curve { width: 100%; height: 84px; color: var(--tinta); }
+
+  .jr__notes span { font-family: var(--f-serif); font-style: italic; font-size: 0.92rem; line-height: 1.2; color: var(--grafito); }
+  .jr__notes span.is-pain { color: var(--rojo); }
+
+  @media (max-width: 560px) {
+    .jr__names span { font-size: 0.58rem; }
+    .jr__notes span { font-size: 0.78rem; }
+  }
+</style>

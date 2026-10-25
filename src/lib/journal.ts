@@ -21,12 +21,12 @@ export async function getMemos(lang: Lang): Promise<Memo[]> {
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 
-/** Primer párrafo de texto (sin títulos, listas ni markdown), recortado. */
+/** Primer párrafo de texto (sin títulos, listas, imports de MDX ni componentes), recortado. */
 export function excerpt(memo: Memo, max = 190): string {
   const paragraph = (memo.body ?? '')
     .split(/\n\s*\n/)
     .map((block) => block.trim())
-    .find((block) => block && !/^(#|-|\*|\d+\.|>|!\[)/.test(block));
+    .find((block) => block && !/^(#|-|\*|\d+\.|>|!\[|<|import |export )/.test(block));
   if (!paragraph) return '';
   const plain = paragraph
     .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')

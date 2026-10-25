@@ -1,0 +1,64 @@
+---
+/**
+ * ── Multicanal vs. omnicanal ──────────────────────────
+ *
+ * Dos dibujos lado a lado: a la izquierda el cliente rodeado de
+ * canales sueltos (cada uno empieza de cero); a la derecha los mismos
+ * canales unidos por un hilo rojo a un historial compartido.
+ */
+import Fig from './Fig.astro';
+
+interface Props {
+  n: number;
+  caption: string;
+  channels: string[];
+  left: string;
+  right: string;
+  center: string;
+}
+
+const { n, caption, channels, left, right, center } = Astro.props;
+const pos = (i: number, cx: number) => {
+  const a = -Math.PI / 2 + (i / channels.length) * Math.PI * 2;
+  return { x: cx + Math.cos(a) * 86, y: 118 + Math.sin(a) * 74 };
+};
+---
+
+<Fig n={n} caption={caption}>
+  <svg class="lv-art red" viewBox="0 0 520 250" role="img" aria-label={`${left} · ${right}`} data-draw="scroll">
+    {[130, 390].map((cx, side) => (
+      <g>
+        <text x={cx} y="16" text-anchor="middle" class:list={['red__title', side ? 'is-on' : '']}>{side ? right : left}</text>
+        {side === 1 && channels.map((_, i) => {
+          const p = pos(i, cx);
+          return <path data-s d={`M${cx} 118 L${p.x.toFixed(1)} ${p.y.toFixed(1)}`} class="lv-art-red" stroke="currentColor" stroke-width="2.2" filter="url(#ink-fino)" />;
+        })}
+        {side === 0 && channels.map((_, i) => {
+          const p = pos(i, cx);
+          const mx = (cx + p.x) / 2, my = (118 + p.y) / 2;
+          return <path data-s d={`M${(cx + (p.x - cx) * 0.25).toFixed(1)} ${(118 + (p.y - 118) * 0.25).toFixed(1)} L${(mx - 4).toFixed(1)} ${(my - 2).toFixed(1)}`} stroke="var(--grafito)" stroke-width="1.4" stroke-dasharray="3 4" />;
+        })}
+        <circle data-fill cx={cx} cy="118" r="26" fill={side ? 'var(--rojo)' : '#FBFAF7'} stroke="currentColor" stroke-width="2" filter="url(#ink-fino)" />
+        <text x={cx} y="122" text-anchor="middle" class:list={['red__center', side ? 'is-on' : '']}>{side ? center : '?'}</text>
+        {channels.map((c, i) => {
+          const p = pos(i, cx);
+          return (
+            <g>
+              <rect data-fill x={(p.x - 44).toFixed(1)} y={(p.y - 13).toFixed(1)} width="88" height="26" fill="#FBFAF7" stroke="currentColor" stroke-width="1.6" filter="url(#ink-fino)" />
+              <text x={p.x.toFixed(1)} y={(p.y + 4).toFixed(1)} text-anchor="middle" class="red__ch">{c}</text>
+            </g>
+          );
+        })}
+      </g>
+    ))}
+  </svg>
+</Fig>
+
+<style>
+  .red { color: var(--tinta); }
+  .red :global(.red__title) { font-family: var(--f-grot); font-size: 12px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; fill: var(--grafito); }
+  .red :global(.red__title.is-on) { fill: var(--rojo); }
+  .red :global(.red__center) { font-family: var(--f-serif); font-style: italic; font-size: 12px; fill: var(--tinta); }
+  .red :global(.red__center.is-on) { fill: #F4F2ED; font-size: 10px; }
+  .red :global(.red__ch) { font-family: var(--f-grot); font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; fill: var(--tinta); }
+</style>

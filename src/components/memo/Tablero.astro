@@ -1,0 +1,81 @@
+---
+/**
+ * ── Tablero Kanban ────────────────────────────────────
+ *
+ * Columnas con notas pegadas; las de "hecho" llevan palomita roja.
+ * Una nota a pluma marca el límite de trabajo en curso (WIP).
+ */
+import Fig from './Fig.astro';
+
+interface Props {
+  n: number;
+  caption: string;
+  columns: Array<{ title: string; cards: string[]; done?: boolean }>;
+  wip?: string;
+}
+
+const { n, caption, columns, wip } = Astro.props;
+---
+
+<Fig n={n} caption={caption}>
+  <div class="kb">
+    {columns.map((col, ci) => (
+      <div class="kb__col">
+        <span class="kb__title">{col.title}</span>
+        {col.cards.map((card, i) => (
+          <span class:list={['kb__card', { 'is-done': col.done }]} style={`rotate:${((ci + i) % 3 - 1) * 1.2}deg`}>
+            {card}
+          </span>
+        ))}
+        {wip && ci === 1 && <span class="kb__wip">{wip}</span>}
+      </div>
+    ))}
+  </div>
+</Fig>
+
+<style>
+  .kb {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+    gap: 16px;
+    padding: 18px;
+    background: color-mix(in srgb, var(--linea) 35%, transparent);
+  }
+
+  .kb__col { display: grid; align-content: start; gap: 10px; }
+
+  .kb__title {
+    padding-bottom: 6px;
+    border-bottom: 1.5px solid var(--tinta);
+    font-family: var(--f-grot);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .kb__card {
+    display: block;
+    padding: 10px 12px;
+    background: var(--hoja);
+    box-shadow: 0 8px 14px -10px rgba(40, 30, 20, 0.45);
+    font-family: var(--f-serif);
+    font-size: 0.98rem;
+    line-height: 1.25;
+  }
+
+  .kb__card.is-done { color: var(--grafito); }
+  .kb__card.is-done::before { content: '✓ '; color: var(--rojo); font-family: var(--f-grot); font-weight: 900; }
+
+  .kb__wip {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--rojo);
+    rotate: -2deg;
+  }
+
+  @media (max-width: 560px) {
+    .kb { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

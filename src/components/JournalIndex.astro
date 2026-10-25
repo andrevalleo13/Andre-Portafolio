@@ -6,7 +6,7 @@
  *   · Cabecera "DIARIO" en negra condensada, línea de edición.
  *   · Nota principal: el memo más reciente con extracto.
  *   · El resto como recortes pegados sobre la mesa, chuecos.
- *   · Al final, el cupón de suscripción.
+ *   · Al final, la suscripción (paloma mensajera).
  */
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 import { getMemos, memoHref, memoDate, excerpt } from '../lib/journal';
@@ -92,7 +92,7 @@ const readLabel = lang === 'es' ? 'Leer memo' : 'Read memo';
     <p class="j-empty">{lang === 'es' ? 'No hay memos publicados aún.' : 'No memos published yet.'}</p>
   )}
 
-  <section class="j-coupon">
+  <section class="j-mail">
     <Newsletter />
   </section>
 </main>
@@ -255,7 +255,7 @@ const readLabel = lang === 'es' ? 'Leer memo' : 'Read memo';
 
   .j-empty { padding: 80px 0; font-style: italic; color: var(--grafito); }
 
-  .j-coupon { display: flex; justify-content: center; padding-top: clamp(24px, 3vw, 48px); }
+  .j-mail { border-top: 1px solid var(--tinta); }
 
   @media (max-width: 1000px) {
     .j-clips { grid-template-columns: repeat(2, minmax(0, 1fr)); }

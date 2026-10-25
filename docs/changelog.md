@@ -2,6 +2,20 @@
 
 Registro cronológico de modificaciones mayores y evolución del proyecto.
 
+## [0.4.2] - 2026-10-25
+
+### Añadido
+- **Journal nuevo:** tres memos en primera persona (EN/ES) sobre lo aprendido en clase y aplicado en Cord y Flouvia: Agile, Lean y bootstrapping; Design Thinking, UX y el recorrido del cliente; NPS, churn, LTV/CAC y omnicanalidad.
+- **Memos en MDX** (`@astrojs/mdx`) con ilustraciones a tinta en `src/components/memo/` (ciclos, Kanban, Venn, iceberg, recorrido del cliente, embudo, balanza, escala NPS, cuentas, multicanal vs. omnicanal, notas al margen).
+- Suscripción a memos rediseñada: sin caja, con paloma mensajera (`Paloma`), campo subrayado a pluma y sello.
+
+### Modificado
+- Astro 7.2.2 → 7.2.10 (requisito de `@astrojs/mdx` 8).
+- Ancho de lectura de los memos limitado a ~70 caracteres.
+
+### Eliminado
+- Los 12 memos anteriores.
+
 ## [0.4.1] - 2026-10-25
 
 ### Añadido

@@ -1,0 +1,121 @@
+---
+title: "La fricción se cobra: Design Thinking, UX y el recorrido del cliente"
+date: 2026-10-22
+readTime: "11 MIN DE LECTURA"
+lang: "es"
+draft: false
+---
+
+import Pasos from '../../components/memo/Pasos.astro';
+import Venn from '../../components/memo/Venn.astro';
+import Iceberg from '../../components/memo/Iceberg.astro';
+import Journey from '../../components/memo/Journey.astro';
+import Ojo from '../../components/memo/Ojo.astro';
+
+En un producto financiero, cada paso de más tiene un precio: alguien que no termina el registro, una factura que no se paga, un cliente que se va con la competencia. Esta sesión fue de Design Thinking, UX y Customer Journey. Este memo es cómo aplico esas tres ideas en Cord y en Flouvia, y lo que aprendí a la mala.
+
+## Design Thinking: empezar por el problema de alguien
+
+Design Thinking es un método centrado en las necesidades reales de las personas. La clase lo relaciona con IDEO y con la d.school de Stanford. Tiene cinco etapas, y la parte que más se olvida es que no son una línea recta.
+
+<Pasos
+  n={1}
+  caption="Las cinco etapas de Design Thinking"
+  steps={[
+    { name: 'Empatizar', note: 'entender al usuario' },
+    { name: 'Definir', note: 'formular el problema' },
+    { name: 'Idear', note: 'generar soluciones' },
+    { name: 'Prototipar', note: 'una versión rápida' },
+    { name: 'Probar', note: 'ponerla frente al usuario' },
+  ]}
+  back="si la prueba falla, regresas a la etapa que haga falta"
+/>
+
+Cord empezó en **empatizar**, aunque en ese momento no le pusimos ese nombre. En las agencias el dolor era siempre el mismo: mandaban la propuesta en PDF, esperaban la firma por correo, perseguían la transferencia, facturaban a mano y conciliaban en Excel. **Definir** fue ponerlo en una frase: el problema no era cotizar, era cerrar. De ahí salió la idea que sigue siendo el centro de todo: de la propuesta al pago, en un solo link.
+
+## Lo deseable, lo factible y lo viable
+
+Un buen diseño necesita tres cosas al mismo tiempo: que la gente lo quiera (**deseabilidad**), que se pueda construir (**factibilidad**) y que funcione como negocio (**viabilidad**).
+
+<Venn
+  n={2}
+  caption="Las tres condiciones de un buen diseño"
+  sets={['Deseable', 'Factible', 'Viable']}
+  notes={['la gente lo quiere', 'se puede construir', 'deja dinero']}
+  center="buen diseño"
+/>
+
+La lección que más me costó fue que lo factible no siempre es viable *hoy*. Cuando abrimos España, construir Verifactu era factible: la huella encadenada, el envío al fisco, todo validado contra los esquemas oficiales. Pero en Estados Unidos el bloqueo no era de código sino de trámite: para completar ciertos formularios fiscales de pagos hacía falta un número de identificación de empresa que Flouvia todavía no tenía. Ninguna línea de código resolvía eso.
+
+<Ojo>Un préstamo inmediato puede ser deseable y factible, pero si prestar cuesta más de lo que recuperas, no es viable. Las tres condiciones o ninguna.</Ojo>
+
+## UX no es UI
+
+Esta es la confusión más común, y en finanzas es la más cara. **UI** (*user interface*) es lo que se ve: botones, colores, tipografía, pantallas. **UX** (*user experience*) es todo el recorrido: qué tan fácil es, cuánto tarda, qué sientes, si confías. La UI es parte de la UX, no al revés.
+
+<Iceberg
+  n={3}
+  caption="Lo que se ve y lo que se siente"
+  top={{ title: 'UI · lo que se ve', items: ['Botones', 'Colores', 'Tipografía', 'Pantallas'] }}
+  bottom={{ title: 'UX · lo que se siente', items: ['Cuántos pasos', 'Cuánto esperas', 'Si sabes qué pasó', 'Si confías con tu dinero'] }}
+/>
+
+En Flouvia lo vemos con cada tienda que construimos: un sitio puede ser precioso y aun así perder ventas porque tarda en cargar. Por eso el portal que le damos a cada cliente, Flouvia OS, muestra las métricas reales de velocidad de su sitio con datos de campo, no una captura bonita. La clase cita a Nielsen Norman Group y a la norma ISO 9241-210 como referencias de UX; la versión corta es que la experiencia se mide en lo que le pasa al usuario, no en cómo se ve.
+
+## Los cuatro principios, aplicados
+
+La clase da cuatro principios de una buena UX. Así se ven en Cord:
+
+- **Claridad:** el cliente abre el link y entiende qué está aprobando: las partidas, los precios negociados, los impuestos por línea. Nada de adivinar.
+- **Poca fricción:** firma y paga en la misma página. Cada salto a otra herramienta es un lugar donde se cae la venta.
+- **Retroalimentación:** el negocio ve en qué va cada cotización (cotizada, aprobada, cobrada) y el cliente sabe si su pago pasó, está pendiente o falló.
+- **Confianza:** el dinero va directo a la cuenta del negocio. Cord procesa el cobro, nunca lo retiene. Cuando mueves dinero de otros, la confianza no es un detalle de diseño: es el producto.
+
+La fricción que más me enseñó fue una que no se veía en la pantalla. En la verificación de identidad, la captura de documentos desde el celular no funcionaba porque una regla de seguridad del sitio bloqueaba la cámara también en esa pantalla. El diseño estaba bien; la experiencia, rota. Lo arreglamos y de paso agregamos compuertas de calidad a la foto y una guía según el país del documento.
+
+<Ojo label="Aprendí">La fricción más cara es la que no ves en tu propia pantalla. Prueba tu flujo en el teléfono de alguien más, con sus documentos y su señal.</Ojo>
+
+## El recorrido del cliente, antes y después
+
+Un **Customer Journey Map** describe qué hace el cliente, dónde interactúa y cómo se siente en cada momento de su relación con una empresa. Tiene cinco elementos: fases, acciones, *touchpoints* (puntos de contacto), emociones y *pain points* (puntos de frustración). No confundas los dos últimos términos: un touchpoint es dónde te tocas con el cliente; un pain point es dónde le duele.
+
+En clase el ejemplo fue una solicitud de préstamo. Yo lo dibujo con el cierre de una venta, que es lo que Cord resuelve:
+
+<Journey
+  n={4}
+  caption="El mismo cierre, sin y con un solo link"
+  rows={[
+    { label: 'Sin Cord', tone: 'rojo', phases: [
+      { name: 'Propuesta', note: 'PDF por correo', mood: -1 },
+      { name: 'Firma', note: 'imprimir y escanear', mood: -2 },
+      { name: 'Cobro', note: 'esperar la transferencia', mood: -2 },
+      { name: 'Factura', note: 'a mano', mood: -1 },
+      { name: 'Conciliar', note: 'en Excel', mood: -2 },
+    ] },
+    { label: 'Con Cord', tone: 'azul', phases: [
+      { name: 'Link', note: 'cotización en vivo', mood: 1 },
+      { name: 'Firma', note: 'en la misma página', mood: 1 },
+      { name: 'Cobro', note: 'al aprobar', mood: 2 },
+      { name: 'Factura', note: 'ligada al pago', mood: 1 },
+      { name: 'Cobranza', note: 'la persigue un agente', mood: 2 },
+    ] },
+  ]}
+/>
+
+Lo importante de este mapa no es el dibujo, es lo que te obliga a ver: casi todos los pain points de la primera fila son saltos entre herramientas. Mejorar la UX no fue cambiar colores; fue quitar saltos.
+
+Para construir uno, la clase propone cinco pasos: elegir un perfil de usuario y una meta, dividir el recorrido en cuatro a seis fases, identificar acciones y puntos de contacto, registrar emociones y fricciones, y priorizar las mejoras. Y algo que el profesor recalcó y que comparto: el mapa se hace con entrevistas, tickets de soporte y datos reales, no con lo que tú crees que siente el cliente.
+
+## Customer centric, en serio
+
+Ser *customer centric* es poner al cliente en el centro de las decisiones de producto, operación, cobros y medición. Antes de decidir algo, la pregunta es si mejora la experiencia del cliente. La clase citó un dato atribuido a Deloitte: los clientes con experiencias de alta calidad son 3.6 veces más propensos a comprar productos adicionales.
+
+En Flouvia tomamos una decisión que resume esto: el portal de clientes nunca muestra datos de ejemplo. Si algo no se ha cargado, aparece vacío, no inventado. Sin gráficas decorativas ni indicadores de "todo en orden" que nadie midió. Puede verse menos impresionante, pero el cliente confía en lo que ve, y en un negocio de pocos clientes al año esa confianza vale más que cualquier pantalla bonita.
+
+## Lo que me llevo
+
+1. Empieza por el problema de alguien con nombre, no por la solución que te emociona.
+2. Revisa las tres condiciones. Si una falta, no es buen diseño, por bonito que se vea.
+3. UX es el recorrido completo; la UI es solo una parte.
+4. Dibuja el recorrido de tu cliente y cuenta los saltos entre herramientas. Cada salto es una venta en riesgo.
+5. No le muestres al cliente nada que no sea real.

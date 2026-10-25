@@ -1,0 +1,51 @@
+---
+/**
+ * ── Embudo ────────────────────────────────────────────
+ *
+ * Embudo a pluma con sus etapas; cada etapa más angosta que la
+ * anterior (ilustrativo, no proporcional a datos) y una nota al lado.
+ */
+import Fig from './Fig.astro';
+
+interface Props {
+  n: number;
+  caption: string;
+  stages: Array<{ name: string; note: string }>;
+}
+
+const { n, caption, stages } = Astro.props;
+const H = 62;
+const top = 300;
+const shrink = 56;
+const layers = stages.map((s, i) => {
+  const w1 = top - i * shrink;
+  const w2 = top - (i + 1) * shrink;
+  const y = 10 + i * H;
+  const x1 = 170 - w1 / 2;
+  const x2 = 170 - w2 / 2;
+  return { ...s, d: `M${x1} ${y} L${x1 + w1} ${y} L${x2 + w2} ${y + H - 6} L${x2} ${y + H - 6} Z`, y, i };
+});
+const tones = ['var(--azul)', 'var(--pint-naranja)', 'var(--rojo)', 'var(--tinta)'];
+---
+
+<Fig n={n} caption={caption}>
+  <svg class="lv-art embudo" viewBox={`0 0 560 ${stages.length * H + 20}`} role="img" aria-label={stages.map((s) => s.name).join(' → ')} data-draw="scroll">
+    <g filter="url(#ink-fino)">
+      {layers.map((l) => <path data-fill d={l.d} style={`fill: ${tones[l.i % tones.length]}`} fill-opacity="0.85" />)}
+      {layers.map((l) => <path data-s d={l.d} fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />)}
+    </g>
+    {layers.map((l) => (
+      <g>
+        <text x="170" y={l.y + H / 2 + 2} text-anchor="middle" class="embudo__name">{l.name}</text>
+        <path d={`M${330 - l.i * 6} ${l.y + H / 2 - 3} L360 ${l.y + H / 2 - 3}`} stroke="var(--grafito)" stroke-width="1" stroke-dasharray="3 3" />
+        <text x="368" y={l.y + H / 2 + 2} class="embudo__note">{l.note}</text>
+      </g>
+    ))}
+  </svg>
+</Fig>
+
+<style>
+  .embudo { max-width: 600px; color: var(--tinta); }
+  .embudo :global(.embudo__name) { font-family: var(--f-grot); font-size: 14px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; fill: #F4F2ED; }
+  .embudo :global(.embudo__note) { font-family: var(--f-serif); font-style: italic; font-size: 15px; fill: var(--tinta); }
+</style>

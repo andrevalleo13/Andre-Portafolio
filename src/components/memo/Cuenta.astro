@@ -1,0 +1,67 @@
+---
+/**
+ * ── Cuenta a mano ─────────────────────────────────────
+ *
+ * Una cuenta como en el margen de una libreta: renglones con su
+ * cifra, una raya y el resultado encerrado con la pluma roja.
+ */
+import Fig from './Fig.astro';
+
+interface Props {
+  n: number;
+  caption: string;
+  lines: Array<[string, string]>;
+  result: [string, string];
+  note?: string;
+}
+
+const { n, caption, lines, result, note } = Astro.props;
+---
+
+<Fig n={n} caption={caption}>
+  <div class="cta">
+    {lines.map(([label, value]) => (
+      <div class="cta__row"><span>{label}</span><b>{value}</b></div>
+    ))}
+    <div class="cta__row is-result">
+      <span>{result[0]}</span>
+      <b><span data-pen data-pen-scroll data-delay="0.3">{result[1]}</span></b>
+    </div>
+    {note && <span class="cta__note">{note}</span>}
+  </div>
+</Fig>
+
+<style>
+  .cta {
+    display: grid;
+    gap: 2px;
+    max-width: 440px;
+    padding: 18px 22px;
+    background: var(--hoja);
+    box-shadow: var(--sombra-hoja);
+    background-image: repeating-linear-gradient(transparent 0 33px, var(--linea) 33px 34px);
+    rotate: -0.6deg;
+  }
+
+  .cta__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 20px;
+    min-height: 34px;
+    font-family: var(--f-serif);
+    font-size: 1.05rem;
+  }
+
+  .cta__row b {
+    font-family: var(--f-grot);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cta__row.is-result { margin-top: 6px; padding-top: 8px; border-top: 2px solid var(--tinta); }
+  .cta__row.is-result b { font-size: 1.5rem; font-weight: 900; font-stretch: 75%; color: var(--rojo); }
+  .cta__row.is-result b span { display: inline-block; padding: 0 6px; }
+
+  .cta__note { margin-top: 8px; font-family: var(--f-serif); font-style: italic; font-size: 0.95rem; color: var(--grafito); }
+</style>

@@ -1,0 +1,58 @@
+---
+/**
+ * ── Paloma mensajera ──────────────────────────────────
+ *
+ * Una paloma a tinta en vuelo con una carta enrollada amarrada a la
+ * pata con hilo rojo. Para el bloque de suscripción a los memos.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Paloma mensajera en vuelo con una carta enrollada',
+  class: className,
+} = Astro.props;
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 300 220"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink-fino)">
+    <path data-fill d="M70 120 C96 96 150 92 196 104 C214 108 226 116 232 126 C220 140 186 148 150 148 C114 148 84 140 70 120 Z" fill="#FBFAF7" />
+    <path data-fill d="M120 104 C120 70 150 30 196 14 C190 48 176 80 160 102 Z" fill="#EDE6D8" />
+    <path data-fill d="M196 104 C206 92 222 88 236 94 C244 98 248 106 246 114 L232 126 Z" fill="#FBFAF7" />
+  </g>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <!-- cuerpo y cola -->
+    <path data-s stroke-width="2.6" d="M70 120 C96 96 150 92 196 104 C214 108 226 116 232 126 C220 140 186 148 150 148 C114 148 84 140 70 120 Z" />
+    <path data-s stroke-width="2.4" d="M70 120 L30 104 L38 120 L24 132 L72 128" />
+    <!-- ala levantada, con plumas -->
+    <path data-s stroke-width="2.6" d="M120 104 C120 70 150 30 196 14 C190 48 176 80 160 102" />
+    <path data-s stroke-width="1.4" d="M134 92 C142 70 160 46 182 30 M146 98 C154 78 168 58 188 42 M128 100 C134 82 146 62 164 46" />
+    <!-- cabeza y pico -->
+    <path data-s stroke-width="2.6" d="M196 104 C206 92 222 88 236 94 C244 98 248 106 246 114 L232 126" />
+    <path data-s stroke-width="2.4" d="M246 104 L262 108 L246 112" />
+    <!-- patas -->
+    <path data-s stroke-width="2" d="M150 148 L146 166 M162 146 L162 164" />
+  </g>
+  <circle data-pop cx="234" cy="102" r="2.8" fill="currentColor" />
+  <!-- la carta enrollada, con hilo rojo -->
+  <g filter="url(#ink-fino)">
+    <path data-fill d="M134 166 L178 166 L178 182 L134 182 Z" fill="#FBFAF7" />
+    <path data-s d="M134 166 L178 166 L178 182 L134 182 Z M140 166 L140 182 M172 166 L172 182" fill="none" stroke="currentColor" stroke-width="1.8" />
+    <path data-s class="lv-art-red" d="M156 164 L156 184 M146 164 C152 160 160 160 166 164" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+  </g>
+  <!-- trazos de vuelo -->
+  <path data-s class="lv-art-red" filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M14 70 L44 72 M8 88 L32 90 M20 150 L48 148" />
+</svg>
