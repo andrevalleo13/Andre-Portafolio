@@ -64,7 +64,7 @@ Los estados iniciales ocultos viven en CSS bajo `@media (scripting: enabled)` ha
 ## Detalles únicos
 
 - **Etiqueta roja** (`Etiqueta.astro`) como marca, estilo label de ropa; la versión completa lleva la numeración 0–23 de Margiela con la página actual encerrada.
-- **Índice a pantalla completa** como collage, abierto con una gota de tinta (`clip-path`).
+- **Navbar**: la etiqueta roja cosida como marca y el botón Índice como etiqueta colgante con ojal (se mece). El **índice a pantalla completa** se abre con una gota de tinta y es un cuadro: lino, trozos de pintura con lobo y "BUILT, NOT BOUGHT©", las secciones en Redaction gigante y notas a barra de óleo que se escriben al abrir.
 - **Holdings** en scroll horizontal fijado; cada proyecto es una lámina.
 - **Footer**: "let's talk." (igual en ambos idiomas) sobre un fondo que se pinta: manchas orgánicas, latigazos y escurrimientos con el cursor (`splatter.ts`), como los GATs pintados.
 - **Títulos que se desgastan** al pasar el cursor (Redaction → Redaction 50).

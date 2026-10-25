@@ -43,7 +43,7 @@ André es financiero y dev (Cord, Flouvia). El sitio tiene que ser serio pero no
 Lenis da el scroll con inercia (`smooth.ts`); `splatter.ts` pinta el footer con el cursor. Con `prefers-reduced-motion` todo aparece en su estado final.
 
 ## Lo que se hizo (rediseño "Lujo vivido", oct 2026)
-- **Navbar**: etiqueta roja de ropa como marca (`Etiqueta`), EN/ES, Contacto a pluma, botón Índice; el índice abre a pantalla completa como collage con gota de tinta. A André le gusta mucho; cualquier cambio debe conservar ese espíritu.
+- **Navbar**: etiqueta roja de ropa cosida como marca (`Etiqueta`), EN/ES, Contacto a pluma y el botón Índice como etiqueta colgante con ojal que se mece. El índice abre con gota de tinta y es un cuadro sobre lino (`Lienzo`: lobo "NO LEASH", "BUILT, NOT BOUGHT©") con las secciones en Redaction gigante y notas a barra de óleo. A André le gusta mucho; cualquier cambio debe conservar ese espíritu.
 - **Home**: portada collage ("André / VALLE / Ortega", lobo, etiqueta roja "i lowkey dgaf anymore"), Tesis con KPIs, Holdings en scroll horizontal, la pared tipo salón (Colección: "La manga rota", el as "PLAY THE GAME", The 6, el 911…), Memos.
 - **Work**: índice de renglones gigantes; **Cord** (cordón que se dibuja con el scroll, 12 banderas pintadas, timbres fiscales, $5k MRR) y **Flouvia** (carta de servicios, pósters, boceto de Flouvia OS) con páginas propias. Texto en `src/data/cases/`.
 - **About**: manifiesto, experiencia, competencias como etiquetas cosidas arrastrables, "Reglas de la casa" pintadas a brocha (`RULES` en `src/data/about.ts`, editable), sus gustos (Barça, Drake/The 6, tequila, café con cigarro, Porsche 911).

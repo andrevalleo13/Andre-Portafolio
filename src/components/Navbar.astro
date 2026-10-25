@@ -3,22 +3,29 @@
  * ── Navbar Component ──────────────────────────────────
  *
  * Mínima, en las esquinas:
- *   [etiqueta roja]                         EN/ES   Contacto   Índice ●
+ *   [etiqueta roja cosida]                EN/ES   Contacto   [etiqueta colgante]
  * Transparente al inicio → papel + línea fina al hacer scroll; se
  * esconde al bajar y regresa al subir.
  *
- * "Índice" abre una hoja a pantalla completa compuesta como collage:
- * las secciones en Bodoni gigante, sueltas y a escalas distintas, con
- * su número de etiqueta (guiño a Margiela) y dibujos alrededor. Se
- * abre como una gota de tinta que se expande desde el botón.
- * La página actual queda en cursiva roja, encerrada con la pluma.
+ * La marca es la etiqueta roja de ropa, con sus puntadas. "Índice" es
+ * una etiqueta colgante (hang tag) con ojal, colgada de un hilo desde
+ * el borde de la pantalla: se mece al pasar el cursor y se pone roja
+ * con "Cerrar" al abrir.
+ *
+ * El índice se abre como una gota de tinta y se lee como un cuadro:
+ * lino, trozos de pintura (`Lienzo`: azul con lobo, negro con
+ * "BUILT, NOT BOUGHT©", naranja, chorreados rojos) y las secciones en
+ * Redaction gigante, sueltas, con su número de etiqueta (guiño a
+ * Margiela) y una nota a barra de óleo que se escribe al abrir.
+ * La página actual queda en rojo, encerrada con la pluma.
  * Colores desde los alias de superficie (--bg, --fg…) definidos en Base.
  */
 import { navItems, languages } from '../i18n/ui';
 import { getLangFromUrl, useTranslations, getLocalePath, getAlternateLangPath } from '../i18n/utils';
+import { getMemos } from '../lib/journal';
 import Etiqueta from './art/Etiqueta.astro';
-import Caballo from './art/Caballo.astro';
-import Trazo from './art/Trazo.astro';
+import Lienzo from './art/Lienzo.astro';
+import { escribir, ancho } from './art/mano';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -30,6 +37,16 @@ const isActive = (href: string) =>
   href === '/' ? basePath === '/' : basePath === href || basePath.startsWith(`${href}/`);
 
 const overlayItems = [{ id: 'home', href: '/' }, ...navItems];
+
+/* Notas a barra de óleo junto a cada sección (en inglés, como los cuadros) */
+const memoCount = (await getMemos(lang)).length;
+const notes: Record<string, string> = {
+  home: 'START HERE',
+  work: 'CORD + FLOUVIA',
+  about: 'UNFILTERED',
+  journal: `${memoCount} MEMOS`,
+  contact: 'PITCH ME',
+};
 
 const langLinks = Object.entries(languages).map(([code, text]) => ({
   code,
@@ -61,19 +78,21 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
       aria-current={isActive('/contact') ? 'page' : undefined}
     >{label('contact')}</a>
     <button class="nav__menu" id="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-overlay">
-      <span class="nav__menu-open">{t('home.index')}</span>
-      <span class="nav__menu-close">{t('nav.close')}</span>
-      <i aria-hidden="true"></i>
+      <svg class="nav__string" viewBox="0 0 24 80" aria-hidden="true"><path d="M22 80 C12 62 20 30 8 0" /></svg>
+      <span class="nav__tag">
+        <span class="nav__menu-open">{t('home.index')}</span>
+        <span class="nav__menu-close">{t('nav.close')}</span>
+      </span>
     </button>
   </div>
 </header>
 
 <div class="overlay" id="mobile-overlay" aria-hidden="true" inert data-lenis-prevent>
   <div class="overlay__marks" aria-hidden="true">
-    <div class="overlay__ocre"><Trazo kind="verde" draw="none" /></div>
-    <div class="overlay__agua"><Trazo kind="puntos" draw="none" /></div>
-    <div class="overlay__horse"><Caballo draw="none" /></div>
-    <div class="overlay__dog"><Trazo kind="estrellas" draw="none" /></div>
+    <div class="overlay__azul"><Lienzo piece="azul" /></div>
+    <div class="overlay__negro"><Lienzo piece="negro" /></div>
+    <div class="overlay__naranja"><Lienzo piece="naranja" /></div>
+    <div class="overlay__rojo"><Lienzo piece="rojo" /></div>
   </div>
 
   <nav aria-label={t('nav.main')}>
@@ -87,6 +106,9 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
           >
             <span class="overlay__num">{i}</span>
             <span class="overlay__label" data-pen aria-current={isActive(item.href) ? 'page' : undefined}>{label(item.id)}</span>
+            <svg class="overlay__note" viewBox={`-3 -3 ${(ancho(notes[item.id], { size: 20 }) + 6).toFixed(1)} 26`} aria-hidden="true">
+              <path d={escribir(notes[item.id], 0, 2, { size: 20, seed: i + 3 })} />
+            </svg>
           </a>
         </li>
       ))}
@@ -111,6 +133,7 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
      BARRA
   ──────────────────────────────────────── */
   .nav {
+    --lino: #ECE5D6;
     position: fixed;
     inset: 0 0 auto;
     z-index: 200;
@@ -135,10 +158,10 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
 
   .nav.is-hidden { translate: 0 -105%; }
 
-  /* Con el índice abierto la barra queda sobre papel, en cualquier superficie */
+  /* Con el índice abierto la barra queda sobre el lino, en cualquier superficie */
   .nav.is-open {
     --fg: var(--tinta);
-    --bg: var(--papel);
+    --bg: var(--lino);
     --fg-soft: var(--grafito);
     background-color: transparent;
     box-shadow: none;
@@ -153,9 +176,24 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
     text-decoration: none;
   }
 
+  /* La etiqueta, cosida: puntadas en los dos extremos */
   .nav__brand :global(.nav__etiqueta) {
+    position: relative;
+    padding-inline: 1.05em;
     transition: rotate 0.8s var(--ease-expo);
   }
+
+  .nav__brand :global(.nav__etiqueta)::before,
+  .nav__brand :global(.nav__etiqueta)::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    border-left: 1.5px dashed rgba(244, 242, 237, 0.6);
+  }
+
+  .nav__brand :global(.nav__etiqueta)::before { left: 4px; }
+  .nav__brand :global(.nav__etiqueta)::after { right: 4px; }
 
   .nav__brand:hover :global(.nav__etiqueta) { rotate: -3deg; }
 
@@ -199,51 +237,93 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
     text-decoration: none;
   }
 
+  /* Índice: etiqueta colgante con ojal, colgada de un hilo */
   .nav__menu {
     position: relative;
     z-index: 300;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--bg);
+    cursor: pointer;
+  }
+
+  .nav__string {
+    position: absolute;
+    left: 2px;
+    bottom: 50%;
+    width: 12px;
+    height: 70px;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .nav__string path {
+    fill: none;
+    stroke: var(--fg);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+  }
+
+  .nav__tag {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.55rem 0.9rem;
-    border: 0;
-    border-radius: 2px;
+    padding: 0.55rem 0.95rem 0.55rem 1.7rem;
     background: var(--fg);
-    color: var(--bg);
     font-family: var(--f-grot);
     font-size: 0.7rem;
     font-weight: 600;
     font-stretch: 90%;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    cursor: pointer;
+    clip-path: polygon(12px 0, 100% 0, 100% 100%, 12px 100%, 0 50%);
+    -webkit-mask: radial-gradient(circle at 11px 50%, transparent 3px, #000 3.6px);
+    mask: radial-gradient(circle at 11px 50%, transparent 3px, #000 3.6px);
+    transform-origin: 11px 50%;
     transition: background-color 0.5s var(--ease-expo);
   }
 
-  .nav__menu i {
-    width: 7px;
-    height: 7px;
+  /* El ojal: arillo alrededor del agujero */
+  .nav__tag::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: calc(50% - 6px);
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid color-mix(in srgb, var(--bg) 55%, transparent);
     border-radius: 50%;
-    background: var(--accent);
-    transition: scale 0.6s var(--ease-expo);
   }
 
-  .nav__menu:hover { background: var(--accent); }
-  .nav__menu:hover i { background: var(--bg); scale: 1.4; }
+  .nav__menu:hover .nav__tag {
+    background: var(--accent);
+    animation: tag-swing 1.3s var(--ease-expo);
+  }
+
+  .nav__menu[aria-expanded='true'] .nav__tag { background: var(--rojo); color: #F4F2ED; }
+
+  @keyframes tag-swing {
+    0%   { rotate: 0deg; }
+    20%  { rotate: -9deg; }
+    45%  { rotate: 5deg; }
+    70%  { rotate: -2deg; }
+    100% { rotate: 0deg; }
+  }
 
   .nav__menu-close { display: none; }
   .nav__menu[aria-expanded='true'] .nav__menu-open { display: none; }
   .nav__menu[aria-expanded='true'] .nav__menu-close { display: inline; }
 
   /* ────────────────────────────────────────
-     ÍNDICE (collage a pantalla completa)
+     ÍNDICE (un cuadro a pantalla completa)
   ──────────────────────────────────────── */
   .overlay {
     position: fixed;
     inset: 0;
     z-index: 150;
     overflow: hidden;
-    background: var(--papel);
+    background: #ECE5D6;
     color: var(--tinta);
     clip-path: circle(0% at calc(100% - var(--gutter) - 40px) 36px);
     visibility: hidden;
@@ -261,17 +341,29 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
   .overlay__marks > div {
     position: absolute;
     pointer-events: none;
+    opacity: 0;
+    scale: 0.94;
+    transition: opacity 0.6s ease, scale 1.2s var(--ease-expo);
   }
 
-  .overlay__ocre { left: 58%; top: -6%; width: 46vw; opacity: 0.9; rotate: -6deg; }
-  .overlay__agua { left: 2%; top: 60%; width: 22vw; opacity: 0.85; }
-  .overlay__horse { right: 6%; top: 20%; width: 17vw; rotate: 5deg; }
-  .overlay__dog { right: 10%; bottom: 10%; width: 20vw; }
+  .overlay.is-open .overlay__marks > div {
+    opacity: 1;
+    scale: 1;
+    transition-delay: 0.25s;
+  }
+
+  .overlay__marks :global(.lienzo) { display: block; width: 100%; overflow: visible; }
+
+  .overlay__azul { right: -1%; top: 12%; width: 36vw; rotate: -3deg; }
+  .overlay__negro { right: 1.5%; top: 53%; width: 16.5vw; rotate: 3deg; }
+  .overlay__naranja { left: -2%; bottom: 12%; width: 18vw; rotate: -2deg; }
+  .overlay__rojo { left: 1%; top: 30%; width: 6vw; }
 
   .overlay__links { list-style: none; }
 
   .overlay__item {
     position: absolute;
+    z-index: 1;
     opacity: 0;
     translate: 0 40px;
     rotate: 3deg;
@@ -295,6 +387,7 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
   .overlay__item--4 { left: 16%; top: 72%; font-size: 8.5vw; font-style: italic; }
 
   .overlay__link {
+    position: relative;
     display: inline-flex;
     align-items: flex-start;
     gap: 0.12em;
@@ -320,11 +413,38 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
   .overlay__link:hover .overlay__label,
   .overlay__link[aria-current='page'] .overlay__label { color: var(--rojo); }
 
+  /* La nota a barra de óleo: se escribe de izquierda a derecha al abrir */
+  .overlay__note {
+    align-self: flex-end;
+    flex: none;
+    width: auto;
+    height: 0.16em;
+    margin: 0 0 0.16em 0.2em;
+    overflow: visible;
+    rotate: -4deg;
+    clip-path: inset(-40% 100% -40% 0);
+    transition: clip-path 0.9s var(--ease-expo);
+  }
+
+  .overlay.is-open .overlay__note {
+    clip-path: inset(-40% -6% -40% 0);
+    transition-delay: calc(var(--i) * 90ms + 650ms);
+  }
+
+  .overlay__note path {
+    fill: none;
+    stroke: var(--rojo);
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
   .overlay__foot {
     position: absolute;
     left: var(--gutter);
     right: var(--gutter);
     bottom: 1.6rem;
+    z-index: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -350,15 +470,29 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
     .overlay__item--3 { left: 30%; top: 54%; font-size: 17vw; }
     .overlay__item--4 { left: 6%; top: 67%; font-size: 15vw; }
     .overlay__item { padding-left: var(--gutter); }
-    .overlay__horse { right: 4%; top: 72%; width: 34vw; }
-    .overlay__dog { display: none; }
-    .overlay__ocre { width: 110vw; left: 10%; }
+
+    /* La nota baja debajo de la palabra */
+    .overlay__note {
+      position: absolute;
+      left: 1.1em;
+      top: 100%;
+      height: 0.15em;
+      margin: 0.04em 0 0;
+    }
+
+    .overlay__azul { left: -4%; right: auto; top: auto; bottom: 5.5%; width: 46vw; rotate: -3deg; }
+    .overlay__negro { right: 3%; top: auto; bottom: 6%; width: 40vw; }
+    .overlay__naranja,
+    .overlay__rojo { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .nav,
     .overlay,
-    .overlay__item { transition: none; }
+    .overlay__item,
+    .overlay__marks > div,
+    .overlay__note { transition: none; }
+    .nav__menu:hover .nav__tag { animation: none; }
   }
 </style>
 

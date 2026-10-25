@@ -6,7 +6,7 @@
 `<head>` (SEO, OG, JSON-LD, fuentes), tokens CSS, piezas compartidas `lv-*`, `InkDefs`, `Navbar`, `Footer` e inicialización de scripts. Props: `title`, `description?`.
 
 ### `Navbar.astro`
-Barra mínima: etiqueta roja (marca) a la izquierda; EN/ES, "Contacto" (pluma roja) y botón "Índice" a la derecha. Papel + línea fina al hacer scroll; se esconde al bajar y vuelve al subir. "Índice" abre una hoja a pantalla completa compuesta como collage (secciones en Redaction gigante, sueltas, con número de etiqueta; la actual en cursiva roja y encerrada). Se abre como gota de tinta (`clip-path`), detiene Lenis, cierra con Escape.
+Barra mínima: la etiqueta roja (marca) **cosida**, con puntadas en los extremos; EN/ES, "Contacto" (pluma roja) y el botón "Índice" como **etiqueta colgante** (hang tag con ojal, colgada de un hilo desde el borde de la pantalla; se mece al pasar el cursor y se pone roja con "Cerrar"). Papel + línea fina al hacer scroll; se esconde al bajar y vuelve al subir. "Índice" abre, como gota de tinta (`clip-path`), una hoja de lino que se lee como **un cuadro**: trozos de pintura (`Lienzo`: azul con lobo "NO LEASH", negro "BUILT, NOT BOUGHT©", naranja con la cuenta, chorreados rojos) y las secciones en Redaction gigante, sueltas, con número de etiqueta y una nota a barra de óleo (`mano.ts`) que se escribe al abrir (START HERE, CORD + FLOUVIA, UNFILTERED, n MEMOS, PITCH ME). La página actual queda en rojo y encerrada. Detiene Lenis, cierra con Escape.
 
 ### `Footer.astro`
 Fondo tinta que se pinta: al entrar en pantalla caen unas manchas solas y el cursor salpica pintura (`splatter.ts`: gotas orgánicas con brillo, latigazos según la velocidad, escurrimientos, un color por gesto, clic = salpicadura grande, botón "limpiar el lienzo"). Encima: "let's talk." gigante en Hubot negra roja (igual en EN y ES), email, índice con la numeración 0–23 de Margiela y una línea base con `Etiqueta`, redes, © y "volver arriba".
@@ -55,7 +55,7 @@ Todos aceptan `draw` (`load` · `scroll` · `manual` · `none`), `delay`, `label
 
 **Marcas:** `Trazo` con `kind`: `rojo`, `ocre`, `salpicadura`, `garabato`, `estrella`, `twombly`, `verde`, `puntos`, `rayas`, `sol`, `zigzag`, `espiral`, `tachas`, `cadena`, `estrellas`, `cielo`, `corona`, y las pinturas de fondo `grafiti` y `brochazo` (con `tone`). Van detrás del texto, nunca encima. A André no le gustaron el chorreado tipo peine ni el salpicado tipo Pollock: no volver a usarlos. La pincelada naranja es la firma de la portada; en el resto del sitio se usan otras marcas para no repetir. A André no le gusta la mancha azul circular (`acuarela`): no usarla.
 
-**Marca:** `Etiqueta` (`mini` · `full` con numeración 0–23). **Filtros SVG:** `InkDefs` (`#ink`, `#ink-fino`, `#pintura`, `#acuarela`, `#sello-f`, `#flor`), montado una vez por página.
+**Marca:** `Etiqueta` (`mini` · `full` con numeración 0–23). **Índice:** `Lienzo` (`piece`: `azul` · `negro` · `naranja` · `rojo`), los trozos de pintura del menú. **Filtros SVG:** `InkDefs` (`#ink`, `#ink-fino`, `#pintura`, `#acuarela`, `#sello-f`, `#flor`), montado una vez por página.
 
 ## Ilustraciones de memos (`components/memo/`)
 

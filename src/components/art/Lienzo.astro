@@ -1,0 +1,85 @@
+---
+/**
+ * ── Lienzo (trozos del índice) ────────────────────────
+ *
+ * Trozos de pintura para el índice a pantalla completa: juntos hacen
+ * que la hoja del menú se lea como un cuadro, con las secciones en
+ * Redaction encima.
+ *   azul     bloque azul con chorreados y un lobo crudo a barra de óleo
+ *   negro    bloque negro con "BUILT, NOT BOUGHT©"
+ *   naranja  brochazo naranja con la cuenta y un gato (#) a mano
+ *   rojo     chorreados rojos y tachas sueltas
+ */
+import { escribir } from './mano';
+
+interface Props {
+  piece: 'azul' | 'negro' | 'naranja' | 'rojo';
+  class?: string;
+}
+
+const { piece, class: className } = Astro.props;
+
+const W = (t: string, x: number, y: number, size: number, tilt = 0, seed = 1) => escribir(t, x, y, { size, tilt, seed });
+const drip = (x: number, y: number, l: number) => `M${x} ${y} C${x + 1.5} ${y + l * 0.4} ${x - 1.5} ${y + l * 0.7} ${x} ${y + l}`;
+const VIEW = { azul: '0 0 540 320', negro: '0 0 360 200', naranja: '0 0 420 170', rojo: '0 0 120 320' };
+const wolf = 'M220 120 L236 58 L262 104 L300 96 L328 52 L340 104 C382 112 430 132 470 150 C476 158 470 166 460 168 L420 172 C410 196 380 206 340 204 C300 202 262 196 236 180 C214 166 210 140 220 120 Z';
+---
+
+<svg class:list={['lv-art', 'lienzo', className]} viewBox={VIEW[piece]} aria-hidden="true">
+  {piece === 'azul' && (
+    <>
+      <path filter="url(#pintura)" style="fill: var(--azul)" d="M10 22 C140 6 360 26 530 10 L534 248 C400 262 200 244 14 258 Z" />
+      <path filter="url(#pintura)" fill="none" style="stroke: var(--cielo)" opacity="0.7" stroke-width="16" stroke-linecap="round" d="M40 222 C160 210 300 232 500 214" />
+      <g filter="url(#ink-fino)" style="stroke: var(--azul); fill: var(--azul)" stroke-linecap="round">
+        {[[70, 252, 50, 5], [196, 246, 26, 3], [488, 244, 64, 4]].map(([x, y, l, w]) => (
+          <>
+            <path d={drip(x, y, l)} stroke-width={w} fill="none" />
+            <circle cx={x} cy={y + l + w * 0.5} r={w * 0.85} stroke="none" />
+          </>
+        ))}
+      </g>
+      <g filter="url(#ink)" fill="none" stroke="#F4F0E6" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke-width="5" d={wolf} />
+        <path stroke-width="3" d="M360 172 L368 186 L376 172 L384 186 L392 172 L400 186 L408 172 L416 182 M226 182 L208 214 M246 190 L236 226 M266 196 L262 232" />
+        <path stroke-width="2.6" d={W('WOLF©', 372, 216, 18, -3, 4)} />
+        <path stroke-width="3.4" d={W('NO LEASH', 40, 44, 26, -2, 7)} />
+      </g>
+      <circle filter="url(#ink-fino)" cx="332" cy="128" r="10" class="lv-art-red-fill" />
+      <circle cx="466" cy="153" r="6" style="fill: var(--tinta-fija)" />
+    </>
+  )}
+
+  {piece === 'negro' && (
+    <>
+      <path filter="url(#pintura)" style="fill: var(--tinta-fija)" d="M8 16 C120 4 240 20 352 8 L356 190 L4 196 Z" />
+      <g filter="url(#ink-fino)" fill="none" stroke="#F4F0E6" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke-width="5" d={W('BUILT,', 30, 40, 38, -3, 2)} />
+        <path stroke-width="3.2" d={W('NOT BOUGHT©', 34, 112, 24, -2, 9)} />
+      </g>
+      <path filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" d="M30 166 C110 156 220 170 330 154" />
+    </>
+  )}
+
+  {piece === 'naranja' && (
+    <>
+      <path filter="url(#pintura)" style="fill: var(--pint-naranja)" d="M6 42 C120 22 300 52 414 28 L416 156 L4 162 Z" />
+      <g filter="url(#ink-fino)" fill="none" style="stroke: var(--tinta-fija)" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke-width="3.2" d="M40 70 L38 128 M58 70 L57 128 M76 70 L75 128 M94 70 L93 128 M28 116 L106 82 M136 70 L135 128 M154 70 L153 128 M172 70 L171 128" />
+        <path stroke-width="3" d="M250 64 L246 140 M290 62 L288 140 M224 88 L318 86 M224 116 L318 114 M232 70 L244 82 M244 70 L232 82 M298 96 L310 108 M310 96 L298 108" />
+        <path stroke-width="3" d="M266 122 C276 122 278 136 266 137 C256 137 256 122 268 121" />
+        <path stroke-width="2.4" d={W('DAY 1', 336, 78, 16, -6, 3)} />
+      </g>
+    </>
+  )}
+
+  {piece === 'rojo' && (
+    <g filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-linecap="round">
+      <path stroke-width="10" filter="url(#pintura)" d="M14 22 C40 14 70 26 104 16" />
+      <path stroke-width="4" d={drip(30, 26, 150)} />
+      <path stroke-width="3" d={drip(66, 24, 90)} />
+      <path stroke-width="5" d={drip(94, 20, 210)} />
+      <path stroke-width="2.6" d="M20 250 L44 274 M44 250 L20 274 M54 262 L74 284 M74 262 L54 284" />
+      <path stroke-width="2.2" d={W('©', 30, 292, 16, 0, 5)} />
+    </g>
+  )}
+</svg>
