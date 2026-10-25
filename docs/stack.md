@@ -8,6 +8,7 @@ Tecnologías, dependencias y configuración del proyecto.
 |---|---|---|
 | Framework | `astro` 7.x | Sitio estático + View Transitions (`astro:transitions`) |
 | Deploy | `@astrojs/vercel` | Adapter; solo `src/pages/api/*` es serverless |
+| Contenido | `@astrojs/mdx` 8 | Memos del Journal en MDX con ilustraciones (requiere astro ≥ 7.2.10) |
 | Animación | `gsap` 3.15 | ScrollTrigger, DrawSVG, Draggable, Inertia (incluidos y gratis desde 3.13) |
 | Scroll | `lenis` 1.3 | Scroll con inercia, sincronizado con el reloj de GSAP |
 | Fuentes | `@fontsource/redaction`, `@fontsource/redaction-50`, `@fontsource-variable/hubot-sans` | Servidas desde el propio sitio (sin Google Fonts) |

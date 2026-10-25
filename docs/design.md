@@ -68,4 +68,8 @@ Los estados iniciales ocultos viven en CSS bajo `@media (scripting: enabled)` ha
 - **Holdings** en scroll horizontal fijado; cada proyecto es una lámina.
 - **Footer**: "let's talk." (igual en ambos idiomas) sobre un fondo que se pinta: manchas orgánicas, latigazos y escurrimientos con el cursor (`splatter.ts`), como los GATs pintados.
 - **Títulos que se desgastan** al pasar el cursor (Redaction → Redaction 50).
-- **Journal** como primera plana de periódico, con cupón de suscripción recortable.
+- **Journal** como primera plana de periódico ("DIARIO"): los memos cuelgan como cuadros del mismo tamaño (clavo y alambre, marco negro/nogal/roble), chuecos, y se enderezan al pasar el cursor; abajo, su cédula de museo. Suscripción con paloma mensajera y sello.
+
+## Cuadros (pinturas)
+
+Las portadas de los memos son pinturas propias a lo neoexpresionista (Basquiat, el tablero "art" de André): lino crudo o gesso, 2–3 bloques de color con `#pintura`, chorreados, un motivo crudo del tema con contorno negro, palabras a barra de óleo (`mano.ts`) con tachones y ©, rejillas, estrellas de precio y parches de papel. Cada una se relaciona con su memo. Lienzo 400×500. Las palabras van en inglés en ambos idiomas. A André le encantaron: es la referencia para cualquier cuadro nuevo (ver el agente `pintor-portadas`).

@@ -2,7 +2,9 @@
 
 ```
 Portafolio/
-├── CLAUDE.md                     ← Reglas del proyecto + índice de docs
+├── CLAUDE.md → AGENTS.md         ← Reglas, estética, lo hecho, lo rechazado + índice de docs
+├── .claude/agents/               ← Subagentes especializados (portadas, memos, landing, copy, dibujos, revisión)
+├── tools/shot.mjs                ← Capturas con Chrome headless para verificar cambios
 ├── docs/                         ← Documentación (diseño, stack, componentes, páginas, i18n, changelog)
 ├── public/
 │   ├── favicon.png
@@ -14,13 +16,16 @@ Portafolio/
 │   │   ├── Home.astro · WorkIndex.astro · WorkCase.astro · About.astro
 │   │   ├── JournalIndex.astro · JournalPost.astro
 │   │   ├── home/                 ← Cover, Tesis, Holdings, Coleccion, Memos, Folio, Pieza, Obra
-│   │   └── art/                  ← Dibujos SVG (lobo, tigre, 911, GAT…), Trazo, Etiqueta, InkDefs
+│   │   ├── CaseCord.astro · CaseFlouvia.astro   ← casos con página propia
+│   │   ├── memo/                 ← Ilustraciones dentro de los memos (Fig, Ciclo, Venn, Journey…)
+│   │   └── art/                  ← Dibujos SVG (lobo, tigre, 911…), cuadros de memos (Cuadro*), mano.ts, Trazo, Etiqueta, InkDefs
 │   ├── scripts/                  ← ink.ts (animaciones), smooth.ts (Lenis), splatter.ts (pintura)
 │   ├── lib/                      ← work.ts, journal.ts, resend.ts
-│   ├── data/about.ts             ← Experiencia, formación, competencias, certificaciones (EN/ES)
+│   ├── data/about.ts             ← Experiencia, formación, competencias, reglas de la casa (EN/ES)
+│   ├── data/cases/               ← Texto de los casos Cord y Flouvia
 │   ├── i18n/                     ← ui.ts (textos EN/ES), utils.ts
 │   ├── emails/                   ← Plantillas de correo (Resend)
-│   ├── content/                  ← Colecciones journal/ y work/ (markdown EN + ES)
+│   ├── content/                  ← Colecciones journal/ (MDX EN + ES, `es-` = español) y work/
 │   └── pages/
 │       ├── index · work/index · work/[id] · about/index · journal · journal/[slug] · contact · 404
 │       ├── api/contact.ts · api/subscribe.ts   ← serverless (Vercel)

@@ -9,6 +9,9 @@ Registro cronológico de modificaciones mayores y evolución del proyecto.
 
 ### Añadido
 - `mano.ts`: letra de palo a mano (mayúsculas de un trazo, chuecas) para escribir sobre los cuadros sin una tercera fuente.
+- Subagentes en `.claude/agents/`: `pintor-portadas`, `ilustrador-memos`, `escritor-memos`, `disenador-landing`, `copy-landing`, `dibujante-sitio`, `revisor-visual`.
+- `tools/shot.mjs`: capturas con Chrome headless para verificar cambios.
+- `AGENTS.md` (CLAUDE.md) reescrito: cómo funciona la estética, lo que se hizo, lo que André rechazó, cómo agregar un memo, mañas del dev server y autor de commits para Vercel.
 
 ### Eliminado
 - El dibujo `Signos` (sol, estrella, pez…).
