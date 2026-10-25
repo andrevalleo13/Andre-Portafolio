@@ -5,7 +5,7 @@ Registro cronológico de modificaciones mayores y evolución del proyecto.
 ## [0.4.3] - 2026-10-25
 
 ### Modificado
-- **Navbar más única:** la etiqueta roja ahora va cosida (puntadas); "Índice" es una etiqueta colgante con ojal e hilo que se mece y se pone roja al abrir. El índice a pantalla completa se volvió un cuadro sobre lino (`Lienzo`: lobo "NO LEASH" en azul, "BUILT, NOT BOUGHT©" en negro, naranja con la cuenta, chorreados rojos) con notas a barra de óleo por sección. Reemplaza al caballo, la mancha verde, los puntos y las estrellas.
+- **Navbar más única:** "Índice" va sobre un brochazo negro de bordes irregulares que se repinta de rojo (se probó una etiqueta colgante con hilo y puntadas en la marca; a André no le convenció). El índice a pantalla completa se volvió un cuadro sobre lino (`Lienzo`: lobo "NO LEASH" en azul, "BUILT, NOT BOUGHT©" en negro, naranja con la cuenta, chorreados rojos) con notas a barra de óleo por sección. Reemplaza al caballo, la mancha verde, los puntos y las estrellas.
 - **Índice del Journal:** sin nota principal gigante; los memos cuelgan como cuadros del mismo tamaño (clavo y alambre, marcos negro, nogal y roble claro), cada uno con su pintura neoexpresionista relacionada con el tema (campo `cover`: `CuadroBootstrap`, `CuadroFriccion`, `CuadroChurn`) y una cédula de museo abajo. Cuelgan chuecos y se enderezan al pasar el cursor.
 
 ### Añadido

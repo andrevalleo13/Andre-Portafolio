@@ -43,7 +43,7 @@ André es financiero y dev (Cord, Flouvia). El sitio tiene que ser serio pero no
 Lenis da el scroll con inercia (`smooth.ts`); `splatter.ts` pinta el footer con el cursor. Con `prefers-reduced-motion` todo aparece en su estado final.
 
 ## Lo que se hizo (rediseño "Lujo vivido", oct 2026)
-- **Navbar**: etiqueta roja de ropa cosida como marca (`Etiqueta`), EN/ES, Contacto a pluma y el botón Índice como etiqueta colgante con ojal que se mece. El índice abre con gota de tinta y es un cuadro sobre lino (`Lienzo`: lobo "NO LEASH", "BUILT, NOT BOUGHT©") con las secciones en Redaction gigante y notas a barra de óleo. A André le gusta mucho; cualquier cambio debe conservar ese espíritu.
+- **Navbar**: etiqueta roja de ropa como marca (`Etiqueta`), EN/ES, Contacto a pluma y el botón Índice sobre un brochazo negro que se repinta de rojo. El índice abre con gota de tinta y es un cuadro sobre lino (`Lienzo`: lobo "NO LEASH", "BUILT, NOT BOUGHT©") con las secciones en Redaction gigante y notas a barra de óleo. A André le gusta mucho; cualquier cambio debe conservar ese espíritu.
 - **Home**: portada collage ("André / VALLE / Ortega", lobo, etiqueta roja "i lowkey dgaf anymore"), Tesis con KPIs, Holdings en scroll horizontal, la pared tipo salón (Colección: "La manga rota", el as "PLAY THE GAME", The 6, el 911…), Memos.
 - **Work**: índice de renglones gigantes; **Cord** (cordón que se dibuja con el scroll, 12 banderas pintadas, timbres fiscales, $5k MRR) y **Flouvia** (carta de servicios, pósters, boceto de Flouvia OS) con páginas propias. Texto en `src/data/cases/`.
 - **About**: manifiesto, experiencia, competencias como etiquetas cosidas arrastrables, "Reglas de la casa" pintadas a brocha (`RULES` en `src/data/about.ts`, editable), sus gustos (Barça, Drake/The 6, tequila, café con cigarro, Porsche 911).
@@ -53,7 +53,7 @@ Lenis da el scroll con inercia (`smooth.ts`); `splatter.ts` pinta el footer con 
 - Favicon (lobo crema sobre etiqueta roja) y OG image con los mismos dibujos.
 
 ### Lo que André rechazó (no volver a usar)
-Amarillo · la mancha azul circular de acuarela · el chorreado tipo peine · el salpicado tipo Pollock · la máscara de luchador · el sello "AVO" · WebGL en el footer · repetir "André Valle Ortega" hasta abajo · frases blandas · el marquee infinito negro · gaps entre secciones del home · el zapato y el plato (dibujos) · un memo "grandote" destacado · el dibujo `Signos` (sol, estrella, pez…) · hojas con cinta para los memos (prefiere cuadros) · ilustraciones "limpias" como portada (prefiere pinturas creativas como su Pinterest).
+Amarillo · la mancha azul circular de acuarela · el chorreado tipo peine · el salpicado tipo Pollock · la máscara de luchador · el sello "AVO" · WebGL en el footer · repetir "André Valle Ortega" hasta abajo · frases blandas · el marquee infinito negro · gaps entre secciones del home · el zapato y el plato (dibujos) · un memo "grandote" destacado · el dibujo `Signos` (sol, estrella, pez…) · hojas con cinta para los memos (prefiere cuadros) · ilustraciones "limpias" como portada (prefiere pinturas creativas como su Pinterest) · en la navbar, la etiqueta colgante con hilo y ojal, y las puntadas en la etiqueta roja.
 
 ## Journal: agregar un memo
 1. Crear `src/content/journal/<slug>.mdx` (EN) y `es-<slug>.mdx` (ES). Frontmatter: `title`, `date`, `readTime`, `lang`, `draft`, `cover`.

@@ -3,14 +3,13 @@
  * ── Navbar Component ──────────────────────────────────
  *
  * Mínima, en las esquinas:
- *   [etiqueta roja cosida]                EN/ES   Contacto   [etiqueta colgante]
+ *   [etiqueta roja]                       EN/ES   Contacto   [Índice pintado]
  * Transparente al inicio → papel + línea fina al hacer scroll; se
  * esconde al bajar y regresa al subir.
  *
- * La marca es la etiqueta roja de ropa, con sus puntadas. "Índice" es
- * una etiqueta colgante (hang tag) con ojal, colgada de un hilo desde
- * el borde de la pantalla: se mece al pasar el cursor y se pone roja
- * con "Cerrar" al abrir.
+ * La marca es la etiqueta roja de ropa. "Índice" va sobre un brochazo
+ * negro de bordes irregulares, como la pintura de los cuadros: al pasar
+ * el cursor se repinta de rojo, y abierto queda rojo con "Cerrar".
  *
  * El índice se abre como una gota de tinta y se lee como un cuadro:
  * lino, trozos de pintura (`Lienzo`: azul con lobo, negro con
@@ -78,11 +77,13 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
       aria-current={isActive('/contact') ? 'page' : undefined}
     >{label('contact')}</a>
     <button class="nav__menu" id="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-overlay">
-      <svg class="nav__string" viewBox="0 0 24 80" aria-hidden="true"><path d="M22 80 C12 62 20 30 8 0" /></svg>
-      <span class="nav__tag">
-        <span class="nav__menu-open">{t('home.index')}</span>
-        <span class="nav__menu-close">{t('nav.close')}</span>
-      </span>
+      <svg class="nav__paint" viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M4 7 C22 3 44 6 64 3 C84 1 102 5 116 2 L118 10 L115 17 L119 25 L116 34 C100 38 82 35 62 38 C42 39 22 36 5 38 L2 31 L5 23 L1 15 Z" />
+        <path class="nav__paint-streak" d="M10 13 C42 11 80 14 108 12 M14 29 C46 27 76 30 104 28" />
+      </svg>
+      <span class="nav__menu-open">{t('home.index')}</span>
+      <span class="nav__menu-close">{t('nav.close')}</span>
+      <i aria-hidden="true"></i>
     </button>
   </div>
 </header>
@@ -176,24 +177,9 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
     text-decoration: none;
   }
 
-  /* La etiqueta, cosida: puntadas en los dos extremos */
   .nav__brand :global(.nav__etiqueta) {
-    position: relative;
-    padding-inline: 1.05em;
     transition: rotate 0.8s var(--ease-expo);
   }
-
-  .nav__brand :global(.nav__etiqueta)::before,
-  .nav__brand :global(.nav__etiqueta)::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    bottom: 3px;
-    border-left: 1.5px dashed rgba(244, 242, 237, 0.6);
-  }
-
-  .nav__brand :global(.nav__etiqueta)::before { left: 4px; }
-  .nav__brand :global(.nav__etiqueta)::after { right: 4px; }
 
   .nav__brand:hover :global(.nav__etiqueta) { rotate: -3deg; }
 
@@ -237,79 +223,68 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
     text-decoration: none;
   }
 
-  /* Índice: etiqueta colgante con ojal, colgada de un hilo */
+  /* Índice: la palabra sobre un brochazo negro que se repinta de rojo */
   .nav__menu {
     position: relative;
     z-index: 300;
-    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.05rem;
     border: 0;
     background: none;
     color: var(--bg);
-    cursor: pointer;
-  }
-
-  .nav__string {
-    position: absolute;
-    left: 2px;
-    bottom: 50%;
-    width: 12px;
-    height: 70px;
-    overflow: visible;
-    pointer-events: none;
-  }
-
-  .nav__string path {
-    fill: none;
-    stroke: var(--fg);
-    stroke-width: 1.4;
-    stroke-linecap: round;
-  }
-
-  .nav__tag {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    padding: 0.55rem 0.95rem 0.55rem 1.7rem;
-    background: var(--fg);
     font-family: var(--f-grot);
     font-size: 0.7rem;
     font-weight: 600;
     font-stretch: 90%;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    clip-path: polygon(12px 0, 100% 0, 100% 100%, 12px 100%, 0 50%);
-    -webkit-mask: radial-gradient(circle at 11px 50%, transparent 3px, #000 3.6px);
-    mask: radial-gradient(circle at 11px 50%, transparent 3px, #000 3.6px);
-    transform-origin: 11px 50%;
-    transition: background-color 0.5s var(--ease-expo);
+    cursor: pointer;
+    transition: rotate 0.8s var(--ease-expo);
   }
 
-  /* El ojal: arillo alrededor del agujero */
-  .nav__tag::before {
-    content: '';
+  .nav__menu > span,
+  .nav__menu > i { position: relative; }
+
+  .nav__paint {
     position: absolute;
-    left: 5px;
-    top: calc(50% - 6px);
-    width: 12px;
-    height: 12px;
-    border: 1.5px solid color-mix(in srgb, var(--bg) 55%, transparent);
-    border-radius: 50%;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
   }
 
-  .nav__menu:hover .nav__tag {
+  .nav__paint path {
+    fill: var(--fg);
+    transition: fill 0.5s var(--ease-expo);
+  }
+
+  .nav__paint .nav__paint-streak {
+    fill: none;
+    stroke: var(--bg);
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    opacity: 0.16;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* El punto rojo, como una gota de pintura */
+  .nav__menu i {
+    width: 7px;
+    height: 7px;
+    border-radius: 54% 46% 58% 42%;
     background: var(--accent);
-    animation: tag-swing 1.3s var(--ease-expo);
+    transition: scale 0.6s var(--ease-expo), background-color 0.5s var(--ease-expo);
   }
 
-  .nav__menu[aria-expanded='true'] .nav__tag { background: var(--rojo); color: #F4F2ED; }
+  .nav__menu:hover { rotate: -1.5deg; }
+  .nav__menu:hover .nav__paint path:first-child { fill: var(--accent); }
+  .nav__menu:hover i { background: var(--bg); scale: 1.4; }
 
-  @keyframes tag-swing {
-    0%   { rotate: 0deg; }
-    20%  { rotate: -9deg; }
-    45%  { rotate: 5deg; }
-    70%  { rotate: -2deg; }
-    100% { rotate: 0deg; }
-  }
+  .nav__menu[aria-expanded='true'] { color: #F4F2ED; }
+  .nav__menu[aria-expanded='true'] .nav__paint path:first-child { fill: var(--rojo); }
+  .nav__menu[aria-expanded='true'] i { background: #F4F2ED; }
 
   .nav__menu-close { display: none; }
   .nav__menu[aria-expanded='true'] .nav__menu-open { display: none; }
@@ -492,7 +467,7 @@ const langLinks = Object.entries(languages).map(([code, text]) => ({
     .overlay__item,
     .overlay__marks > div,
     .overlay__note { transition: none; }
-    .nav__menu:hover .nav__tag { animation: none; }
+    .nav__menu { transition: none; }
   }
 </style>
 
