@@ -2,6 +2,14 @@
 
 Registro cronológico de modificaciones mayores y evolución del proyecto.
 
+## [0.4.3] - 2026-10-25
+
+### Modificado
+- **Índice del Journal:** sin nota principal gigante; los memos cuelgan como cuadros del mismo tamaño (clavo y alambre, marcos negro, nogal y roble claro, paspartú) con su dibujo de portada (campo `cover` en el frontmatter: `Bota`, `Lapiz`, `Cubeta`) y una cédula de museo abajo. Cuelgan chuecos y se enderezan al pasar el cursor.
+
+### Eliminado
+- El dibujo `Signos` (sol, estrella, pez…).
+
 ## [0.4.2] - 2026-10-25
 
 ### Añadido

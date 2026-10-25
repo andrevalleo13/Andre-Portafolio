@@ -9,6 +9,7 @@ const journalCollection = defineCollection({
     readTime: z.string(),
     lang: z.enum(['en', 'es']).default('en'),
     draft: z.boolean().default(false),
+    cover: z.enum(['bota', 'lapiz', 'cubeta']).optional(),
   }),
 });
 const workCollection = defineCollection({

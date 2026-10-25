@@ -1,0 +1,46 @@
+---
+/**
+ * ── Bota ──────────────────────────────────────────────
+ *
+ * Una bota de piel con el jalador de atrás en rojo: "pulling yourself
+ * up by your bootstraps". Portada del memo de bootstrapping.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Bota de piel con el jalador de atrás en rojo',
+  class: className,
+} = Astro.props;
+
+const boot = 'M74 34 L132 34 L134 138 C172 140 202 150 216 168 C222 178 218 190 206 192 L66 192 C60 192 58 186 60 176 Z';
+const laces = [56, 76, 96, 116].map((y) => `M112 ${y} L134 ${y + 10} M134 ${y} L112 ${y + 10}`).join(' ');
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 240 220"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink-fino)">
+    <path data-fill d={boot} style="fill: var(--cognac)" />
+    <path data-fill d="M58 192 L214 192 L214 206 L58 206 Z" fill="currentColor" />
+  </g>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s stroke-width="2.6" d={boot} />
+    <path data-s stroke-width="1.4" stroke-dasharray="4 4" d="M80 44 L82 184 M140 150 C170 154 196 162 206 176" stroke="#F4F2ED" />
+    <path data-s stroke-width="1.8" d={laces} stroke="#F4F2ED" />
+    <path data-s stroke-width="2.2" d="M134 138 C150 128 160 132 168 144" />
+  </g>
+  <path data-s class="lv-art-red" filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" d="M76 40 C54 26 54 4 74 6 C88 8 90 24 80 36" />
+  <path data-s class="lv-art-red" filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M30 120 L30 70 M20 82 L30 68 L40 82" />
+</svg>

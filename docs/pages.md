@@ -8,7 +8,7 @@ El idioma principal (inglés) se sirve desde `/` y el español desde `/es/`. Cad
 | `/work` | `/es/work` | `WorkIndex` | Holdings & Ventures |
 | `/work/[id]` | `/es/work/[id]` | `WorkCase` | Caso por proyecto (colección `work`) |
 | `/about` | `/es/about` | `About` | Manifiesto, experiencia, competencias, formación |
-| `/journal` | `/es/journal` | `JournalIndex` | Primera plana de memos + cupón |
+| `/journal` | `/es/journal` | `JournalIndex` | Primera plana: memos colgados como cuadros + suscripción |
 | `/journal/[slug]` | `/es/journal/[slug]` | `JournalPost` | Memo (colección `journal`) |
 | `/contact` | `/es/contact` | `TypeformContact` | Formulario paso a paso |
 | `/404` | — | `pages/404.astro` | "El lobo se comió esta página." Cambia a español en el navegador si la ruta empieza con `/es` |

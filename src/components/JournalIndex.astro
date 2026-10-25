@@ -4,27 +4,32 @@
  *
  * La primera plana de un periódico, pasada por collage:
  *   · Cabecera "DIARIO" en negra condensada, línea de edición.
- *   · Nota principal: el memo más reciente con extracto.
- *   · El resto como recortes pegados sobre la mesa, chuecos.
+ *   · Los memos colgados como cuadros del mismo tamaño: clavo y
+ *     alambre, marco, paspartú y el dibujo de portada (frontmatter
+ *     `cover`); abajo, su cédula de museo. El cuadro cuelga chueco y
+ *     se endereza al pasar el cursor.
  *   · Al final, la suscripción (paloma mensajera).
  */
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 import { getMemos, memoHref, memoDate, excerpt } from '../lib/journal';
 import Pieza from './home/Pieza.astro';
 import Pulpo from './art/Pulpo.astro';
-import Signos from './art/Signos.astro';
 import Trazo from './art/Trazo.astro';
+import Bota from './art/Bota.astro';
+import Lapiz from './art/Lapiz.astro';
+import Cubeta from './art/Cubeta.astro';
 import Newsletter from './Newsletter.astro';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const memos = await getMemos(lang);
-const [lead, ...rest] = memos;
+const covers = { bota: Bota, lapiz: Lapiz, cubeta: Cubeta };
 const pad = (n: number) => String(n).padStart(2, '0');
 const [word, more] = t('journal.heading').split(/\s*&\s*/);
 const now = new Date();
 const edition = `${pad(now.getMonth() + 1)}.${now.getFullYear()}`;
 const readLabel = lang === 'es' ? 'Leer memo' : 'Read memo';
+const medium = lang === 'es' ? 'Tinta sobre papel' : 'Ink on paper';
 ---
 
 <main class="journal">
@@ -51,40 +56,37 @@ const readLabel = lang === 'es' ? 'Leer memo' : 'Read memo';
     </Pieza>
   </header>
 
-  {lead && (
-    <section class="j-lead">
-      <a href={memoHref(lead, lang)} class="j-lead__link" data-pen-group>
-        <p class="lv-kicker j-lead__meta">
-          <span>Nº {pad(memos.length)}</span>
-          <span data-reveal="type">{memoDate(lead.data.date)}</span>
-          <span>{lead.data.readTime}</span>
-        </p>
-        <h2 class="j-lead__title" data-reveal="lines">
-          <span class="lv-line"><span>{lead.data.title}</span></span>
-        </h2>
-        <p class="j-lead__excerpt" data-reveal="fade">{excerpt(lead, 260)}</p>
-        <span class="lv-link j-lead__go"><span data-pen="under">{readLabel}</span> →</span>
-      </a>
-      <div class="j-lead__art" data-parallax="0.1"><Signos /></div>
-    </section>
-  )}
-
-  {rest.length > 0 && (
-    <ol class="j-clips">
-      {rest.map((memo, i) => (
-        <li class:list={['j-clip', `j-clip--${(i % 3) + 1}`]} data-reveal="drop" data-delay={((i % 3) * 0.1).toFixed(2)}>
-          <a href={memoHref(memo, lang)} data-pen-group>
-            {i % 2 === 0 && <i class="lv-tape"></i>}
-            <span class="j-clip__meta">
-              <span>Nº {pad(memos.length - i - 1)}</span>
-              <span>{memoDate(memo.data.date)}</span>
-            </span>
-            <span class="j-clip__title"><span data-pen="under">{memo.data.title}</span></span>
-            <span class="j-clip__excerpt">{excerpt(memo, 150)}</span>
-            <span class="j-clip__time">{memo.data.readTime} →</span>
-          </a>
-        </li>
-      ))}
+  {memos.length > 0 && (
+    <ol class="j-memos">
+      {memos.map((memo, i) => {
+        const Cover = memo.data.cover && covers[memo.data.cover];
+        return (
+          <li class:list={['j-memo', `j-memo--${(i % 3) + 1}`]} data-reveal="drop" data-delay={((i % 3) * 0.12).toFixed(2)}>
+            <a href={memoHref(memo, lang)} data-pen-group>
+              <span class="j-memo__piece">
+                <svg class="j-memo__hang" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M8 40 L100 6 L192 40" />
+                  <circle cx="100" cy="5" r="3.2" />
+                </svg>
+                <span class="j-memo__frame">
+                  <span class="j-memo__mat">
+                    <span class="j-memo__cover" data-cover={memo.data.cover}>
+                      {Cover && <Cover delay={0.2 + (i % 3) * 0.15} />}
+                    </span>
+                  </span>
+                </span>
+              </span>
+              <span class="j-memo__label">
+                <span class="j-memo__no">Nº {pad(memos.length - i)}</span>
+                <span class="j-memo__title"><span data-pen="under">{memo.data.title}</span></span>
+                <span class="j-memo__meta">{medium} · {memoDate(memo.data.date)} · {memo.data.readTime}</span>
+                <span class="j-memo__excerpt">{excerpt(memo, 130)}</span>
+                <span class="j-memo__go">{readLabel} →</span>
+              </span>
+            </a>
+          </li>
+        );
+      })}
     </ol>
   )}
 
@@ -146,105 +148,142 @@ const readLabel = lang === 'es' ? 'Leer memo' : 'Read memo';
 
   .j-rule { margin-top: clamp(24px, 3vw, 44px); }
 
-  /* ── Nota principal ── */
-  .j-lead {
-    display: grid;
-    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
-    gap: 40px clamp(32px, 5vw, 96px);
-    align-items: start;
-    padding: clamp(48px, 6vw, 96px) 0;
-    border-bottom: 1px solid var(--tinta);
-  }
-
-  .j-lead__link {
-    display: grid;
-    gap: clamp(16px, 2vw, 26px);
-    color: var(--tinta);
-    text-decoration: none;
-  }
-
-  .j-lead__meta { display: flex; gap: 24px; }
-
-  .j-lead__title {
-    font-family: var(--f-serif);
-    font-weight: 400;
-    font-size: clamp(2.8rem, 7vw, 8rem);
-    line-height: 0.92;
-    letter-spacing: -0.04em;
-    text-wrap: balance;
-  }
-
-  .j-lead__link:hover .j-lead__title { font-family: var(--f-worn); }
-
-  .j-lead__excerpt {
-    max-width: 52ch;
-    font-size: clamp(1.15rem, 1.6vw, 1.45rem);
-    line-height: 1.45;
-    color: var(--grafito);
-  }
-
-  .j-lead__go { justify-self: start; }
-  .j-lead__go > span { display: inline-block; }
-
-  .j-lead__art { padding-top: 4vw; }
-
-  /* ── Recortes ── */
-  .j-clips {
+  /* ── Memos: cuadros colgados, todos del mismo tamaño ── */
+  .j-memos {
     list-style: none;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(40px, 5vw, 80px) clamp(24px, 3vw, 48px);
+    gap: clamp(56px, 6vw, 100px) clamp(36px, 4.4vw, 80px);
     align-items: start;
-    padding: clamp(56px, 7vw, 110px) 0;
+    padding: clamp(64px, 8vw, 130px) 0 clamp(80px, 9vw, 150px);
   }
 
-  .j-clip--1 { rotate: -1.5deg; }
-  .j-clip--2 { rotate: 1deg; margin-top: 5vw; }
-  .j-clip--3 { rotate: -0.6deg; margin-top: 2vw; }
+  .j-memo--1 { --tilt: -1.8deg; --marco: #1f1b17; }
+  .j-memo--2 {
+    --tilt: 1.4deg;
+    --marco: repeating-linear-gradient(90deg, #6c4126 0 3px, var(--cognac) 3px 8px, #653c22 8px 10px);
+    margin-top: 5vw;
+  }
+  .j-memo--3 { --tilt: -0.8deg; --marco: #e6dfd1; margin-top: 2vw; }
 
-  .j-clip a {
-    position: relative;
+  .j-memo a {
     display: grid;
-    gap: 14px;
-    padding: clamp(20px, 2.2vw, 30px);
-    background: var(--hoja);
-    box-shadow: var(--sombra-hoja);
+    gap: clamp(20px, 2.2vw, 30px);
     color: var(--tinta);
     text-decoration: none;
-    transition: translate 0.8s var(--ease-expo), rotate 0.8s var(--ease-expo);
   }
 
-  .j-clip a:hover { translate: 0 -8px; rotate: 1deg; }
+  /* Clavo + alambre + marco: giran juntos desde el clavo */
+  .j-memo__piece {
+    position: relative;
+    display: block;
+    padding-top: 36px;
+    rotate: var(--tilt);
+    transform-origin: 50% 5px;
+    transition: rotate 1.4s var(--ease-expo);
+  }
 
-  .j-clip__meta {
-    display: flex;
-    justify-content: space-between;
+  .j-memo a:hover .j-memo__piece { rotate: 0deg; }
+
+  .j-memo__hang {
+    position: absolute;
+    top: 0;
+    left: 24%;
+    width: 52%;
+    height: 40px;
+    overflow: visible;
+  }
+
+  .j-memo__hang path { fill: none; stroke: var(--grafito); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+  .j-memo__hang circle { fill: var(--tinta); }
+
+  .j-memo__frame {
+    display: block;
+    padding: clamp(12px, 1.2vw, 18px);
+    background: var(--marco);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+      inset 0 0 0 4px rgba(0, 0, 0, 0.16),
+      0 2px 0 rgba(40, 30, 20, 0.08),
+      0 30px 36px -24px rgba(40, 30, 20, 0.6);
+  }
+
+  .j-memo--3 .j-memo__frame { box-shadow: inset 0 0 0 1px rgba(40, 30, 20, 0.22), inset 0 0 0 4px rgba(40, 30, 20, 0.06), 0 2px 0 rgba(40, 30, 20, 0.08), 0 30px 36px -24px rgba(40, 30, 20, 0.6); }
+
+  /* Paspartú con el corte biselado alrededor del dibujo */
+  .j-memo__mat {
+    display: block;
+    padding: 12%;
+    background: var(--hoja);
+    box-shadow: inset 2px 2px 7px rgba(40, 30, 20, 0.22);
+  }
+
+  .j-memo__cover {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 5;
+    background: var(--papel);
+    box-shadow: 0 0 0 3px #fffdf8, 0 0 0 4px rgba(40, 30, 20, 0.16);
+  }
+
+  .j-memo__cover[data-cover='bota'] { background: color-mix(in srgb, var(--cielo) 26%, var(--hoja)); }
+  .j-memo__cover[data-cover='lapiz'] { background: color-mix(in srgb, var(--pint-naranja) 13%, var(--hoja)); }
+  .j-memo__cover[data-cover='cubeta'] { background: color-mix(in srgb, var(--verde) 15%, var(--hoja)); }
+
+  .j-memo__cover :global(.lv-art) {
+    position: absolute;
+    inset: 12%;
+    width: 76%;
+    height: 76%;
+  }
+
+  /* Cédula de museo */
+  .j-memo__label {
+    display: grid;
+    gap: 8px;
+    width: 86%;
+    margin-left: 7%;
+    padding: 16px 18px 18px;
+    background: var(--hoja);
+    box-shadow: 0 1px 0 rgba(40, 30, 20, 0.06), 0 12px 18px -16px rgba(40, 30, 20, 0.55);
+  }
+
+  .j-memo__no {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    line-height: 1;
+    color: var(--rojo);
+  }
+
+  .j-memo__title {
+    font-family: var(--f-serif);
+    font-size: clamp(1.3rem, 1.75vw, 1.75rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .j-memo__title > span { display: inline; }
+
+  .j-memo__meta {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--linea);
     font-family: var(--f-grot);
-    font-size: 0.66rem;
+    font-size: 0.62rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--grafito);
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--linea);
   }
 
-  .j-clip__title {
-    font-family: var(--f-serif);
-    font-size: clamp(1.5rem, 2.4vw, 2.3rem);
-    line-height: 1.04;
-    letter-spacing: -0.02em;
-  }
-
-  .j-clip__title > span { display: inline; }
-
-  .j-clip__excerpt {
-    font-size: 1rem;
+  .j-memo__excerpt {
+    font-size: 0.95rem;
     line-height: 1.5;
     color: var(--grafito);
   }
 
-  .j-clip__time {
+  .j-memo__go {
     font-family: var(--f-grot);
     font-size: 0.66rem;
     font-weight: 700;
@@ -258,17 +297,21 @@ const readLabel = lang === 'es' ? 'Leer memo' : 'Read memo';
   .j-mail { border-top: 1px solid var(--tinta); }
 
   @media (max-width: 1000px) {
-    .j-clips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .j-clip--2 { margin-top: 0; }
+    .j-memos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .j-memo--3 { margin-top: 0; }
   }
 
   @media (max-width: 700px) {
     .j-line span:nth-child(2) { display: none; }
     .j-title { font-size: 30vw; }
     .j-sub { margin-left: 8vw; }
-    .j-lead { grid-template-columns: minmax(0, 1fr); }
-    .j-lead__art { display: none; }
-    .j-clips { grid-template-columns: minmax(0, 1fr); }
-    .j-clip--3 { margin-top: 0; }
+    .j-memos { grid-template-columns: minmax(0, 1fr); gap: 64px; }
+    .j-memo--2 { margin-top: 0; }
+    .j-memo:nth-child(even) { margin-inline: 10vw 0; }
+    .j-memo:nth-child(odd) { margin-inline: 0 10vw; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .j-memo__piece { transition: none; }
   }
 </style>
