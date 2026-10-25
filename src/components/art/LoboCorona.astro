@@ -1,0 +1,93 @@
+---
+/**
+ * ── Lobo con corona (cabeza) ──────────────────────────
+ *
+ * Cabeza de lobo garabateada a barra de óleo negra, al estilo
+ * de un cuadro de Basquiat: ojos blancos medio cerrados, hocico
+ * naranja con dientes y uno de oro, y la corona roja encima.
+ * El relleno es un zigzag recortado con la silueta de la cabeza.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Cabeza de lobo garabateada en negro con dientes y una corona roja',
+  class: className,
+} = Astro.props;
+
+const clipId = `lobo-cabeza-${Math.random().toString(36).slice(2, 8)}`;
+const head = 'M60 96 L74 26 L112 82 L168 82 L206 26 L220 96 L232 170 L206 246 L140 270 L74 246 L48 170 Z';
+
+/* Garabato de barra de óleo: zigzags que se cruzan */
+const scribble: string[] = [];
+for (let y = 30, i = 0; y < 272; y += 11, i++) {
+  const dir = i % 2 === 0 ? 1 : -1;
+  const pts: string[] = [];
+  for (let k = 0; k <= 10; k++) {
+    const x = dir > 0 ? 40 + k * 20 : 240 - k * 20;
+    const yy = y + (k % 2 === 0 ? 0 : 9) + Math.sin(k + i) * 2;
+    pts.push(`${x.toFixed(1)} ${yy.toFixed(1)}`);
+  }
+  scribble.push(`M${pts.join(' L')}`);
+}
+
+const teeth = [0, 1, 2, 3, 4, 5];
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 280 300"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+  data-speed="2.6"
+>
+  <defs>
+    <clipPath id={clipId}><path d={head} /></clipPath>
+  </defs>
+
+  <g clip-path={`url(#${clipId})`} filter="url(#ink)" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    {scribble.map((d) => <path data-s d={d} opacity="0.92" />)}
+  </g>
+  <path data-s filter="url(#ink)" d={head} fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+
+  <!-- ojos medio cerrados -->
+  <g filter="url(#ink-fino)">
+    <path data-fill d="M84 136 C92 120 122 120 130 136 C122 146 92 146 84 136 Z" fill="#F4F2ED" />
+    <path data-fill d="M150 136 C158 120 188 120 196 136 C188 146 158 146 150 136 Z" fill="#F4F2ED" />
+    <path data-s d="M84 134 C96 128 118 128 130 134 M150 134 C162 128 184 128 196 134" fill="none" stroke="currentColor" stroke-width="4" />
+    <circle data-pop cx="112" cy="138" r="5" fill="currentColor" />
+    <circle data-pop cx="172" cy="138" r="5" fill="currentColor" />
+  </g>
+
+  <!-- hocico naranja con dientes -->
+  <g filter="url(#ink-fino)">
+    <path data-fill d="M92 184 L196 180 L200 236 L90 240 Z" style="fill: var(--pint-naranja)" />
+    {teeth.map((i) => (
+      <path data-pop d={`M${100 + i * 16} 192 L${112 + i * 16} 192 L${110 + i * 16} 212 L${102 + i * 16} 212 Z`} fill={i === 3 ? 'var(--pint-2)' : '#F4F2ED'} stroke="currentColor" stroke-width="2" />
+    ))}
+    {teeth.map((i) => (
+      <path data-pop d={`M${100 + i * 16} 226 L${112 + i * 16} 226 L${110 + i * 16} 212 L${102 + i * 16} 212 Z`} fill="#F4F2ED" stroke="currentColor" stroke-width="2" />
+    ))}
+  </g>
+
+  <!-- corona -->
+  <path
+    data-s
+    class="lv-art-red"
+    filter="url(#ink-fino)"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="4"
+    stroke-linejoin="round"
+    stroke-linecap="round"
+    d="M88 20 L98 -18 L118 8 L140 -26 L160 8 L182 -18 L192 20 Z"
+  />
+</svg>

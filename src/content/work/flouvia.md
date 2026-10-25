@@ -1,6 +1,6 @@
 ---
 title: "Flouvia"
-subtitle: "E-commerce & B2B Engineering Studio"
+subtitle: "Design & Engineering Studio for Commerce and B2B"
 role: "Co-Founder & Lead Engineer"
 timeline: "2024 — Present"
 impact: "+12 Infrastructures Deployed"
@@ -9,29 +9,36 @@ lang: "en"
 draft: false
 ---
 
-# Revenue Infrastructure for Modern Commerce
+Flouvia is a design and engineering studio based in Mexico City. It builds the digital operation of established businesses — websites, online stores, private B2B portals, Shopify apps, platforms, mobile apps and AI — and hands each client the tools to see and run what was built. We work with a limited number of clients a year, by application.
 
-Flouvia is a **Private Growth Boutique** that builds custom operational systems. We do not work with early-stage startups or brands looking for generic templates; we deploy highly technical, corporate-grade infrastructure for established operations.
+## 1. Selected work
 
-## The Approach
+- **Cord** — the studio's own product: a closing platform from proposal to payment in a single link. It started as Flouvia's Shopify app for B2B quotes and became a standalone company.
+- **El Zarco** — a wholesale distributor that has supplied restaurants, shops and cafés from Mexico City's Central de Abasto since 1992, where prices change every day. We rebuilt its site, the catalog where clients put their orders together and the portal where they track and repeat them, and built the panel the business runs on, with quotes from Cord.
+- **shwcs** — a B2B discovery platform where a company searches in its own words and lands on the software, agency or service that solves its problem. We designed and built the search, listings with editorial review, the buyer's library and consent-based contact.
 
-We limit our bandwidth to a maximum of 8 active clients per year. This strictly *by-application-only* model ensures we can deploy enterprise-grade infrastructure without compromising on execution quality. 
+## 2. Flouvia OS: the client portal
 
-Our core areas of engineering include:
-- **E-commerce Engineering:** Rebuilding purchase flows to maximize conversion without relying on increased ad spend or third-party apps. We specialize heavily in Shopify Plus.
-- **B2B Digital Architecture:** Building private B2B wholesale portals where buyers can purchase autonomously with custom catalogs and tiered pricing, allowing operations to scale without increasing headcount.
-- **Business Automation:** Connecting ERPs, storefronts, and databases to ensure information flows seamlessly, eliminating manual data entry and desynchronized inventory.
-- **Conversion Rate Optimization:** Data-driven funnel auditing to identify and eliminate revenue leaks with surgical precision.
+Every client gets `os.flouvia.com`, a private portal to follow their project without asking for updates:
 
-## Execution Protocol
+- **Home:** project status and what is waiting on them.
+- **Live site:** field Core Web Vitals and the state of every deploy, read from Vercel.
+- **Payments:** plan, amount, payment method and invoice history through Stripe.
+- **Vault:** private file storage for the project.
+- **Conversations:** one channel with the team, under the support terms agreed with each client.
 
-We never improvise. We follow a strict, data-driven framework to guarantee secure deployments and scalable architectures:
+Access is by invitation, with passkeys. The portal never shows sample data: what nobody has loaded appears as empty, not invented.
 
-1. **Audit & Diagnosis:** Analyzing current infrastructure to map friction points and operational bottlenecks.
-2. **System Architecture:** Designing database logic, API connections, and UX/UI with a specific focus on maximizing Average Order Value (AOV).
-3. **Full-Stack Development:** Writing clean, optimized code, deploying the ecosystem, and integrating automated data pipelines.
-4. **Deployment & Scaling:** Launching to production with active server and latency monitoring, leaving systems fully prepared to scale.
+## 3. Flouvia Ops: the internal console
 
-## Private Client OS
+`ops.flouvia.com` is where the studio runs: overview, inbox, clients with a 360° view, leads and account access.
 
-We do not simply deliver storefronts or source code; we hand over entire operational ecosystems. Every Flouvia partner receives access to our **Private Client OS**: a secure, centralized environment providing absolute visibility into their system architecture, real-time latency monitoring, B2B technical documentation, and direct control over deployed automations. It is a fully managed, turnkey infrastructure designed to let internal teams operate with zero friction.
+## 4. Brand and craft, built in-house
+
+- **Gota** — Flouvia's own icon library, with an explorer, a guide, a license and its own MCP server, at `gota.flouvia.com`.
+- **Flouvia Sans** — the studio's own typeface, drawn and generated in-house for the logo and display titles.
+- **3D by script** — scenes modeled and rendered in Blender (Cycles) from code, then cut into the films that open each case study.
+
+## 5. How it is built
+
+Astro 6 (SSR) on Vercel, React islands where there is real state, Tailwind v4 and GSAP. Data in Neon PostgreSQL, files in private Vercel Blob, email through Resend, product analytics in PostHog. The site and the portal run in Spanish and English.

@@ -1,0 +1,89 @@
+---
+/**
+ * ── Pieza de collage ──────────────────────────────────
+ *
+ * Coloca cualquier cosa (dibujo, hoja, palabra) en un punto libre
+ * de una composición. Tres capas para que nada se pelee:
+ *
+ *   .pieza        posición + parallax con el mouse (data-depth)
+ *   .pieza__drag  arrastrable con inercia (data-drag)
+ *   .pieza__in    entrada animada (data-reveal="drop")
+ *
+ * Posición en % del contenedor; tamaño en vw. Las variables m*
+ * reemplazan a las de escritorio en pantallas angostas.
+ */
+interface Props {
+  x: string;
+  y: string;
+  w: string;
+  r?: number;
+  z?: number;
+  mx?: string;
+  my?: string;
+  mw?: string;
+  mr?: number;
+  depth?: number;
+  drag?: boolean;
+  reveal?: boolean;
+  delay?: number;
+  hideMobile?: boolean;
+  /** deriva vertical con el scroll (ver data-parallax en ink.ts) */
+  parallax?: number;
+  class?: string;
+}
+
+const {
+  x, y, w, r = 0, z = 2,
+  mx, my, mw, mr,
+  depth = 0,
+  drag = false,
+  reveal = true,
+  delay = 0,
+  hideMobile = false,
+  parallax,
+  class: className,
+} = Astro.props;
+
+const vars = [
+  `--x:${x}`, `--y:${y}`, `--w:${w}`, `--r:${r}deg`, `--z:${z}`,
+  mx && `--mx:${mx}`, my && `--my:${my}`, mw && `--mw:${mw}`, mr !== undefined && `--mr:${mr}deg`,
+].filter(Boolean).join(';');
+---
+
+<div
+  class:list={['pieza', { 'pieza--hide-m': hideMobile }, className]}
+  style={vars}
+  data-depth={depth || undefined}
+  data-parallax={parallax}
+>
+  <div class:list={['pieza__drag', { 'is-draggable': drag }]} data-drag={drag ? '' : undefined}>
+    <div class="pieza__in" data-reveal={reveal ? 'drop' : undefined} data-delay={delay}>
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .pieza {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    z-index: var(--z);
+    width: var(--w);
+  }
+
+  .pieza__drag { rotate: var(--r); }
+
+  .pieza__drag.is-draggable { cursor: grab; touch-action: pan-y; }
+  .pieza__drag.is-dragging { cursor: grabbing; }
+
+  @media (max-width: 900px) {
+    .pieza {
+      left: var(--mx, var(--x));
+      top: var(--my, var(--y));
+      width: var(--mw, var(--w));
+    }
+    .pieza__drag { rotate: var(--mr, var(--r)); }
+    .pieza--hide-m { display: none; }
+  }
+</style>

@@ -1,0 +1,671 @@
+---
+/**
+ * ── Caso: Cord (EN + ES) ──────────────────────────────
+ *
+ * Página propia, no plantilla. Cada capítulo cuenta una parte del
+ * producto con su propio dibujo:
+ *   Portada      "Cord" gigante, la cuerda, timbre de $5k MRR, ficha.
+ *   I.   Link    un cordón que se dibuja con el scroll y amarra los
+ *                cuatro pasos: cotización → firma → cobro → factura.
+ *   II.  Países  las 12 banderas pintadas a mano, con su riel de cobro.
+ *   III. Pagos   el dinero va del cliente al negocio; Cord solo procesa.
+ *   IV.  Fisco   timbres de goma: CFDI 4.0, Verifactu, sales tax + la
+ *                cadena de huellas de Verifactu.
+ *   V.   Cobranza calendario tachado con sello de pagado.
+ *   VI.  Hecho   terminal (API, MCP) + candado (auth, RLS).
+ *   VII. Modelo  dos engranes: suscripción y volumen.
+ *   VIII.Números el libro contable.
+ * Contenido en src/data/cases/cord.ts.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { getLangFromUrl, useTranslations, getLocalePath } from '../i18n/utils';
+import { cordCase, CORD_COUNTRIES } from '../data/cases/cord';
+import { workSlug } from '../lib/work';
+import Pieza from './home/Pieza.astro';
+import Capitulo from './case/Capitulo.astro';
+import CaseNext from './case/CaseNext.astro';
+import Cuerda from './art/Cuerda.astro';
+import Bandera from './art/Bandera.astro';
+import Timbre from './art/Timbre.astro';
+import Doodle from './art/Doodle.astro';
+import Trazo from './art/Trazo.astro';
+
+interface Props {
+  project: CollectionEntry<'work'>;
+  lot: number;
+  next?: CollectionEntry<'work'>;
+  nextLot?: number;
+}
+
+const { project, lot, next, nextLot } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const c = cordCase[lang];
+const pad = (n: number) => String(n).padStart(2, '0');
+const host = project.data.url ? new URL(project.data.url).host : null;
+const stepArt = ['cotizacion', 'firma', 'tarjeta', 'recibo'] as const;
+const [embedText, embedTag] = c.link.embed.split(': ');
+---
+
+<main class="cc">
+  <!-- ═════════ PORTADA ═════════ -->
+  <header class="cc-cover" data-collage>
+    <Pieza x="-3%" y="30%" w="52vw" z={0} depth={0.12} reveal={false} mx="-12%" my="22%" mw="96vw">
+      <Trazo kind="brochazo" tone="azul" draw="load" delay={0.2} />
+    </Pieza>
+
+    <p class="lv-kicker cc-kicker" data-reveal="fade" data-delay="0.1">
+      <a href={getLocalePath('/work', lang)}>← {t('home.s2')}</a> · {t('home.lot')} {pad(lot)}
+    </p>
+    <h1 class="cc-title" transition:name={`work-title-${workSlug(project.id)}`}>{project.data.title}</h1>
+    <p class="cc-sub" data-reveal="fade" data-delay="0.4">{project.data.subtitle}</p>
+
+    <Pieza x="48%" y="12%" w="46vw" r={-3} z={3} depth={0.4} drag delay={0.3} mx="8%" my="40%" mw="88vw">
+      <Cuerda draw="load" delay={0.6} />
+    </Pieza>
+    <Pieza x="38%" y="6%" w="13vw" r={-14} z={5} depth={0.8} drag delay={0.9} mx="66%" my="4%" mw="30vw">
+      <Timbre top={lang === 'es' ? 'MRR · octubre 2026' : 'MRR · October 2026'} center={project.data.impact.replace(' MRR', '')} tone="rojo" />
+    </Pieza>
+
+    <p class="cc-lede" data-reveal="fade" data-delay="0.6">{c.lede}</p>
+
+    <div class="cc-card" data-reveal="drop" data-delay="0.8">
+      <i class="lv-tape"></i>
+      <dl>
+        <div><dt>{t('home.lot.role')}</dt><dd>{project.data.role}</dd></div>
+        <div><dt>{t('home.lot.period')}</dt><dd>{project.data.timeline}</dd></div>
+        <div><dt>{t('home.lot.result')}</dt><dd><span data-pen data-pen-scroll data-delay="1.4">{project.data.impact}</span></dd></div>
+        {host && <div><dt>{t('home.lot.site')}</dt><dd><a href={project.data.url} target="_blank" rel="noopener noreferrer">{host} ↗</a></dd></div>}
+      </dl>
+    </div>
+  </header>
+
+  <!-- ═════════ I. EL LINK ═════════ -->
+  <section class="cc-sec cc-link">
+    <Capitulo n="I" kicker={c.chapters.link} title={c.link.title} />
+    <p class="cc-intro" data-reveal="fade">{c.link.intro}</p>
+
+    <div class="cc-rope">
+      <svg class="cc-rope__line" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true" data-draw="scrub">
+        <path data-s filter="url(#ink)" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round" vector-effect="non-scaling-stroke"
+          d="M-20 40 C40 40 80 110 120 150 C180 210 280 430 380 390 C480 350 540 120 640 130 C740 140 800 400 880 370 C940 350 980 300 1020 280" />
+      </svg>
+      {c.link.steps.map((s, i) => (
+        <figure class:list={['cc-step', `cc-step--${i + 1}`]} data-reveal="drop" data-delay={(i * 0.12).toFixed(2)}>
+          <div class="lv-sheet cc-step__sheet">
+            <i class="lv-tape"></i>
+            <Doodle kind={stepArt[i]} />
+          </div>
+          <figcaption>
+            <span class="cc-step__n">{i + 1}</span>
+            <b>{s.title}</b>
+            <span>{s.text}</span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+    <p class="lv-pen-note cc-embed" data-reveal="write">{embedText}: <code>{embedTag}</code></p>
+  </section>
+
+  <!-- ═════════ II. PAÍSES ═════════ -->
+  <section class="cc-sec cc-countries" data-collage>
+    <div class="cc-countries__head">
+      <p class="cc-twelve" data-reveal="lines"><span class="lv-line"><span>12</span></span></p>
+      <div class="cc-countries__copy">
+        <Capitulo n="II" kicker={c.chapters.countries} />
+        <p class="cc-countries__word" data-reveal="fade"><em>{c.countries.word}</em></p>
+        <p class="cc-intro" data-reveal="fade">{c.countries.intro}</p>
+        <p class="lv-pen-note" data-reveal="write" data-delay="0.3">{c.countries.note}</p>
+      </div>
+    </div>
+
+    <ul class="cc-flags">
+      {CORD_COUNTRIES.map(({ code, rail }, i) => (
+        <li class="cc-flag" data-reveal="drop" data-delay={((i % 6) * 0.07).toFixed(2)}>
+          <div data-drag>
+            <Bandera code={code} label={c.countries.names[code]} delay={0.2 + (i % 6) * 0.08} />
+          </div>
+          <span class="cc-flag__name">{c.countries.names[code]}</span>
+          <span class:list={['cc-flag__rail', `is-${rail}`]}>{c.countries.rails[rail]}</span>
+        </li>
+      ))}
+    </ul>
+
+    <ul class="cc-legend" data-reveal="fade">
+      <li><i class="is-payments"></i>{c.countries.legend.payments}</li>
+      <li><i class="is-mp"></i>{c.countries.legend.mp}</li>
+    </ul>
+  </section>
+
+  <!-- ═════════ III. CORD PAYMENTS ═════════ -->
+  <section class="cc-sec cc-pay" data-collage>
+    <div class="cc-pay__copy">
+      <Capitulo n="III" kicker={c.chapters.payments} title={c.payments.title} />
+      <p class="cc-intro" data-reveal="fade">{c.payments.text}</p>
+      <ul class="cc-list" data-reveal="fade" data-delay="0.1">
+        {c.payments.bullets.map((b) => <li>{b}</li>)}
+      </ul>
+    </div>
+    <figure class="cc-flow">
+      <Doodle kind="flujo" />
+      <span class="cc-flow__label cc-flow__label--client">{c.payments.flow.client}</span>
+      <span class="cc-flow__label cc-flow__label--cord">{c.payments.flow.cord}</span>
+      <span class="cc-flow__label cc-flow__label--biz">{c.payments.flow.business}</span>
+      <figcaption class="lv-pen-note" data-reveal="write" data-delay="0.6">{c.payments.note}</figcaption>
+    </figure>
+    <Pieza x="84%" y="78%" w="14vw" r={8} z={4} depth={0.6} drag mx="58%" my="88%" mw="36vw">
+      <Doodle kind="tarjeta" />
+    </Pieza>
+  </section>
+
+  <!-- ═════════ IV. EL FISCO ═════════ -->
+  <section class="cc-sec cc-fiscal">
+    <Capitulo n="IV" kicker={c.chapters.fiscal} title={c.fiscal.title} />
+    <p class="cc-intro" data-reveal="fade">{c.fiscal.intro}</p>
+    <ul class="cc-stamps">
+      {c.fiscal.stamps.map((s, i) => (
+        <li class:list={['cc-stamp', `cc-stamp--${i + 1}`]} data-reveal="drop" data-delay={(i * 0.15).toFixed(2)}>
+          <div data-drag>
+            <Timbre shape={i === 1 ? 'rect' : 'circle'} top={s.top} center={s.center} tone={(['rojo', 'azul', 'tinta'] as const)[i]} />
+          </div>
+          <p>{s.text}</p>
+        </li>
+      ))}
+    </ul>
+    <figure class="cc-chain">
+      <Doodle kind="cadenaHash" />
+      <figcaption data-reveal="fade">{c.fiscal.chain}</figcaption>
+    </figure>
+  </section>
+
+  <!-- ═════════ V. LA COBRANZA ═════════ -->
+  <section class="cc-sec cc-ai" data-collage>
+    <div class="cc-ai__art">
+      <Doodle kind="calendario" />
+      <div class="cc-ai__stamp" data-reveal="drop" data-delay="0.9"><Timbre shape="rect" top={lang === 'es' ? 'Conciliado' : 'Reconciled'} center={c.collections.stamp} tone="azul" /></div>
+      <div class="cc-ai__mail"><Doodle kind="sobre" delay={0.4} /></div>
+    </div>
+    <div class="cc-ai__copy">
+      <Capitulo n="V" kicker={c.chapters.collections} title={c.collections.title} />
+      <p class="cc-intro" data-reveal="fade">{c.collections.text}</p>
+    </div>
+  </section>
+
+  <!-- ═════════ VI. CÓMO ESTÁ HECHO ═════════ -->
+  <section class="cc-sec cc-build">
+    <Capitulo n="VI" kicker={c.chapters.build} />
+    <div class="cc-build__grid">
+      <div class="cc-dev">
+        <h3 class="cc-h3" data-reveal="lines"><span class="lv-line"><span>{c.devs.title}</span></span></h3>
+        <p class="lv-pen-note" data-reveal="write">{c.devs.text}</p>
+        <pre class="cc-term" data-reveal="drop"><span class="cc-term__dim">$</span> curl https://cordhq.app/api/v1/… \
+    -H "Authorization: Bearer ••••"
+
+<span class="cc-term__dim">mcp ›</span> listar_workflows_manuales()
+<span class="cc-term__dim">mcp ›</span> correr_workflow(&#123; id &#125;)</pre>
+        <ul class="cc-tags" data-reveal="fade">
+          {c.devs.items.map((it) => <li>{it}</li>)}
+        </ul>
+      </div>
+      <div class="cc-sec-lock">
+        <div class="cc-lock"><Doodle kind="candado" /></div>
+        <h3 class="cc-h3" data-reveal="lines"><span class="lv-line"><span>{c.security.title}</span></span></h3>
+        <p class="cc-body" data-reveal="fade">{c.security.text}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ VII. EL MODELO ═════════ -->
+  <section class="cc-sec cc-model">
+    <Capitulo n="VII" kicker={c.chapters.model} title={c.model.title} />
+    <div class="cc-model__stage">
+      <div class="cc-engine cc-engine--a" data-reveal="fade">
+        <b>{c.model.engines[0].title}</b>
+        <p>{c.model.engines[0].text}</p>
+      </div>
+      <div class="cc-gears"><Doodle kind="engranes" /></div>
+      <div class="cc-engine cc-engine--b" data-reveal="fade" data-delay="0.15">
+        <b>{c.model.engines[1].title}</b>
+        <p>{c.model.engines[1].text}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ VIII. EN NÚMEROS ═════════ -->
+  <section class="cc-sec cc-numbers">
+    <Capitulo n="VIII" kicker={c.chapters.numbers} />
+    <dl class="cc-ledger">
+      {c.numbers.items.map((it, i) => (
+        <div class:list={['cc-ledger__row', { 'is-lead': i === 0 }]} data-reveal="fade" data-delay={(i * 0.06).toFixed(2)}>
+          <dt>{it.label}</dt>
+          <dd>{i === 0 ? <span data-pen data-pen-scroll data-delay="0.4">{it.value}</span> : it.value}</dd>
+        </div>
+      ))}
+    </dl>
+    <p class="lv-kicker cc-stack" data-reveal="fade">{c.numbers.stack}</p>
+  </section>
+
+  <CaseNext next={next} nextLot={nextLot} />
+</main>
+
+<style>
+  .cc {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(110px, 13vw, 200px);
+    padding: 0 var(--gutter) clamp(110px, 12vw, 180px);
+    overflow-x: clip;
+  }
+
+  .cc > * { width: 100%; max-width: 1560px; margin-inline: auto; }
+
+  .cc-sec { position: relative; display: grid; gap: clamp(24px, 3vw, 44px); }
+
+  .cc-intro {
+    position: relative;
+    z-index: 2;
+    max-width: 52ch;
+    font-size: clamp(1.15rem, 1.6vw, 1.45rem);
+    line-height: 1.45;
+  }
+
+  .cc-body { font-size: 1.1rem; line-height: 1.55; color: var(--grafito); max-width: 52ch; }
+
+  .cc-h3 {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(2rem, 3.6vw, 3.6rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .cc-list { list-style: none; display: grid; gap: 12px; max-width: 52ch; }
+  .cc-list li { position: relative; padding-left: 1.6em; font-size: 1.08rem; line-height: 1.5; }
+  .cc-list li::before { content: '—'; position: absolute; left: 0; color: var(--rojo); }
+
+  /* ── Portada ── */
+  .cc-cover {
+    position: relative;
+    min-height: max(60vw, 700px);
+    padding-top: clamp(110px, 14vh, 150px);
+  }
+
+  .cc-kicker { position: relative; z-index: 4; }
+  .cc-kicker a { color: inherit; text-decoration: none; }
+  .cc-kicker a:hover { color: var(--rojo); }
+
+  .cc-title {
+    position: relative;
+    z-index: 2;
+    margin-top: 1vw;
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(7rem, 27vw, 32rem);
+    line-height: 0.8;
+    letter-spacing: -0.06em;
+  }
+
+  .cc-sub {
+    position: relative;
+    z-index: 2;
+    max-width: 18ch;
+    margin: 1.2vw 0 0 6vw;
+    font-style: italic;
+    font-size: clamp(1.5rem, 2.8vw, 2.8rem);
+    line-height: 1.05;
+  }
+
+  .cc-lede {
+    position: relative;
+    z-index: 3;
+    max-width: 46ch;
+    margin: clamp(32px, 4vw, 64px) 0 0 6vw;
+    font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+    line-height: 1.5;
+  }
+
+  .cc-card {
+    position: absolute;
+    z-index: 5;
+    right: 2%;
+    bottom: 4%;
+    width: min(30vw, 400px);
+    padding: 22px 22px 18px;
+    background: var(--hoja);
+    box-shadow: var(--sombra-hoja);
+    rotate: -2deg;
+  }
+
+  .cc-card dl { display: grid; gap: 8px; font-family: var(--f-grot); font-size: 0.8rem; }
+  .cc-card dl div { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 10px; padding-bottom: 6px; border-bottom: 1px dotted var(--linea); }
+  .cc-card dt { color: var(--grafito); text-transform: uppercase; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.06em; }
+  .cc-card dd span { display: inline-block; }
+  .cc-card a { color: var(--tinta); }
+
+  /* ── I. El cordón ── */
+  .cc-rope {
+    position: relative;
+    aspect-ratio: 1000 / 600;
+    max-width: 100%;
+    margin-top: clamp(16px, 2vw, 32px);
+  }
+
+  .cc-rope__line {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    color: var(--tinta);
+  }
+
+  .cc-step {
+    position: absolute;
+    z-index: 2;
+    width: 20%;
+    margin: 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  .cc-step--1 { left: 1%; top: 4%; rotate: -2deg; }
+  .cc-step--2 { left: 28%; top: 44%; rotate: 1.5deg; }
+  .cc-step--3 { left: 54%; top: 2%; rotate: -1deg; }
+  .cc-step--4 { left: 78%; top: 42%; rotate: 2deg; }
+
+  .cc-step__sheet { padding: 12%; color: var(--tinta); }
+
+  .cc-step figcaption { display: grid; gap: 4px; }
+
+  .cc-step__n {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--rojo);
+    color: var(--hoja);
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-size: 0.95rem;
+  }
+
+  .cc-step b { font-family: var(--f-serif); font-weight: 400; font-size: clamp(1.4rem, 2vw, 2rem); line-height: 1; }
+  .cc-step figcaption > span:last-child { font-size: 0.98rem; line-height: 1.45; color: var(--grafito); }
+
+  .cc-embed { justify-self: end; rotate: -2deg; }
+  .cc-embed code { font-family: var(--f-grot); font-style: normal; font-size: 0.9em; color: var(--tinta); }
+
+  /* ── II. Países ── */
+  .cc-countries__head {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 24px 4vw;
+    align-items: end;
+  }
+
+  .cc-twelve {
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(10rem, 34vw, 38rem);
+    line-height: 0.76;
+    letter-spacing: -0.04em;
+  }
+
+  .cc-countries__copy { display: grid; gap: 18px; padding-bottom: 2vw; }
+
+  .cc-countries__word {
+    margin-top: -0.2em;
+    font-size: clamp(3rem, 7vw, 7.6rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  .cc-countries__word em { font-style: italic; color: var(--rojo); }
+
+  .cc-flags {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: clamp(28px, 3.4vw, 56px) clamp(16px, 2vw, 36px);
+    padding-top: clamp(24px, 3vw, 48px);
+  }
+
+  .cc-flag { display: grid; gap: 6px; justify-items: start; }
+  .cc-flag:nth-child(3n + 1) { rotate: -3deg; }
+  .cc-flag:nth-child(3n + 2) { rotate: 2deg; margin-top: 2.4vw; }
+  .cc-flag:nth-child(3n) { rotate: -1deg; margin-top: 1vw; }
+  .cc-flag [data-drag] { width: 100%; color: var(--tinta); }
+
+  .cc-flag__name { font-size: clamp(1.1rem, 1.5vw, 1.4rem); line-height: 1.1; }
+
+  .cc-flag__rail {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--f-grot);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--grafito);
+  }
+
+  .cc-flag__rail::before,
+  .cc-legend i {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .cc-flag__rail.is-payments::before, .cc-legend .is-payments { background: var(--rojo); }
+  .cc-flag__rail.is-mp::before, .cc-legend .is-mp { background: var(--azul); }
+
+  .cc-legend {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 36px;
+    padding-top: 18px;
+    border-top: 1px solid var(--linea);
+    font-size: 0.98rem;
+    color: var(--grafito);
+  }
+
+  .cc-legend li { display: inline-flex; align-items: center; gap: 10px; }
+
+  /* ── III. Pagos ── */
+  .cc-pay {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    align-items: center;
+    column-gap: clamp(32px, 5vw, 96px);
+    padding-bottom: 6vw;
+  }
+
+  .cc-pay__copy { display: grid; gap: clamp(20px, 2.4vw, 32px); }
+
+  .cc-flow { position: relative; margin: 0; display: grid; gap: 22px; color: var(--tinta); }
+
+  .cc-flow__label {
+    position: absolute;
+    translate: -50% -50%;
+    font-family: var(--f-grot);
+    font-size: clamp(0.66rem, 0.9vw, 0.85rem);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .cc-flow__label--client { left: 14%; top: 34%; }
+  .cc-flow__label--biz { left: 86%; top: 34%; }
+  .cc-flow__label--cord { left: 51%; top: 4%; color: var(--rojo); }
+
+  .cc-flow figcaption { justify-self: center; rotate: -2deg; font-size: 1.3rem; }
+
+  /* ── IV. Fisco ── */
+  .cc-stamps {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1.25fr 1fr;
+    gap: 40px clamp(24px, 4vw, 72px);
+    align-items: start;
+    padding-top: clamp(16px, 2vw, 32px);
+  }
+
+  .cc-stamp { display: grid; gap: 18px; }
+  .cc-stamp [data-drag] { width: min(100%, 260px); }
+  .cc-stamp--1 [data-drag] { rotate: -10deg; }
+  .cc-stamp--2 { margin-top: 4vw; }
+  .cc-stamp--2 [data-drag] { rotate: 4deg; width: min(100%, 340px); }
+  .cc-stamp--3 [data-drag] { rotate: 12deg; }
+  .cc-stamp p { max-width: 30ch; font-size: 1.02rem; line-height: 1.5; color: var(--grafito); }
+
+  .cc-chain {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 24px 4vw;
+    align-items: center;
+    margin: clamp(32px, 4vw, 64px) 0 0;
+    padding-top: 28px;
+    border-top: 1px solid var(--linea);
+    color: var(--tinta);
+  }
+
+  .cc-chain figcaption { font-style: italic; font-size: 1.15rem; line-height: 1.45; }
+
+  /* ── V. Cobranza ── */
+  .cc-ai {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    column-gap: clamp(32px, 5vw, 96px);
+  }
+
+  .cc-ai__art { position: relative; z-index: 2; max-width: 520px; color: var(--tinta); rotate: -2deg; }
+  .cc-ai__stamp { position: absolute; right: -30%; bottom: -8%; width: 62%; rotate: -12deg; }
+  .cc-ai__mail { position: absolute; left: -10%; top: -16%; width: 42%; rotate: 8deg; }
+  .cc-ai__copy { position: relative; z-index: 2; display: grid; gap: clamp(20px, 2.4vw, 32px); }
+
+  /* ── VI. Cómo está hecho ── */
+  .cc-build__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 56px clamp(32px, 5vw, 96px);
+    align-items: start;
+  }
+
+  .cc-dev, .cc-sec-lock { display: grid; gap: 18px; align-content: start; }
+  .cc-dev .lv-pen-note { justify-self: start; rotate: -2deg; }
+
+  .cc-term {
+    overflow-x: auto;
+    padding: 26px 28px;
+    background: var(--tinta-fija);
+    color: #F4F2ED;
+    font-family: var(--f-grot);
+    font-size: clamp(0.78rem, 1vw, 0.95rem);
+    line-height: 1.7;
+    rotate: 1deg;
+    box-shadow: var(--sombra-hoja);
+  }
+
+  .cc-term__dim { color: #e2533f; }
+
+  .cc-tags { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+  .cc-tags li {
+    padding: 6px 10px;
+    border: 1px solid var(--tinta);
+    font-family: var(--f-grot);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .cc-lock { width: min(40%, 170px); color: var(--tinta); rotate: -6deg; }
+
+  /* ── VII. Modelo ── */
+  .cc-model__stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 32px clamp(24px, 4vw, 64px);
+    align-items: center;
+  }
+
+  .cc-gears { color: var(--tinta); }
+  .cc-engine { display: grid; gap: 10px; }
+  .cc-engine--b { text-align: right; justify-items: end; }
+
+  .cc-engine b {
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(2.4rem, 4.4vw, 4.6rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .cc-engine--a b { color: var(--rojo); }
+  .cc-engine--b b { color: var(--azul); }
+  .cc-engine p { max-width: 30ch; font-size: 1.05rem; line-height: 1.5; color: var(--grafito); }
+
+  /* ── VIII. Números ── */
+  .cc-ledger { display: grid; border-top: 1px solid var(--tinta); }
+
+  .cc-ledger__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 24px;
+    padding: clamp(14px, 1.6vw, 22px) 0;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  .cc-ledger__row dt { font-size: clamp(1.1rem, 1.6vw, 1.5rem); }
+
+  .cc-ledger__row dd {
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(2.6rem, 6vw, 6.4rem);
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cc-ledger__row dd span { display: inline-block; }
+  .cc-ledger__row.is-lead dd { font-size: clamp(4rem, 11vw, 12rem); color: var(--rojo); }
+
+  .cc-stack { padding-top: 6px; }
+
+  /* ── Móvil ── */
+  @media (max-width: 900px) {
+    .cc-cover { min-height: 0; height: 250vw; }
+    .cc-title { font-size: 40vw; }
+    .cc-sub, .cc-lede { margin-left: 0; }
+    .cc-lede { position: absolute; top: 120vw; left: 0; right: 0; }
+    .cc-card { right: auto; left: 0; bottom: 2%; width: 92%; }
+
+    .cc-rope { aspect-ratio: auto; display: grid; gap: 40px; padding-left: 22px; border-left: 4px solid var(--tinta); }
+    .cc-rope__line { display: none; }
+    .cc-step { position: static; width: 100%; max-width: 360px; }
+
+    .cc-countries__head { grid-template-columns: minmax(0, 1fr); }
+    .cc-flags { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .cc-pay, .cc-ai, .cc-build__grid { grid-template-columns: minmax(0, 1fr); }
+    .cc-pay { padding-bottom: 46vw; }
+    .cc-ai__art { margin: 18vw 0 0 4vw; }
+    .cc-ai__stamp { right: -4%; bottom: -14%; }
+
+    .cc-stamps { grid-template-columns: minmax(0, 1fr); }
+    .cc-stamp--2 { margin-top: 0; }
+    .cc-chain { grid-template-columns: minmax(0, 1fr); }
+
+    .cc-model__stage { grid-template-columns: minmax(0, 1fr); }
+    .cc-engine--b { text-align: left; justify-items: start; }
+  }
+</style>

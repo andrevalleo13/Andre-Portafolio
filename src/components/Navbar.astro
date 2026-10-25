@@ -2,480 +2,433 @@
 /**
  * ── Navbar Component ──────────────────────────────────
  *
- * Fixed. Transparent over hero → opaque on scroll.
- * Desktop:  LEFT nav links  |  RIGHT: EN / ES toggle
- * Mobile:   Hamburger → Full-screen overlay (Stealth Wealth)
+ * Mínima, en las esquinas:
+ *   [etiqueta roja]                         EN/ES   Contacto   Índice ●
+ * Transparente al inicio → papel + línea fina al hacer scroll; se
+ * esconde al bajar y regresa al subir.
  *
- * Aesthetic: raw Helvetica Neue, no borders, no decoration.
- * The type IS the design. Animación editorial expo.out.
+ * "Índice" abre una hoja a pantalla completa compuesta como collage:
+ * las secciones en Bodoni gigante, sueltas y a escalas distintas, con
+ * su número de etiqueta (guiño a Margiela) y dibujos alrededor. Se
+ * abre como una gota de tinta que se expande desde el botón.
+ * La página actual queda en cursiva roja, encerrada con la pluma.
+ * Colores desde los alias de superficie (--bg, --fg…) definidos en Base.
  */
-import { navItems, languages, type Lang } from '../i18n/ui';
+import { navItems, languages } from '../i18n/ui';
 import { getLangFromUrl, useTranslations, getLocalePath, getAlternateLangPath } from '../i18n/utils';
+import Etiqueta from './art/Etiqueta.astro';
+import Caballo from './art/Caballo.astro';
+import Trazo from './art/Trazo.astro';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const alternate = getAlternateLangPath(Astro.url.pathname);
+const label = (id: string) => t(`nav.${id}` as Parameters<typeof t>[0]);
 
-const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '/es' || Astro.url.pathname === '/es/';
+const basePath = Astro.url.pathname.replace(/^\/es(?=\/|$)/, '').replace(/\/$/, '') || '/';
+const isActive = (href: string) =>
+  href === '/' ? basePath === '/' : basePath === href || basePath.startsWith(`${href}/`);
+
+const overlayItems = [{ id: 'home', href: '/' }, ...navItems];
+
+const langLinks = Object.entries(languages).map(([code, text]) => ({
+  code,
+  text,
+  href: code === alternate.lang ? alternate.href : Astro.url.pathname,
+  active: code === lang,
+}));
 ---
 
-<nav class="navbar" id="navbar">
+<header class="nav" id="navbar">
+  <a class="nav__brand" href={getLocalePath('/', lang)} aria-label={`André Valle Ortega · ${label('home')}`}>
+    <Etiqueta class="nav__etiqueta" />
+  </a>
 
-  <!-- Mobile: Hamburger Button (izquierda) -->
-  <button class="navbar__burger" id="menu-btn" aria-label="Toggle Menu" aria-expanded="false">
-    <span class="burger__line burger__line--top"></span>
-    <span class="burger__line burger__line--mid"></span>
-    <span class="burger__line burger__line--bot"></span>
-  </button>
+  <div class="nav__right">
+    <div class="nav__lang">
+      {langLinks.map((l, i) => (
+        <>
+          {i > 0 && <span aria-hidden="true">/</span>}
+          <a href={l.href} hreflang={l.code} class:list={{ 'is-active': l.active }} id={`lang-${l.code}`}>{l.text}</a>
+        </>
+      ))}
+    </div>
+    <a
+      class="nav__contact"
+      href={getLocalePath('/contact', lang)}
+      id="nav-contact"
+      data-pen
+      aria-current={isActive('/contact') ? 'page' : undefined}
+    >{label('contact')}</a>
+    <button class="nav__menu" id="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-overlay">
+      <span class="nav__menu-open">{t('home.index')}</span>
+      <span class="nav__menu-close">{t('nav.close')}</span>
+      <i aria-hidden="true"></i>
+    </button>
+  </div>
+</header>
 
-  <!-- Desktop: Left page links -->
-  <ul class="navbar__links" id="nav-links">
-    {!isHome && (
-      <li>
-        <a href={getLocalePath('/', lang)} class="navbar__link hover-fill" id="nav-home">
-          {lang === 'es' ? 'INICIO' : 'HOME'}
-        </a>
-      </li>
-    )}
-    {navItems.map((item) => (
-      <li>
-        <a
-          href={getLocalePath(item.href, lang)}
-          class:list={[
-            'navbar__link',
-            item.id === 'contact' ? 'navbar__contact-btn' : 'hover-fill'
-          ]}
-          id={`nav-${item.id}`}
-        >
-          {t(`nav.${item.id}` as any)}
-          {item.id === 'contact' && (
-            <svg class="contact-arrow" width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.8"/>
-            </svg>
-          )}
-        </a>
-      </li>
-    ))}
-  </ul>
-
-  <!-- Right: language switch -->
-  <div class="navbar__lang" id="navbar-lang">
-    {Object.entries(languages).map(([code, label]) => {
-      const isActive = code === lang;
-      const href = code === alternate.lang
-        ? alternate.href
-        : Astro.url.pathname;
-      return (
-        <a
-          href={href}
-          class:list={['lang-link hover-fill', { active: isActive }]}
-          id={`lang-${code}`}
-        >
-          {label}
-        </a>
-      );
-    })}
+<div class="overlay" id="mobile-overlay" aria-hidden="true" inert data-lenis-prevent>
+  <div class="overlay__marks" aria-hidden="true">
+    <div class="overlay__ocre"><Trazo kind="verde" draw="none" /></div>
+    <div class="overlay__agua"><Trazo kind="puntos" draw="none" /></div>
+    <div class="overlay__horse"><Caballo draw="none" /></div>
+    <div class="overlay__dog"><Trazo kind="estrellas" draw="none" /></div>
   </div>
 
-</nav>
+  <nav aria-label={t('nav.main')}>
+    <ul class="overlay__links">
+      {overlayItems.map((item, i) => (
+        <li class:list={['overlay__item', `overlay__item--${i}`]} style={`--i:${i}`}>
+          <a
+            href={getLocalePath(item.href, lang)}
+            class="overlay__link"
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            <span class="overlay__num">{i}</span>
+            <span class="overlay__label" data-pen aria-current={isActive(item.href) ? 'page' : undefined}>{label(item.id)}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
 
-<!-- Mobile full-screen overlay -->
-<div class="mobile-overlay" id="mobile-overlay" aria-hidden="true">
-  <div class="overlay__divider"></div>
-
-  <ul class="overlay__links" id="overlay-links">
-    {!isHome && (
-      <li class="overlay__item">
-        <a href={getLocalePath('/', lang)} class="overlay__link" id="overlay-home">
-          <span class="overlay__index">00</span>
-          <span class="overlay__label">{lang === 'es' ? 'Inicio' : 'Home'}</span>
-        </a>
-      </li>
-    )}
-    {navItems.map((item, i) => (
-      <li class="overlay__item">
-        <a
-          href={getLocalePath(item.href, lang)}
-          class:list={['overlay__link', item.id === 'contact' && 'overlay__link--contact']}
-          id={`overlay-${item.id}`}
-        >
-          <span class="overlay__index">0{i + 1}</span>
-          <span class="overlay__label">{t(`nav.${item.id}` as any)}</span>
-          {item.id === 'contact' && (
-            <svg class="overlay__arrow" width="10" height="10" viewBox="0 0 8 8" fill="none">
-              <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.8"/>
-            </svg>
-          )}
-        </a>
-      </li>
-    ))}
-  </ul>
-
-  <!-- Lang switch slides here from navbar via JS -->
-  <div class="overlay__lang-slot" id="overlay-lang-slot"></div>
+  <div class="overlay__foot">
+    <div class="nav__lang overlay__lang">
+      {langLinks.map((l, i) => (
+        <>
+          {i > 0 && <span aria-hidden="true">/</span>}
+          <a href={l.href} hreflang={l.code} class:list={{ 'is-active': l.active }}>{l.text}</a>
+        </>
+      ))}
+    </div>
+    <span>andrevalleo13@gmail.com</span>
+  </div>
 </div>
 
 <style>
   /* ────────────────────────────────────────
-     DESKTOP NAV
+     BARRA
   ──────────────────────────────────────── */
-  .navbar {
+  .nav {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    inset: 0 0 auto;
     z-index: 200;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2rem 12vw;
-    background: transparent;
-    transition: background 0.5s ease, backdrop-filter 0.5s ease, padding 0.4s ease;
+    gap: 1.5rem;
+    padding: 1.3rem var(--gutter);
+    color: var(--fg);
+    transition:
+      background-color 0.5s var(--ease-expo),
+      box-shadow 0.5s var(--ease-expo),
+      padding 0.6s var(--ease-expo),
+      translate 0.8s var(--ease-expo);
   }
 
-  .navbar.scrolled {
-    background: rgba(20, 17, 15, 0.75);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    padding: 1.25rem 12vw;
+  .nav.is-scrolled {
+    background-color: var(--bg);
+    box-shadow: 0 1px 0 var(--rule);
+    padding-block: 0.8rem;
   }
 
-  .navbar__links {
-    list-style: none;
+  .nav.is-hidden { translate: 0 -105%; }
+
+  /* Con el índice abierto la barra queda sobre papel, en cualquier superficie */
+  .nav.is-open {
+    --fg: var(--tinta);
+    --bg: var(--papel);
+    --fg-soft: var(--grafito);
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  .nav__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .nav__brand :global(.nav__etiqueta) {
+    transition: rotate 0.8s var(--ease-expo);
+  }
+
+  .nav__brand:hover :global(.nav__etiqueta) { rotate: -3deg; }
+
+  .nav__right {
     display: flex;
-    gap: 2px;
-  }
-
-  .navbar__link {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 0.62rem;
-    font-weight: 300;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: rgba(237, 233, 228, 0.5);
-    padding: 0.5rem 1.2rem;
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: clamp(1.2rem, 2.4vw, 2.2rem);
   }
 
-  .navbar__contact-btn {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 0.62rem;
-    font-weight: 400;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: #14110F;
-    background: rgba(237, 233, 228, 0.95);
-    border-radius: 2px;
-    padding: 0.5rem 1.2rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
-    transition: background 0.4s ease;
-  }
-
-  .navbar__contact-btn:hover { background: #FFFFFF; }
-
-  .contact-arrow {
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .navbar__contact-btn:hover .contact-arrow {
-    transform: translate(3px, -3px);
-  }
-
-  .navbar__lang {
+  .nav__lang {
     display: flex;
-    gap: 2px;
-    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--f-grot);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--fg-soft);
   }
 
-  .lang-link {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 0.62rem;
-    font-weight: 300;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+  .nav__lang a {
+    color: var(--fg-soft);
     text-decoration: none;
-    color: rgba(237, 233, 228, 0.35);
-    padding: 0.5rem 1.2rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    transition: color 0.3s ease;
   }
 
-  .lang-link.active {
-    color: rgba(237, 233, 228, 0.95);
-    font-weight: 400;
+  .nav__lang a:hover { color: var(--fg); }
+
+  .nav__lang a.is-active {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 5px;
   }
 
-  /* ── Hamburger ─────────────────────────── */
-  .navbar__burger {
-    display: none;
-    background: none;
-    border: none;
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
-    cursor: pointer;
-    padding: 0.4rem 0;
-    flex-direction: column;
-    gap: 5px;
-    width: 22px;
+  .nav__contact {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 1.08rem;
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .nav__menu {
     position: relative;
     z-index: 300;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.9rem;
+    border: 0;
+    border-radius: 2px;
+    background: var(--fg);
+    color: var(--bg);
+    font-family: var(--f-grot);
+    font-size: 0.7rem;
+    font-weight: 600;
+    font-stretch: 90%;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.5s var(--ease-expo);
   }
 
-  .burger__line {
-    display: block;
-    width: 100%;
-    height: 1px;
-    background: rgba(237, 233, 228, 0.8);
-    transform-origin: center;
-    transition:
-      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-      opacity   0.3s ease,
-      width     0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  .nav__menu i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    transition: scale 0.6s var(--ease-expo);
   }
 
-  /* X morph cuando está abierto */
-  .navbar__burger.is-open .burger__line--top {
-    transform: translateY(6px) rotate(45deg);
-  }
-  .navbar__burger.is-open .burger__line--mid {
-    opacity: 0;
-    transform: scaleX(0);
-  }
-  .navbar__burger.is-open .burger__line--bot {
-    transform: translateY(-6px) rotate(-45deg);
-  }
+  .nav__menu:hover { background: var(--accent); }
+  .nav__menu:hover i { background: var(--bg); scale: 1.4; }
+
+  .nav__menu-close { display: none; }
+  .nav__menu[aria-expanded='true'] .nav__menu-open { display: none; }
+  .nav__menu[aria-expanded='true'] .nav__menu-close { display: inline; }
 
   /* ────────────────────────────────────────
-     MOBILE OVERLAY
+     ÍNDICE (collage a pantalla completa)
   ──────────────────────────────────────── */
-  .mobile-overlay {
-    display: none;
+  .overlay {
     position: fixed;
     inset: 0;
     z-index: 150;
-    background: rgba(20, 17, 15, 0.98);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    flex-direction: column;
-    padding: 0 12vw;
+    overflow: hidden;
+    background: var(--papel);
+    color: var(--tinta);
+    clip-path: circle(0% at calc(100% - var(--gutter) - 40px) 36px);
+    visibility: hidden;
+    transition:
+      clip-path 1s var(--ease-expo),
+      visibility 0s linear 1s;
+  }
+
+  .overlay.is-open {
+    clip-path: circle(150% at calc(100% - var(--gutter) - 40px) 36px);
+    visibility: visible;
+    transition: clip-path 1.1s var(--ease-expo);
+  }
+
+  .overlay__marks > div {
+    position: absolute;
     pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .mobile-overlay.is-open {
-    opacity: 1;
-    pointer-events: all;
-  }
+  .overlay__ocre { left: 58%; top: -6%; width: 46vw; opacity: 0.9; rotate: -6deg; }
+  .overlay__agua { left: 2%; top: 60%; width: 22vw; opacity: 0.85; }
+  .overlay__horse { right: 6%; top: 20%; width: 17vw; rotate: 5deg; }
+  .overlay__dog { right: 10%; bottom: 10%; width: 20vw; }
 
-  .overlay__divider {
-    height: 1px;
-    background: rgba(237, 233, 228, 0.06);
-    margin-top: 5.5rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .overlay__links {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    flex: 1;
-  }
+  .overlay__links { list-style: none; }
 
   .overlay__item {
-    border-bottom: 1px solid rgba(237, 233, 228, 0.05);
+    position: absolute;
+    opacity: 0;
+    translate: 0 40px;
+    rotate: 3deg;
+    transition:
+      translate 1s var(--ease-expo),
+      rotate 1s var(--ease-expo),
+      opacity 0.6s ease;
   }
 
+  .overlay.is-open .overlay__item {
+    opacity: 1;
+    translate: 0 0;
+    rotate: 0deg;
+    transition-delay: calc(var(--i) * 70ms + 200ms);
+  }
+
+  .overlay__item--0 { left: 6%; top: 15%; font-size: 8.5vw; }
+  .overlay__item--1 { left: 34%; top: 27%; font-size: 11vw; font-style: italic; }
+  .overlay__item--2 { left: 9%; top: 47%; font-size: 7.5vw; }
+  .overlay__item--3 { left: 47%; top: 55%; font-size: 9.5vw; }
+  .overlay__item--4 { left: 16%; top: 72%; font-size: 8.5vw; font-style: italic; }
+
   .overlay__link {
-    display: flex;
-    align-items: baseline;
-    gap: 1.4rem;
-    padding: 1.15rem 0;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.12em;
+    color: var(--tinta);
     text-decoration: none;
   }
 
-  .overlay__index {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 0.5rem;
-    font-weight: 300;
-    letter-spacing: 0.25em;
-    color: rgba(237, 233, 228, 0.2);
-    flex-shrink: 0;
-    transform: translateY(24px);
-    opacity: 0;
-    transition:
-      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-      opacity   0.5s ease;
+  .overlay__num {
+    font-family: var(--f-mono);
+    font-size: max(0.75rem, 0.12em);
+    font-style: normal;
+    color: var(--grafito);
+    padding-top: 0.5em;
   }
 
   .overlay__label {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: clamp(1.5rem, 7.5vw, 2.2rem);
-    font-weight: 200;
-    letter-spacing: -0.01em;
-    text-transform: uppercase;
-    color: rgba(237, 233, 228, 0.65);
-    transform: translateY(32px);
-    opacity: 0;
-    display: block;
-    transition:
-      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-      opacity   0.5s ease,
-      color     0.3s ease;
+    font-family: var(--f-display);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    transition: color 0.3s ease;
   }
 
-  .overlay__arrow {
-    margin-left: 0.4rem;
-    flex-shrink: 0;
-    color: rgba(237, 233, 228, 0.35);
-    transform: translateY(24px);
-    opacity: 0;
-    align-self: center;
-    transition:
-      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-      opacity   0.5s ease;
+  .overlay__link:hover .overlay__label,
+  .overlay__link[aria-current='page'] .overlay__label { color: var(--rojo); }
+
+  .overlay__foot {
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 1.6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--f-mono);
+    font-size: 0.76rem;
+    color: var(--grafito);
   }
 
-  /* Stagger por item */
-  .overlay__item:nth-child(1) .overlay__index,
-  .overlay__item:nth-child(1) .overlay__label,
-  .overlay__item:nth-child(1) .overlay__arrow { transition-delay: 0.04s; }
-
-  .overlay__item:nth-child(2) .overlay__index,
-  .overlay__item:nth-child(2) .overlay__label,
-  .overlay__item:nth-child(2) .overlay__arrow { transition-delay: 0.09s; }
-
-  .overlay__item:nth-child(3) .overlay__index,
-  .overlay__item:nth-child(3) .overlay__label,
-  .overlay__item:nth-child(3) .overlay__arrow { transition-delay: 0.14s; }
-
-  .overlay__item:nth-child(4) .overlay__index,
-  .overlay__item:nth-child(4) .overlay__label,
-  .overlay__item:nth-child(4) .overlay__arrow { transition-delay: 0.19s; }
-
-  .overlay__item:nth-child(5) .overlay__index,
-  .overlay__item:nth-child(5) .overlay__label,
-  .overlay__item:nth-child(5) .overlay__arrow { transition-delay: 0.24s; }
-
-  /* Estado visible */
-  .mobile-overlay.is-open .overlay__index,
-  .mobile-overlay.is-open .overlay__label,
-  .mobile-overlay.is-open .overlay__arrow {
-    transform: translateY(0);
-    opacity: 1;
-  }
-
-  /* Hover */
-  .overlay__link:hover .overlay__label { color: rgba(237, 233, 228, 0.95); }
-  .overlay__link:hover .overlay__index { color: rgba(237, 233, 228, 0.4); }
-
-  /* Contact destacado */
-  .overlay__link--contact .overlay__label {
-    color: rgba(237, 233, 228, 0.9);
-    font-weight: 300;
-  }
-
-  /* Lang slot at bottom of overlay */
-  .overlay__lang-slot {
-    padding: 2rem 0 3rem;
-    transform: translateY(16px);
-    opacity: 0;
-    transition:
-      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.28s,
-      opacity   0.5s ease 0.28s;
-  }
-
-  .mobile-overlay.is-open .overlay__lang-slot {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  .overlay__lang a { color: var(--grafito); }
+  .overlay__lang a.is-active { color: var(--tinta); text-decoration-color: var(--rojo); }
 
   /* ────────────────────────────────────────
-     RESPONSIVE BREAKPOINT
+     RESPONSIVE
   ──────────────────────────────────────── */
-  @media (max-width: 768px) {
-    .navbar__burger { display: flex; }
-    .navbar__links  { display: none !important; }
-    .navbar__lang {
-      position: relative;
-      z-index: 300;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-    .navbar__lang.is-hidden {
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-4px);
-    }
-    .mobile-overlay { display: flex; }
+  @media (max-width: 900px) {
+    .nav > .nav__right > .nav__lang,
+    .nav__contact { display: none; }
+
+    .overlay__item--0 { left: 0; top: 14%; font-size: 15vw; }
+    .overlay__item--1 { left: 22%; top: 26%; font-size: 19vw; }
+    .overlay__item--2 { left: 4%; top: 42%; font-size: 14vw; }
+    .overlay__item--3 { left: 30%; top: 54%; font-size: 17vw; }
+    .overlay__item--4 { left: 6%; top: 67%; font-size: 15vw; }
+    .overlay__item { padding-left: var(--gutter); }
+    .overlay__horse { right: 4%; top: 72%; width: 34vw; }
+    .overlay__dog { display: none; }
+    .overlay__ocre { width: 110vw; left: 10%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav,
+    .overlay,
+    .overlay__item { transition: none; }
   }
 </style>
 
 <script>
-  /* ── Scroll class ─────────────────────── */
-  /* Re-queries #navbar each event, so it survives view transitions. */
-  window.addEventListener('scroll', () => {
+  /* ── Scroll: papel al bajar, se esconde y regresa ── */
+  /* Re-consulta #navbar en cada evento: sobrevive a las View Transitions. */
+  let lastY = window.scrollY;
+  let ticking = false;
+
+  function updateNav() {
+    ticking = false;
     const nav = document.getElementById('navbar');
-    if (nav) nav.classList.toggle('scrolled', window.scrollY > 40);
+    if (!nav) return;
+    const y = window.scrollY;
+    const menuOpen = nav.classList.contains('is-open');
+    nav.classList.toggle('is-scrolled', y > 24);
+    if (!menuOpen && y > 220 && y > lastY + 4) nav.classList.add('is-hidden');
+    else if (y < lastY - 4 || y <= 220) nav.classList.remove('is-hidden');
+    lastY = y;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updateNav);
+    }
   }, { passive: true });
 
-  /* ── Mobile menu toggle ───────────────── */
-  /* The DOM is replaced on every Astro view transition, so bind on each
-     `astro:page-load` (guarded against double-binding). */
-  function initNavbarMenu() {
-    const menuBtn = document.getElementById('menu-btn') as HTMLButtonElement | null;
+  /* ── Índice a pantalla completa ─────────────────── */
+  /* El DOM se reemplaza en cada View Transition: enlazar en cada
+     `astro:page-load` (con guardia contra doble enlace). */
+  function setMenu(open: boolean) {
+    const btn = document.getElementById('menu-btn');
     const overlay = document.getElementById('mobile-overlay') as HTMLElement | null;
-    if (!menuBtn || !overlay || menuBtn.dataset.bound === 'true') return;
-    menuBtn.dataset.bound = 'true';
-
-    const overlayLangSlot = document.getElementById('overlay-lang-slot');
-    let isOpen = false;
-
-    const lang = () => document.getElementById('navbar-lang');
-
-    function openMenu() {
-      isOpen = true;
-      menuBtn!.classList.add('is-open');
-      menuBtn!.setAttribute('aria-expanded', 'true');
-      overlay!.classList.add('is-open');
-      overlay!.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-      const navbarLang = lang();
-      if (navbarLang && overlayLangSlot) {
-        navbarLang.classList.add('is-hidden');
-        setTimeout(() => {
-          overlayLangSlot.appendChild(navbarLang);
-          navbarLang.classList.remove('is-hidden');
-        }, 150);
-      }
-    }
-
-    function closeMenu() {
-      isOpen = false;
-      menuBtn!.classList.remove('is-open');
-      menuBtn!.setAttribute('aria-expanded', 'false');
-      overlay!.classList.remove('is-open');
-      overlay!.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-      const navbarLang = lang();
-      const navbar = document.getElementById('navbar');
-      if (navbarLang && navbar) {
-        navbar.appendChild(navbarLang);
-        navbarLang.classList.remove('is-hidden');
-      }
-    }
-
-    menuBtn.addEventListener('click', () => (isOpen ? closeMenu() : openMenu()));
-    overlay.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+    const nav = document.getElementById('navbar');
+    if (!btn || !overlay) return;
+    btn.setAttribute('aria-expanded', String(open));
+    overlay.classList.toggle('is-open', open);
+    overlay.setAttribute('aria-hidden', String(!open));
+    overlay.inert = !open;
+    nav?.classList.toggle('is-open', open);
+    if (open) nav?.classList.remove('is-hidden');
+    const lenis = (window as any).__lenis;
+    if (lenis) open ? lenis.stop() : lenis.start();
+    else document.body.style.overflow = open ? 'hidden' : '';
   }
+
+  function initNavbarMenu() {
+    updateNav();
+    const btn = document.getElementById('menu-btn') as HTMLButtonElement | null;
+    const overlay = document.getElementById('mobile-overlay');
+    if (!btn || !overlay || btn.dataset.bound === 'true') return;
+    btn.dataset.bound = 'true';
+    btn.addEventListener('click', () => setMenu(btn.getAttribute('aria-expanded') !== 'true'));
+    overlay.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+  }
+
+  /* Escape cierra el índice (un solo listener global). */
+  document.addEventListener('keydown', (e) => {
+    const btn = document.getElementById('menu-btn');
+    if (e.key === 'Escape' && btn?.getAttribute('aria-expanded') === 'true') {
+      setMenu(false);
+      btn.focus();
+    }
+  });
 
   initNavbarMenu();
   document.addEventListener('astro:page-load', initNavbarMenu);
+  document.addEventListener('astro:before-swap', () => {
+    document.body.style.overflow = '';
+    (window as any).__lenis?.start();
+  });
 </script>

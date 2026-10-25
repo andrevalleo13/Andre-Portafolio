@@ -1,0 +1,70 @@
+---
+/**
+ * ── InkDefs ───────────────────────────────────────────
+ *
+ * Filtros y símbolos SVG compartidos por todos los dibujos.
+ * Se monta una sola vez por página (en Base.astro).
+ *
+ *   #ink       → borde de tinta irregular (pincel)
+ *   #ink-fino  → lo mismo, más sutil (pluma)
+ *   #pintura   → pinceladas anchas y arrastradas (acrílico)
+ *
+ * Las regiones de filtro son amplias a propósito: se miden contra la caja
+ * de la geometría (sin el grosor del trazo) y, si son justas, recortan
+ * los brochazos gruesos.
+ *   #sello-f   → tinta de sello: moteada e imperfecta
+ *   #brocha    → letras pintadas a brocha: borde áspero y huecos de pincel seco
+ *   #flor      → flor roja de cuatro pétalos (arte popular)
+ */
+---
+
+<svg class="ink-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="ink" x="-25%" y="-25%" width="150%" height="150%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="w" />
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="5" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <filter id="ink-fino" x="-25%" y="-25%" width="150%" height="150%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="11" result="w" />
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="2.6" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <filter id="pintura" x="-25%" y="-70%" width="150%" height="240%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.09" numOctaves="3" seed="7" result="w" />
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="14" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <filter id="sello-f" x="-6%" y="-6%" width="112%" height="112%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="8" result="n" />
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -6 3.7" result="mask" />
+      <feComposite in="SourceGraphic" in2="mask" operator="in" result="s" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="2" result="w" />
+      <feDisplacementMap in="s" in2="w" scale="3" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <filter id="brocha" x="-4%" y="-12%" width="108%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="5" result="w" />
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="4" xChannelSelector="R" yChannelSelector="G" result="d" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" seed="3" result="n" />
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.6 2.35" result="m" />
+      <feComposite in="d" in2="m" operator="in" />
+    </filter>
+    <filter id="acuarela" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="21" result="w" />
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="22" xChannelSelector="R" yChannelSelector="G" result="d" />
+      <feGaussianBlur in="d" stdDeviation="1.4" />
+    </filter>
+    <symbol id="flor" viewBox="-11 -11 22 22">
+      <g fill="currentColor">
+        <circle cx="0" cy="-5.6" r="4.7" /><circle cx="5.6" cy="0" r="4.7" />
+        <circle cx="0" cy="5.6" r="4.7" /><circle cx="-5.6" cy="0" r="4.7" />
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<style>
+  .ink-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+</style>

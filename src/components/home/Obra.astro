@@ -1,0 +1,67 @@
+---
+/**
+ * ── Obra ──────────────────────────────────────────────
+ *
+ * Una pieza colgada con su cédula de museo.
+ *   frame  marco negro con paspartú (como la pared de Basquiat)
+ *   sheet  hoja suelta con cinta
+ *   stamp  estampilla con perforaciones
+ *   bare   sin soporte (el contenido trae el suyo)
+ */
+interface Props {
+  n: number;
+  /** "Título|Técnica" (formato de las claves art.* en ui.ts) */
+  label: string;
+  frame?: 'frame' | 'sheet' | 'stamp' | 'bare';
+}
+
+const { n, label, frame = 'frame' } = Astro.props;
+const [title, medium] = label.split('|');
+---
+
+<figure class:list={['obra', `obra--${frame}`]}>
+  <div class:list={['obra__piece', { 'lv-perforado': frame === 'stamp', 'lv-sheet': frame === 'sheet' }]}>
+    {frame === 'sheet' && <i class="lv-tape"></i>}
+    <slot />
+  </div>
+  <figcaption class="obra__label">
+    <span>Nº {String(n).padStart(2, '0')}</span>
+    <b>{title}</b>
+    <em>{medium}</em>
+  </figcaption>
+</figure>
+
+<style>
+  .obra {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    color: var(--tinta);
+  }
+
+  .obra--frame .obra__piece {
+    padding: 9%;
+    background: var(--hoja);
+    border: 7px solid var(--tinta);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08), 0 26px 36px -26px rgba(30, 20, 10, 0.55);
+  }
+
+  .obra--sheet .obra__piece { padding: 7%; }
+
+  .obra__label {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 10px;
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    line-height: 1.45;
+    color: var(--grafito);
+    transition: color 0.3s ease;
+  }
+
+  .obra__label span { grid-row: span 2; }
+  .obra__label b { font-weight: 400; color: var(--tinta); }
+  .obra__label em { font-style: normal; }
+
+  .obra:hover .obra__label b { color: var(--rojo); }
+</style>

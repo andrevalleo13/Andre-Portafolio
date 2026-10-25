@@ -1,68 +1,30 @@
 # Estructura del Proyecto
 
-Árbol completo de archivos y su propósito.
-
 ```
-André-Portafolio/
-│
-├── CLAUDE.md                   ← Reglas para el agente (dev server, docs Astro)
-│
-├── docs/                       ← Documentación artesanal del proyecto
-│   ├── claude.md               ← Índice — links a todos los docs
-│   ├── estructura.md           ← Este archivo
-│   ├── stack.md                ← Tecnologías y dependencias
-│   ├── design.md               ← Sistema de diseño
-│   ├── i18n.md                 ← Sistema de internacionalización
-│   ├── components.md           ← Documentación de componentes
-│   ├── pages.md                ← Estado de cada página
-│   └── changelog.md            ← Historial de cambios
-│
+Portafolio/
+├── CLAUDE.md                     ← Reglas del proyecto + índice de docs
+├── docs/                         ← Documentación (diseño, stack, componentes, páginas, i18n, changelog)
 ├── public/
-│   └── favicon.svg
-│
+│   ├── favicon.png
+│   └── og-image.jpg              ← 1200×675, estética "Lujo vivido"
 ├── src/
-│   │
-│   ├── content/
-│   │   ├── journal/
-│   │   │   ├── 01-the-economics-of-micro-saas.md
-│   │   │   ├── 02-friction-as-a-catalyst.md
-│   │   │   ├── 03-capital-allocation.md
-│   │   │   ├── 04-private-equity-trends.md
-│   │   │   ├── 05-emerging-markets.md
-│   │   │   ├── 06-operator-playbook.md
-│   │   │   ├── es-01-the-economics-of-micro-saas.md
-│   │   │   ├── es-02-friction-as-a-catalyst.md
-│   │   │   ├── es-03-capital-allocation.md
-│   │   │   ├── es-04-private-equity-trends.md
-│   │   │   ├── es-05-emerging-markets.md
-│   │   │   └── es-06-operator-playbook.md
-│   │
-│   ├── i18n/
-│   │   ├── ui.ts               ← Diccionario central de traducciones EN/ES
-│   │   └── utils.ts            ← Helpers i18n (getLangFromUrl, useTranslations…)
-│   │
+│   ├── layouts/Base.astro        ← <head>, tokens, piezas lv-*, Navbar, Footer, init de scripts
 │   ├── components/
-│   │   ├── MouseFollower.astro    # Cursor personalizado e interacciones gsap
-│   │   ├── Navbar.astro           # Navegación principal adaptativa
-│   │   ├── Newsletter.astro       # Componente de suscripción Stealth Wealth
-│   │   └── HeroShader.jsx      ← Shader 3D raymarching (React + Three.js)
-│   │
-│   ├── layouts/
-│   │   └── Base.astro          ← Layout compartido: <head>, Navbar, Footer, CSS global
-│   │
+│   │   ├── Navbar.astro · Footer.astro · Newsletter.astro · TypeformContact.astro
+│   │   ├── Home.astro · WorkIndex.astro · WorkCase.astro · About.astro
+│   │   ├── JournalIndex.astro · JournalPost.astro
+│   │   ├── home/                 ← Cover, Tesis, Holdings, Coleccion, Memos, Folio, Pieza, Obra
+│   │   └── art/                  ← Dibujos SVG (lobo, tigre, 911, GAT…), Trazo, Etiqueta, InkDefs
+│   ├── scripts/                  ← ink.ts (animaciones), smooth.ts (Lenis), splatter.ts (pintura)
+│   ├── lib/                      ← work.ts, journal.ts, resend.ts
+│   ├── data/about.ts             ← Experiencia, formación, competencias, certificaciones (EN/ES)
+│   ├── i18n/                     ← ui.ts (textos EN/ES), utils.ts
+│   ├── emails/                   ← Plantillas de correo (Resend)
+│   ├── content/                  ← Colecciones journal/ y work/ (markdown EN + ES)
 │   └── pages/
-│       ├── index.astro         ← Home EN
-│       ├── work.astro          ← Work EN
-│       ├── about.astro         ← About EN
-│       ├── journal.astro       ← Journal EN
-│       ├── contact.astro       ← Contact EN
-│       └── es/
-│           ├── index.astro     ← Home ES
-│           ├── work.astro      ← Work ES
-│           ├── about.astro     ← About ES
-│           ├── journal.astro   ← Journal ES
-│           └── contact.astro   ← Contact ES
-│
+│       ├── index · work/index · work/[id] · about/index · journal · journal/[slug] · contact · 404
+│       ├── api/contact.ts · api/subscribe.ts   ← serverless (Vercel)
+│       └── es/                   ← mismas rutas en español (envoltorios)
 ├── astro.config.mjs
 ├── package.json
 └── tsconfig.json
@@ -70,8 +32,7 @@ André-Portafolio/
 
 ## Convenciones
 
-- Las páginas EN viven en `src/pages/*.astro`
-- Las páginas ES viven en `src/pages/es/*.astro` (mirrors de las EN, mismos archivos)
-- Los imports en páginas ES usan `../../` en vez de `../`
-- Cada componente tiene su CSS `<style>` scoped dentro del mismo archivo
-- Los estilos globales y tokens viven únicamente en `src/layouts/Base.astro`
+- Las páginas (EN en `src/pages`, ES en `src/pages/es`) son envoltorios de una línea; el contenido vive en un componente compartido que saca el idioma de la URL.
+- Cada componente lleva su `<style>` scoped. Tokens y piezas compartidas (`lv-*`) viven en `Base.astro`.
+- Textos de interfaz en `src/i18n/ui.ts`; contenido estructurado en `src/data/`.
+- El movimiento se declara con atributos (`data-reveal`, `data-draw`, `data-pen`…), ver `design.md`.

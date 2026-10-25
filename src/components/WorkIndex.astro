@@ -1,0 +1,268 @@
+---
+/**
+ * ── Work: índice (EN + ES) ────────────────────────────
+ *
+ * Portada con "HOLDINGS" en negra condensada y "& Ventures" en
+ * itálica, un sello rojo de "no se vende" y un sol rojo.
+ * Abajo, cada proyecto es un renglón gigante: al pasar el cursor el
+ * título se desgasta (Redaction 50) y el dibujo del proyecto aparece
+ * pegado en su hoja, siguiendo al cursor.
+ */
+import { getLangFromUrl, useTranslations, getLocalePath } from '../i18n/utils';
+import Pieza from './home/Pieza.astro';
+import Timbre from './art/Timbre.astro';
+import Caballo from './art/Caballo.astro';
+import Cuerda from './art/Cuerda.astro';
+import Velero from './art/Velero.astro';
+import Trazo from './art/Trazo.astro';
+import { getWork, workSlug as slug } from '../lib/work';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const path = (p: string) => getLocalePath(p, lang);
+const pad = (n: number) => String(n).padStart(2, '0');
+
+const work = await getWork(lang);
+
+const ART = { cord: Cuerda, flouvia: Velero } as const;
+const [word, rest] = t('work.heading').split(/\s*&\s*/);
+---
+
+<main class="works">
+  <section class="w-cover" data-collage>
+    <p class="lv-kicker" data-reveal="fade" data-delay="0.1">Nº II — {t('home.s2')} · {t('home.meta.lots')} 01—{pad(work.length)}</p>
+    <h1 class="w-title" data-reveal="lines" data-delay="0.2">
+      <span class="lv-line w-title__a"><span>{word}</span></span>
+      {rest && <span class="lv-line w-title__b"><span>&amp; {rest}</span></span>}
+    </h1>
+
+    <Pieza x="60%" y="56%" w="30vw" r={-8} z={3} depth={0.5} drag delay={0.6} mx="20%" my="70%" mw="70vw">
+      <Timbre shape="rect" top="Holdings · MMXXVI" center={lang === 'es' ? 'NO SE VENDE' : 'NOT FOR SALE'} tone="rojo" />
+    </Pieza>
+    <Pieza x="74%" y="14%" w="16vw" z={0} depth={0.15} reveal={false} mx="62%" my="18%" mw="32vw">
+      <Trazo kind="sol" draw="load" delay={0.3} />
+    </Pieza>
+  </section>
+
+  <ol class="w-list" data-follow-host>
+    {work.map((project, i) => {
+      const key = slug(project.id) as keyof typeof ART;
+      const Art = ART[key] ?? Caballo;
+      return (
+        <li class="w-row">
+          <a href={path(`/work/${slug(project.id)}`)} class="w-link" data-follow={`w-art-${i}`}>
+            <span class="w-lot"><small>{t('home.lot')}</small>{pad(i + 1)}</span>
+            <span class="w-main">
+              <span class="w-name" transition:name={`work-title-${slug(project.id)}`}>{project.data.title}</span>
+              <span class="w-sub">{project.data.subtitle}</span>
+            </span>
+            <span class="w-meta">
+              <span>{project.data.role}</span>
+              <span>{project.data.timeline}</span>
+              <span class="w-impact">{project.data.impact}</span>
+            </span>
+            <svg class="w-arrow" width="22" height="22" viewBox="0 0 8 8" fill="none" aria-hidden="true">
+              <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.6" />
+            </svg>
+          </a>
+          <template id={`w-art-${i}`}>
+            <figure class="lv-sheet w-float__sheet"><i class="lv-tape"></i><Art draw="none" /></figure>
+          </template>
+          <i class="lv-rule" data-reveal="rule" aria-hidden="true"></i>
+        </li>
+      );
+    })}
+  </ol>
+
+  <div class="w-float" aria-hidden="true" data-follow-float></div>
+</main>
+
+<style>
+  .works {
+    padding: 0 var(--gutter) clamp(110px, 12vw, 180px);
+    overflow-x: clip;
+  }
+
+  .works > * { max-width: 1560px; margin-inline: auto; }
+
+  /* ── Portada ── */
+  .w-cover {
+    position: relative;
+    min-height: max(52vw, 600px);
+    padding-top: clamp(110px, 14vh, 150px);
+  }
+
+  .w-title {
+    position: relative;
+    z-index: 2;
+    margin-top: 1.4vw;
+    font-weight: 400;
+    line-height: 0.82;
+  }
+
+  .w-title__a {
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(5rem, 21vw, 25rem);
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+
+  .w-title__b {
+    padding-left: 22vw;
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: clamp(2.6rem, 8vw, 9rem);
+    letter-spacing: -0.03em;
+  }
+
+
+
+  /* ── Lista ── */
+  .w-list { list-style: none; border-top: 1px solid var(--tinta); }
+
+  .w-link {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr) minmax(0, 0.55fr) 28px;
+    gap: 16px clamp(20px, 3vw, 56px);
+    align-items: center;
+    padding-block: clamp(36px, 4.4vw, 64px);
+    color: var(--tinta);
+    text-decoration: none;
+  }
+
+  .w-lot {
+    align-self: start;
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: clamp(3rem, 5.4vw, 5.4rem);
+    line-height: 0.8;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--tinta);
+  }
+
+  .w-lot small {
+    display: block;
+    margin-bottom: 8px;
+    font-family: var(--f-grot);
+    font-style: normal;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--grafito);
+    -webkit-text-stroke: 0;
+  }
+
+  .w-main { display: grid; gap: 10px; min-width: 0; }
+
+  /* Al pasar el cursor, el título se "desgasta" */
+  .w-name {
+    font-family: var(--f-serif);
+    font-size: clamp(4rem, 11vw, 12rem);
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+    transition: translate 0.8s var(--ease-expo);
+  }
+
+  .w-link:hover .w-name {
+    font-family: var(--f-worn);
+    translate: 1.2vw 0;
+  }
+
+  .w-sub {
+    font-style: italic;
+    font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+    color: var(--grafito);
+  }
+
+  .w-meta {
+    display: grid;
+    gap: 6px;
+    font-family: var(--f-grot);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--grafito);
+  }
+
+  .w-impact { color: var(--rojo); }
+
+  .w-arrow { transition: translate 0.7s var(--ease-expo), rotate 0.7s var(--ease-expo); }
+  .w-link:hover .w-arrow { translate: 4px -4px; rotate: 8deg; }
+
+  /* ── El dibujo que sigue al cursor ── */
+  .w-float {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 60;
+    width: clamp(220px, 22vw, 340px);
+    pointer-events: none;
+    opacity: 0;
+    scale: 0.85;
+    transition: opacity 0.4s ease, scale 0.6s var(--ease-expo);
+  }
+
+  .w-float.is-on { opacity: 1; scale: 1; }
+
+  .w-float :global(.w-float__sheet) {
+    margin: 0;
+    padding: 18px;
+    color: var(--tinta);
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .w-float { display: none; }
+  }
+
+  @media (max-width: 900px) {
+    .w-cover { min-height: 0; height: 150vw; }
+    .w-title__a { font-size: 25vw; }
+    .w-title__b { padding-left: 10vw; font-size: 11vw; }
+    .w-link { grid-template-columns: minmax(0, 1fr) 24px; }
+    .w-lot { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 10px; font-size: 2.6rem; }
+    .w-meta { grid-column: 1 / -1; }
+    .w-name { font-size: 18vw; }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+
+  /* El dibujo del proyecto sigue al cursor sobre su renglón. */
+  function initFollow() {
+    const host = document.querySelector<HTMLElement>('[data-follow-host]');
+    const float = document.querySelector<HTMLElement>('[data-follow-float]');
+    if (!host || !float || host.dataset.bound) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    host.dataset.bound = 'true';
+
+    const x = gsap.quickTo(float, 'x', { duration: 0.7, ease: 'power3.out' });
+    const y = gsap.quickTo(float, 'y', { duration: 0.7, ease: 'power3.out' });
+    const r = gsap.quickTo(float, 'rotation', { duration: 0.9, ease: 'power3.out' });
+    let lastX = 0;
+
+    host.querySelectorAll<HTMLAnchorElement>('[data-follow]').forEach((link) => {
+      link.addEventListener('pointerenter', (e) => {
+        const tpl = document.getElementById(link.dataset.follow || '') as HTMLTemplateElement | null;
+        if (tpl) float.replaceChildren(tpl.content.cloneNode(true));
+        gsap.set(float, { x: e.clientX + 24, y: e.clientY - 120 });
+        float.classList.add('is-on');
+      });
+      link.addEventListener('pointerleave', () => float.classList.remove('is-on'));
+    });
+
+    host.addEventListener('pointermove', (e) => {
+      x(e.clientX + 24);
+      y(e.clientY - 120);
+      r(gsap.utils.clamp(-12, 12, (e.clientX - lastX) * 0.6));
+      lastX = e.clientX;
+    });
+  }
+
+  initFollow();
+  document.addEventListener('astro:page-load', initFollow);
+</script>

@@ -1,9 +1,12 @@
 # André Valle Ortega — Portafolio
 ## Golden Rules (Aesthetics & Code)
-1. **Stealth Wealth Técnico**: Estética inspirada en lujo discreto (Maison Margiela, The Row, Porsche). Menos es más.
-2. **Minimalismo Absoluto**: NO bordes redondeados (solo ligeros 2px en botones), NO cajas visibles, NO sombras baratas. Todo debe sentirse editorial y tipográfico.
-3. **Interacciones Cinematográficas**: Las animaciones (gsap) deben ser fluidas (`expo.out`), elegantes y tener un propósito. Nada de rebotes infantiles.
-4. **Código Artesanal**: Evitamos librerías pesadas (UI libs, Tailwind) a menos que sea necesario. CSS vanilla con variables bien estructuradas en `Base.astro`.
+1. **Lujo vivido, con un toque**: 90 % clásico (finanzas), 10 % raro (dev, arte, humor). Referencias: el Pinterest de André (Margiela, Golden Goose, RRL, Basquiat, cerámica, lucha libre). Ver `docs/design.md`.
+2. **Composición libre, tipo collage**: nada de "texto a la izquierda, imagen a la derecha". Piezas encimadas, chuecas, arrastrables, en capas. Dibujos propios en SVG (`src/components/art/`); no repetir el mismo dibujo ni la misma marca entre páginas.
+3. **Solo dos fuentes**: Redaction (+ Redaction 50) y Hubot Sans. Sin fuentes manuscritas, sin Google Fonts.
+4. **Paleta**: papel, tinta, rojo, azul, naranja (+ verde olivo, cielo, cognac). **Nada de amarillo.** Radios solo de 2px en botones.
+5. **Movimiento con propósito**: GSAP con `expo.out` (líneas `power3.inOut`), declarado con atributos (`data-reveal`, `data-draw`, `data-pen`…) en `src/scripts/ink.ts`. Respetar `prefers-reduced-motion`.
+6. **Frases duras**, no blandas (*Work hard*, *Play the game*, *i lowkey dgaf anymore*…). El animal de André es el lobo.
+7. **Código artesanal**: CSS vanilla con tokens en `Base.astro`, piezas compartidas con prefijo `lv-`. Nada de UI libs ni Tailwind.
 
 ## Quick Start
 - `npm run dev` — Levantar servidor local (Astro dev; los endpoints `/api/*` corren aquí)

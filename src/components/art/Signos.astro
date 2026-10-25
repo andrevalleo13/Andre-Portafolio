@@ -1,0 +1,58 @@
+---
+/**
+ * ── Hoja de signos ────────────────────────────────────
+ *
+ * Seis iconos a pluma roja, como una hoja de flash de tatuaje
+ * o un sello de bloque: sol, estrella, pez, ojo, luna, jarrón.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Seis signos dibujados con pluma roja: sol, estrella, pez, ojo, luna y jarrón',
+  class: className,
+} = Astro.props;
+
+const rays = Array.from({ length: 12 }, (_, i) => {
+  const a = (i / 12) * Math.PI * 2;
+  const p = (r: number) => `${(40 + Math.cos(a) * r).toFixed(1)} ${(45 + Math.sin(a) * r).toFixed(1)}`;
+  return `M${p(19)} L${p(27)}`;
+}).join(' ');
+---
+
+<svg
+  class:list={['lv-art', 'lv-art-red', className]}
+  viewBox="0 0 240 180"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- sol -->
+    <circle data-s cx="40" cy="45" r="14" />
+    <path data-s d={rays} />
+    <path data-s d="M34 42 L35 42 M45 42 L46 42 M35 50 C38 53 42 53 45 50" />
+    <!-- estrella -->
+    <path data-s d="M120 22 L126 38 L143 38 L129 48 L134 65 L120 55 L106 65 L111 48 L97 38 L114 38 Z" />
+    <!-- pez -->
+    <path data-s d="M176 45 C186 32 210 32 220 45 C210 58 186 58 176 45 Z M220 45 L232 36 L232 54 Z" />
+    <path data-s d="M196 37 C192 42 192 48 196 53 M204 39 L210 45 L204 51" />
+    <circle data-s cx="186" cy="42" r="2" />
+    <!-- ojo -->
+    <path data-s d="M14 130 C28 112 52 112 66 130 C52 148 28 148 14 130 Z" />
+    <circle data-s cx="40" cy="130" r="8" />
+    <!-- luna -->
+    <path data-s d="M128 108 C110 110 100 124 104 140 C108 154 124 160 136 154 C122 152 112 140 114 126 C116 116 122 110 128 108 Z" />
+    <!-- jarrón -->
+    <path data-s d="M190 104 L210 104 L206 112 C220 118 224 134 214 148 C208 156 192 156 186 148 C176 134 180 118 194 112 Z" />
+    <path data-s d="M184 128 L216 128 M186 136 L214 136" />
+  </g>
+  <circle data-pop cx="40" cy="130" r="3" fill="currentColor" />
+</svg>

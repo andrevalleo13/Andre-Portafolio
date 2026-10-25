@@ -1,0 +1,346 @@
+---
+/**
+ * ── Bocetos ───────────────────────────────────────────
+ *
+ * Dibujos chicos a pluma para contar lo que hace cada producto
+ * (casos de Cord y Flouvia). Mismo trazo que el resto del sitio.
+ *
+ *   Cord:     cotizacion · firma · tarjeta · recibo · candado · sobre ·
+ *             calendario · cadenaHash · flujo · engranes
+ *   Flouvia:  huacal · lupa · gota · letra · cubo · portal · pin
+ */
+type Kind =
+  | 'cotizacion' | 'firma' | 'tarjeta' | 'recibo' | 'candado' | 'sobre' | 'calendario' | 'cadenaHash' | 'flujo' | 'engranes'
+  | 'huacal' | 'lupa' | 'gota' | 'letra' | 'cubo' | 'portal' | 'pin';
+
+interface Props {
+  kind: Kind;
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const { kind, draw = 'scroll', delay = 0, label, class: className } = Astro.props;
+
+const VIEW: Record<Kind, string> = {
+  cotizacion: '0 0 200 240', firma: '0 0 240 120', tarjeta: '0 0 230 150', recibo: '0 0 180 260',
+  candado: '0 0 170 210', sobre: '0 0 240 160', calendario: '0 0 250 230', cadenaHash: '0 0 390 120',
+  flujo: '0 0 440 170', engranes: '0 0 330 220', huacal: '0 0 280 230', lupa: '0 0 230 230',
+  gota: '0 0 220 270', letra: '0 0 260 270', cubo: '0 0 250 240', portal: '0 0 520 340', pin: '0 0 90 130',
+};
+
+/* ── Datos generados ── */
+const rows = [86, 110, 134, 158];
+const calCells = Array.from({ length: 28 }, (_, i) => ({ x: 24 + (i % 7) * 30, y: 74 + Math.floor(i / 7) * 34, i }));
+const gear = (cx: number, cy: number, R: number, r: number, n: number) => {
+  const pts: string[] = [];
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2;
+    const step = (Math.PI * 2) / n;
+    [[a, r], [a + step * 0.15, R], [a + step * 0.5, R], [a + step * 0.65, r]].forEach(([ang, rad]) =>
+      pts.push(`${(cx + Math.cos(ang) * rad).toFixed(1)} ${(cy + Math.sin(ang) * rad).toFixed(1)}`)
+    );
+  }
+  return `M${pts.join(' L')} Z`;
+};
+const produce = [
+  { k: 'tomate', x: 64, y: 108 }, { k: 'aguacate', x: 96, y: 100 }, { k: 'tomate', x: 128, y: 104 },
+  { k: 'chile', x: 156, y: 98 }, { k: 'tomate', x: 186, y: 106 }, { k: 'aguacate', x: 216, y: 100 },
+  { k: 'tomate', x: 80, y: 84 }, { k: 'tomate', x: 146, y: 80 }, { k: 'chile', x: 200, y: 80 },
+];
+const gotaIcons = [
+  'M70 140 L74 132 L78 140 L86 141 L80 146 L82 154 L74 150 L66 154 L68 146 L62 141 Z',
+  'M104 146 L110 152 L120 138',
+  'M142 146 L162 146 M154 138 L162 146 L154 154',
+  'M64 182 C64 172 82 172 82 182 C82 192 64 192 64 182 Z',
+  'M110 172 L110 192 M100 182 L120 182',
+  'M150 172 L144 184 L154 184 L148 196',
+  'M64 222 C70 214 82 214 86 222 C82 230 70 230 64 222 Z',
+  'M110 212 C100 214 98 230 110 232 C104 226 104 218 110 212 Z',
+  'M144 214 L164 214 L160 232 L148 232 Z',
+];
+const hashes = ['a3f9·e1c0', '7c2b·0f48', 'd81e·9a37'];
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox={VIEW[kind]}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  {kind === 'cotizacion' && (
+    <>
+      <path data-fill filter="url(#ink-fino)" d="M20 14 L170 10 L176 226 L24 230 Z" fill="#FBFAF7" />
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path data-s stroke-width="2.4" d="M20 14 L170 10 L176 226 L24 230 Z" />
+        <path data-s stroke-width="8" d="M40 42 L112 40" />
+        <path data-s stroke-width="1.6" d="M40 60 L92 59" />
+        {rows.map((y) => <path data-s stroke-width="2" d={`M40 ${y} L118 ${y - 1} M138 ${y} L160 ${y}`} />)}
+        <path data-s stroke-width="1.2" d="M36 184 L166 182" />
+        <path data-s stroke-width="2.4" d="M40 206 L84 205" />
+      </g>
+      <path data-s class="lv-art-red" filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" d="M112 208 L164 204" />
+    </>
+  )}
+
+  {kind === 'firma' && (
+    <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path data-s stroke="currentColor" stroke-width="2" d="M20 94 L222 92" />
+      <path data-s stroke="currentColor" stroke-width="2.6" d="M24 64 L40 82 M40 64 L24 82" />
+      <path data-s style="stroke: var(--azul)" stroke-width="3.2" d="M54 80 C70 30 86 30 82 72 C78 104 102 40 120 58 C132 70 120 88 138 72 C152 58 162 88 178 64 C188 50 198 72 216 56" />
+    </g>
+  )}
+
+  {kind === 'tarjeta' && (
+    <>
+      <g filter="url(#ink-fino)">
+        <path data-fill d="M14 22 L210 14 L216 132 L20 138 Z" style="fill: var(--azul)" />
+        <path data-fill d="M40 56 L72 55 L73 80 L41 81 Z" style="fill: var(--pint-naranja)" />
+      </g>
+      <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path data-s stroke="currentColor" stroke-width="2.4" d="M14 22 L210 14 L216 132 L20 138 Z" />
+        <path data-s stroke="currentColor" stroke-width="1.6" d="M40 56 L72 55 L73 80 L41 81 Z M41 68 L73 67 M57 55 L57 81" />
+        <path data-s stroke="#F4F2ED" stroke-width="2.6" d="M94 58 C100 64 100 72 94 78 M102 52 C112 62 112 76 102 86" />
+        <path data-s stroke="#F4F2ED" stroke-width="2" d="M40 124 L112 123" />
+      </g>
+      <g fill="#F4F2ED">
+        {[40, 88, 136, 184].map((x, gi) => [0, 1, 2, 3].map((j) => (gi < 3 || j < 2) && <circle data-pop cx={x + j * 9} cy="106" r="2.8" />))}
+      </g>
+    </>
+  )}
+
+  {kind === 'recibo' && (
+    <>
+      <path data-fill filter="url(#ink-fino)" d="M20 10 L160 10 L160 230 L146 244 L132 230 L118 244 L104 230 L90 244 L76 230 L62 244 L48 230 L34 244 L20 230 Z" fill="#FBFAF7" />
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path data-s stroke-width="2.4" d="M20 10 L160 10 L160 230 L146 244 L132 230 L118 244 L104 230 L90 244 L76 230 L62 244 L48 230 L34 244 L20 230 Z" />
+        <path data-s stroke-width="6" d="M40 38 L100 37" />
+        {[70, 90, 110, 130].map((y) => <path data-s stroke-width="1.8" d={`M40 ${y} L104 ${y} M120 ${y} L140 ${y}`} />)}
+        <path data-s stroke-width="1" stroke-dasharray="3 4" d="M36 154 L144 154" />
+        <path data-s stroke-width="3" d="M40 178 L80 178 M110 178 L140 178" />
+      </g>
+      <path data-s class="lv-art-red" filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.4" d="M96 206 C96 192 140 192 140 206 C140 220 96 220 96 206 Z" />
+    </>
+  )}
+
+  {kind === 'candado' && (
+    <>
+      <path data-fill filter="url(#ink-fino)" d="M30 96 L140 92 L144 196 L26 200 Z" class="lv-art-red-fill" />
+      <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path data-s stroke="currentColor" stroke-width="11" d="M54 96 L54 64 C54 24 116 24 116 64 L116 94" />
+        <path data-s stroke="currentColor" stroke-width="2.6" d="M30 96 L140 92 L144 196 L26 200 Z" />
+        <path data-s stroke="#F4F2ED" stroke-width="4" d="M84 152 L84 172" />
+      </g>
+      <circle data-pop cx="84" cy="142" r="9" fill="#F4F2ED" />
+    </>
+  )}
+
+  {kind === 'sobre' && (
+    <>
+      <path data-fill filter="url(#ink-fino)" d="M14 30 L216 22 L220 142 L18 148 Z" fill="#FBFAF7" />
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path data-s d="M14 30 L216 22 L220 142 L18 148 Z" />
+        <path data-s d="M14 30 L118 94 L216 22" />
+        <path data-s d="M18 148 L96 86 M220 142 L140 84" />
+      </g>
+      <circle data-pop filter="url(#ink-fino)" cx="212" cy="28" r="18" class="lv-art-red-fill" />
+      <text data-pop x="212" y="35" text-anchor="middle" font-size="20" font-weight="900" fill="#F4F2ED" style="font-family: var(--f-grot)">3</text>
+    </>
+  )}
+
+  {kind === 'calendario' && (
+    <>
+      <path data-fill filter="url(#ink-fino)" d="M14 22 L236 18 L238 214 L16 218 Z" fill="#FBFAF7" />
+      <path data-fill filter="url(#ink-fino)" d="M14 22 L236 18 L236 56 L14 58 Z" class="lv-art-red-fill" />
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path data-s stroke-width="2.4" d="M14 22 L236 18 L238 214 L16 218 Z" />
+        <path data-s stroke-width="5" d="M60 8 L60 30 M190 8 L190 30" />
+        {calCells.map((c) => <path data-s stroke-width="1.2" d={`M${c.x} ${c.y} L${c.x + 22} ${c.y} L${c.x + 22} ${c.y + 26} L${c.x} ${c.y + 26} Z`} />)}
+      </g>
+      <g filter="url(#ink-fino)" class="lv-art-red" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+        {calCells.filter((c) => c.i < 17).map((c) => <path data-s d={`M${c.x + 4} ${c.y + 4} L${c.x + 18} ${c.y + 22} M${c.x + 18} ${c.y + 4} L${c.x + 4} ${c.y + 22}`} />)}
+      </g>
+      <path data-s filter="url(#ink-fino)" fill="none" style="stroke: var(--azul)" stroke-width="3" d="M168 168 C168 150 202 150 202 168 C202 190 166 190 170 166" />
+    </>
+  )}
+
+  {kind === 'cadenaHash' && (
+    <>
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        {[10, 140, 270].map((x) => <path data-s stroke-width="2.4" d={`M${x} 36 L${x + 110} 34 L${x + 112} 92 L${x + 2} 94 Z`} />)}
+        <path data-s style="stroke: var(--azul)" stroke-width="4" d="M114 58 C114 50 132 50 132 58 C132 66 114 66 114 58 Z M124 62 C124 54 142 54 142 62 C142 70 124 70 124 62 Z" />
+        <path data-s style="stroke: var(--azul)" stroke-width="4" d="M244 58 C244 50 262 50 262 58 C262 66 244 66 244 58 Z M254 62 C254 54 272 54 272 62 C272 70 254 70 254 62 Z" />
+      </g>
+      <g fill="currentColor" style="font-family: var(--f-grot)" font-size="13" font-weight="700" text-anchor="middle">
+        {hashes.map((h, i) => <text data-pop x={65 + i * 130} y="70">{h}</text>)}
+      </g>
+      <g class="lv-art-red" fill="currentColor" style="font-family: var(--f-grot)" font-size="10" font-weight="700" letter-spacing="1.5" text-anchor="middle">
+        {[0, 1, 2].map((i) => <text data-pop x={65 + i * 130} y="24">SHA-256</text>)}
+      </g>
+    </>
+  )}
+
+  {kind === 'flujo' && (
+    <>
+      <g filter="url(#ink-fino)">
+        <path data-fill d="M10 64 L112 60 L114 132 L12 136 Z" fill="#FBFAF7" />
+        <path data-fill d="M328 60 L430 64 L428 136 L326 132 Z" fill="#FBFAF7" />
+      </g>
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path data-s stroke-width="2.4" d="M10 64 L112 60 L114 132 L12 136 Z" />
+        <path data-s stroke-width="2.4" d="M328 60 L430 64 L428 136 L326 132 Z" />
+        <path data-s stroke-width="4" d="M120 100 C180 94 260 106 318 98 M302 86 L320 98 L302 112" />
+        <path data-s stroke-width="1.6" stroke-dasharray="4 5" d="M220 64 L220 92" />
+        <path data-s stroke-width="5" d="M196 46 C204 26 236 26 236 44 C236 62 200 62 212 40 C222 22 252 30 258 44" />
+      </g>
+      <g filter="url(#ink-fino)">
+        {[150, 190, 252, 290].map((x) => <circle data-pop cx={x} cy={x < 220 ? 97 : 101} r="7" style="fill: var(--pint-naranja)" stroke="currentColor" stroke-width="1.5" />)}
+      </g>
+    </>
+  )}
+
+  {kind === 'engranes' && (
+    <>
+      <g filter="url(#ink)">
+        <path data-fill d={gear(112, 118, 86, 70, 12)} class="lv-art-red-fill" />
+        <path data-fill d={gear(252, 86, 60, 48, 9)} style="fill: var(--azul)" />
+      </g>
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linejoin="round">
+        <path data-s stroke-width="2.4" d={gear(112, 118, 86, 70, 12)} />
+        <path data-s stroke-width="2.4" d={gear(252, 86, 60, 48, 9)} />
+      </g>
+      <circle data-pop cx="112" cy="118" r="20" fill="#F4F2ED" stroke="currentColor" stroke-width="2.4" />
+      <circle data-pop cx="252" cy="86" r="14" fill="#F4F2ED" stroke="currentColor" stroke-width="2.4" />
+    </>
+  )}
+
+  {kind === 'huacal' && (
+    <>
+      <g filter="url(#ink-fino)">
+        {produce.map((p) =>
+          p.k === 'tomate' ? (
+            <circle data-pop cx={p.x} cy={p.y} r="17" class="lv-art-red-fill" stroke="currentColor" stroke-width="2" />
+          ) : p.k === 'aguacate' ? (
+            <ellipse data-pop cx={p.x} cy={p.y} rx="13" ry="19" style="fill: var(--verde)" stroke="currentColor" stroke-width="2" />
+          ) : (
+            <path data-pop d={`M${p.x - 18} ${p.y + 6} C${p.x - 6} ${p.y - 14} ${p.x + 14} ${p.y - 12} ${p.x + 22} ${p.y - 2} C${p.x + 10} ${p.y - 2} ${p.x - 4} ${p.y + 4} ${p.x - 18} ${p.y + 6} Z`} style="fill: var(--verde)" stroke="currentColor" stroke-width="2" />
+          )
+        )}
+        <path data-fill d="M30 116 L250 112 L248 212 L32 214 Z" style="fill: var(--cognac)" fill-opacity="0.55" />
+      </g>
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path data-s stroke-width="2.6" d="M30 116 L250 112 L248 212 L32 214 Z" />
+        <path data-s stroke-width="2" d="M31 148 L249 146 M31 180 L249 178" />
+        <path data-s stroke-width="5" d="M42 116 L42 214 M238 112 L238 212" />
+        <path data-s stroke-width="1.6" d="M250 130 C262 132 266 140 268 150" />
+        <path data-s stroke-width="2.4" d="M252 150 L278 148 L280 196 L254 198 Z" />
+      </g>
+      <text data-pop x="266" y="170" text-anchor="middle" font-size="13" font-weight="900" class="lv-art-red-fill" style="font-family: var(--f-grot)">$</text>
+      <text data-pop x="266" y="188" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor" style="font-family: var(--f-grot)">HOY</text>
+    </>
+  )}
+
+  {kind === 'lupa' && (
+    <>
+      <circle data-fill filter="url(#ink-fino)" cx="92" cy="92" r="66" style="fill: var(--cielo)" fill-opacity="0.35" />
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <circle data-s cx="92" cy="92" r="66" stroke-width="9" />
+        <path data-s stroke-width="18" d="M142 142 L206 206" />
+        <path data-s stroke-width="3" d="M58 74 L120 72 M58 94 L108 93 M58 114 L126 112" />
+      </g>
+      <path data-pop class="lv-art-red-fill" d="M128 66 L130.4 72.6 L137 73 L132 77 L133.6 83.6 L128 80 L122.4 83.6 L124 77 L119 73 L125.6 72.6 Z" />
+    </>
+  )}
+
+  {kind === 'gota' && (
+    <>
+      <path data-fill filter="url(#ink-fino)" d="M110 10 C150 70 196 120 196 170 C196 222 156 258 110 258 C64 258 24 222 24 170 C24 120 70 70 110 10 Z" style="fill: var(--cielo)" fill-opacity="0.4" />
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path data-s stroke-width="3" d="M110 10 C150 70 196 120 196 170 C196 222 156 258 110 258 C64 258 24 222 24 170 C24 120 70 70 110 10 Z" />
+        {gotaIcons.map((d) => <path data-s stroke-width="2.4" d={d} />)}
+      </g>
+    </>
+  )}
+
+  {kind === 'letra' && (
+    <>
+      <g fill="none" stroke="var(--grafito)" stroke-width="1" stroke-dasharray="4 5">
+        <path data-s d="M10 230 L250 230 M10 120 L250 120 M10 36 L250 36" />
+      </g>
+      <path data-fill filter="url(#ink-fino)" d="M90 230 L90 92 C90 52 116 36 150 36 C170 36 186 42 196 50 L184 76 C176 70 164 66 152 66 C130 66 120 76 120 96 L120 120 L170 120 L170 146 L120 146 L120 230 Z" fill="currentColor" fill-opacity="0.9" />
+      <g filter="url(#ink-fino)" fill="none" stroke-linecap="round">
+        <path data-s class="lv-art-red" stroke="currentColor" stroke-width="2" d="M90 230 L90 92 C90 52 116 36 150 36 C170 36 186 42 196 50 L184 76 C176 70 164 66 152 66 C130 66 120 76 120 96 L120 120 L170 120 L170 146 L120 146 L120 230 Z" />
+        <path data-s style="stroke: var(--azul)" stroke-width="1.6" d="M90 92 L90 52 L118 36 M150 36 L176 36 M120 96 L120 70 L140 66" />
+      </g>
+      <g class="lv-art-red" fill="#F4F2ED" stroke="currentColor" stroke-width="2">
+        {[[90, 230], [90, 92], [150, 36], [196, 50], [184, 76], [152, 66], [120, 96], [120, 120], [170, 120], [170, 146], [120, 146], [120, 230]].map(([x, y]) => (
+          <rect data-pop x={x - 4} y={y - 4} width="8" height="8" />
+        ))}
+      </g>
+      <g style="fill: var(--azul)">
+        {[[90, 52], [118, 36], [176, 36], [120, 70], [140, 66]].map(([x, y]) => <circle data-pop cx={x} cy={y} r="3.4" />)}
+      </g>
+    </>
+  )}
+
+  {kind === 'cubo' && (
+    <>
+      <path data-fill filter="url(#ink-fino)" d="M70 70 L150 40 L210 76 L130 108 Z" style="fill: var(--cielo)" fill-opacity="0.45" />
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path data-s d="M70 70 L150 40 L210 76 L130 108 Z M70 70 L70 160 L130 200 L130 108 M130 200 L210 166 L210 76" />
+        <path data-s stroke-dasharray="4 5" stroke-width="1.4" d="M150 40 L150 128 L70 160 M150 128 L210 166" />
+      </g>
+      <g fill="currentColor">
+        {[[70, 70], [150, 40], [210, 76], [130, 108], [70, 160], [130, 200], [210, 166]].map(([x, y]) => <circle data-pop cx={x} cy={y} r="3.6" />)}
+      </g>
+      <g filter="url(#ink-fino)" fill="none" stroke-width="3" stroke-linecap="round">
+        <path data-s class="lv-art-red" stroke="currentColor" d="M30 214 L70 214" />
+        <path data-s style="stroke: var(--verde)" d="M30 214 L50 190" />
+        <path data-s style="stroke: var(--azul)" d="M30 214 L30 172" />
+      </g>
+      <g font-size="10" font-weight="700" style="font-family: var(--f-grot)">
+        <text data-pop x="76" y="218" class="lv-art-red-fill">X</text>
+        <text data-pop x="52" y="186" style="fill: var(--verde)">Y</text>
+        <text data-pop x="26" y="166" style="fill: var(--azul)">Z</text>
+      </g>
+    </>
+  )}
+
+  {kind === 'portal' && (
+    <>
+      <path data-fill filter="url(#ink-fino)" d="M10 10 L510 6 L514 330 L14 334 Z" fill="#FBFAF7" />
+      <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path data-s stroke-width="2.6" d="M10 10 L510 6 L514 330 L14 334 Z" />
+        <path data-s stroke-width="2" d="M10 40 L511 37" />
+        <path data-s stroke-width="2" d="M120 40 L122 332" />
+        {[70, 100, 130, 160, 190].map((y) => <path data-s stroke-width="3" d={`M32 ${y} L98 ${y}`} />)}
+        <path data-s stroke-width="2" d="M140 60 L320 58 L322 150 L142 152 Z" />
+        <path data-s stroke-width="2" d="M340 58 L496 56 L498 150 L342 152 Z" />
+        <path data-s stroke-width="2" d="M140 172 L498 170 L500 312 L142 314 Z" />
+        <path data-s stroke-width="2.4" style="stroke: var(--azul)" d="M154 134 L184 116 L210 124 L238 96 L266 104 L300 76" />
+        {[196, 226, 256, 286].map((y) => <path data-s stroke-width="2" d={`M178 ${y} L380 ${y - 1} M420 ${y} L470 ${y}`} />)}
+      </g>
+      <path data-fill filter="url(#ink-fino)" d="M24 92 L104 92 L104 108 L24 108 Z" class="lv-art-red-fill" fill-opacity="0.85" />
+      <g fill="currentColor">
+        <circle data-pop cx="26" cy="24" r="4" /><circle data-pop cx="40" cy="24" r="4" /><circle data-pop cx="54" cy="24" r="4" />
+      </g>
+      <g>
+        {[196, 226, 256, 286].map((y, i) => <circle data-pop cx="160" cy={y} r="5" style={`fill: ${i === 2 ? 'var(--pint-naranja)' : 'var(--verde)'}`} />)}
+      </g>
+      <text data-pop x="420" y="120" text-anchor="middle" font-size="44" font-weight="900" fill="currentColor" style="font-family: var(--f-grot); font-stretch: 75%">92</text>
+    </>
+  )}
+
+  {kind === 'pin' && (
+    <>
+      <path data-fill filter="url(#ink-fino)" d="M45 8 C68 8 82 24 82 44 C82 70 45 102 45 102 C45 102 8 70 8 44 C8 24 22 8 45 8 Z" class="lv-art-red-fill" />
+      <path data-s filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.4" d="M45 8 C68 8 82 24 82 44 C82 70 45 102 45 102 C45 102 8 70 8 44 C8 24 22 8 45 8 Z" />
+      <circle data-pop cx="45" cy="42" r="12" fill="#F4F2ED" />
+      <text data-pop x="45" y="124" text-anchor="middle" font-size="14" font-weight="900" fill="currentColor" letter-spacing="1" style="font-family: var(--f-grot)">CDMX</text>
+    </>
+  )}
+</svg>

@@ -1,27 +1,37 @@
 ---
+/**
+ * ── Newsletter ────────────────────────────────────────
+ *
+ * Cupón de suscripción recortable, como el de un periódico:
+ * borde punteado con tijeras, el titular en negra condensada y
+ * el campo de email subrayado. Al enviar, alta en POST /api/subscribe.
+ */
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 ---
 
-<div class="newsletter">
-  <h3 class="newsletter__heading">{t('newsletter.heading' as any)}</h3>
+<div class="cupon">
+  <span class="cupon__tijeras" aria-hidden="true">✂</span>
+  <p class="lv-kicker">{lang === 'es' ? 'Cupón de suscripción · Gratis' : 'Subscription coupon · Free'}</p>
+  <h3 class="cupon__heading">{t('newsletter.heading')}</h3>
   <form
-    class="newsletter__form"
+    class="cupon__form"
     id="newsletter-form"
-    data-success={t('newsletter.success' as any)}
-    data-error={t('newsletter.error' as any)}
+    data-success={t('newsletter.success')}
+    data-error={t('newsletter.error')}
   >
-    <input type="email" placeholder={t('newsletter.placeholder' as any)} class="newsletter__input" required />
-    <button type="submit" class="newsletter__btn hover-fill">
-      {t('newsletter.button' as any)}
-      <svg class="newsletter__arrow" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1 9L9 1M9 1H2.5M9 1V7.5" stroke="currentColor" stroke-width="0.8"/>
+    <label class="lv-sr-only" for="newsletter-email">{t('newsletter.placeholder')}</label>
+    <input type="email" id="newsletter-email" placeholder={t('newsletter.placeholder')} class="cupon__input" required />
+    <button type="submit" class="lv-btn cupon__btn">
+      {t('newsletter.button')}
+      <svg width="9" height="9" viewBox="0 0 8 8" fill="none" aria-hidden="true">
+        <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.9" />
       </svg>
     </button>
   </form>
-  <p class="newsletter__msg" id="newsletter-msg" hidden></p>
+  <p class="cupon__msg" id="newsletter-msg" hidden></p>
 </div>
 
 <script>
@@ -67,82 +77,66 @@ const t = useTranslations(lang);
 </script>
 
 <style>
-  .newsletter {
-    margin-top: 8rem;
-    padding-top: 4rem;
-    max-width: 600px;
+  .cupon {
+    position: relative;
+    display: grid;
+    gap: 16px;
+    max-width: 640px;
+    padding: clamp(24px, 3vw, 40px);
+    border: 2px dashed var(--tinta);
+    background: var(--hoja);
+    rotate: -1deg;
   }
 
-  .newsletter__heading {
-    font-size: clamp(1.2rem, 3vw, 1.8rem);
-    font-weight: 300;
-    letter-spacing: -0.01em;
-    color: rgba(237, 233, 228, 0.95);
-    margin-bottom: 2rem;
+  .cupon__tijeras {
+    position: absolute;
+    top: -0.85em;
+    left: 28px;
+    padding: 0 6px;
+    background: var(--papel);
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--rojo);
   }
 
-  .newsletter__form {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid rgba(237, 233, 228, 0.3);
-    padding-bottom: 0.8rem;
-    transition: border-color 0.4s ease;
-  }
-
-  .newsletter__form:focus-within {
-    border-bottom-color: rgba(237, 233, 228, 0.95);
-  }
-
-  .newsletter__input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: rgba(237, 233, 228, 0.95);
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 1rem;
-    font-weight: 300;
-  }
-
-  .newsletter__input::placeholder {
-    color: rgba(237, 233, 228, 0.3);
-  }
-
-  .newsletter__btn {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 0.62rem;
-    font-weight: 400;
-    letter-spacing: 0.22em;
+  .cupon__heading {
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(2.2rem, 4.6vw, 4.4rem);
+    line-height: 0.88;
     text-transform: uppercase;
-    color: #14110F;
-    background: rgba(237, 233, 228, 0.95);
-    border-radius: 2px;
-    padding: 0.6rem 1.2rem;
-    border: none;
+  }
+
+  .cupon__form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px 20px;
+  }
+
+  .cupon__input {
+    flex: 1 1 240px;
+    min-width: 0;
+    padding: 0.5rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--tinta);
+    border-radius: 0;
     outline: none;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    transition: background 0.4s ease;
+    background: transparent;
+    color: var(--tinta);
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 1.4rem;
   }
 
-  .newsletter__btn:hover {
-    background: #FFFFFF;
-  }
+  .cupon__input:focus { border-bottom-color: var(--rojo); }
+  .cupon__input::placeholder { color: var(--linea); }
 
-  .newsletter__arrow {
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .newsletter__btn:hover .newsletter__arrow {
-    transform: translate(2px, -2px);
-  }
-
-  .newsletter__msg {
-    margin-top: 1.5rem;
-    font-size: 0.85rem;
-    letter-spacing: 0.1em;
-    color: rgba(237, 233, 228, 0.6);
+  .cupon__msg {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--rojo);
   }
 </style>

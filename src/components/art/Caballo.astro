@@ -1,0 +1,61 @@
+---
+/**
+ * ── Caballo ───────────────────────────────────────────
+ *
+ * Caballo naïf de patas largas, pintado a pincel, con una
+ * columna de flores rojas. Cada trazo es un <path data-s>
+ * para que `drawArt` lo pinte en orden, como a mano.
+ */
+interface Props {
+  /** 'load' pinta al cargar, 'scroll' al entrar en pantalla, 'none' estático */
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Caballo negro pintado en tinta, con flores rojas',
+  class: className,
+} = Astro.props;
+
+const flores = [18, 50, 82, 114, 146, 178, 210, 242];
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 360 280"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <!-- cuerpo -->
+    <path data-s stroke-width="40" d="M82 132 C120 123 170 127 204 120" />
+    <path data-s stroke-width="24" d="M94 144 C130 141 168 142 198 136" />
+    <!-- cuello, cabeza, hocico, oreja -->
+    <path data-s stroke-width="24" d="M200 126 C213 102 225 80 237 60" />
+    <path data-s stroke-width="17" d="M236 58 C250 51 266 57 284 74" />
+    <path data-s stroke-width="9" d="M270 66 L291 78" />
+    <path data-s stroke-width="6" d="M241 54 L245 31" />
+    <!-- crin -->
+    <path data-s stroke-width="4" d="M232 52 L218 47 L226 62 L210 60 L218 76 L202 76 L210 90 L196 92 L203 104 L190 108" />
+    <!-- patas y cascos -->
+    <path data-s stroke-width="6" d="M90 150 C88 186 86 222 84 258" />
+    <path data-s stroke-width="6" d="M110 152 C112 188 114 224 116 258" />
+    <path data-s stroke-width="6" d="M188 146 C186 184 184 222 182 258" />
+    <path data-s stroke-width="6" d="M206 140 C210 180 214 220 218 258" />
+    <path data-s stroke-width="7" d="M76 259 L92 259 M110 259 L124 259 M176 259 L190 259 M213 259 L228 259" />
+    <!-- cola -->
+    <path data-s stroke-width="6" d="M70 128 C52 134 44 156 46 190 C47 202 44 210 40 218" />
+    <path data-s stroke-width="3" d="M70 134 C59 148 56 170 60 196" />
+  </g>
+  <circle data-pop class="lv-art-eye" cx="259" cy="60" r="2.6" />
+  <g filter="url(#ink-fino)" class="lv-art-red">
+    {flores.map((y) => <use data-pop href="#flor" x="314" y={y} width="24" height="24" />)}
+    <use data-pop href="#flor" x="138" y="198" width="22" height="22" />
+  </g>
+</svg>

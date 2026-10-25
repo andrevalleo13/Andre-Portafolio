@@ -1,0 +1,137 @@
+---
+/**
+ * ── 404 ───────────────────────────────────────────────
+ *
+ * "El lobo se comió esta página." Un 404 gigante en Hubot negra,
+ * el lobo con corona encima y un par de piezas sueltas que se
+ * pueden mover. Astro genera una sola 404 para todo el sitio:
+ * el texto cambia a español en el navegador si la ruta empieza
+ * con /es.
+ */
+import Base from '../layouts/Base.astro';
+import Pieza from '../components/home/Pieza.astro';
+import LoboCorona from '../components/art/LoboCorona.astro';
+import Trazo from '../components/art/Trazo.astro';
+---
+
+<Base title="404 — André Valle Ortega">
+  <main class="nf" data-collage data-nf>
+    <Pieza x="58%" y="20%" w="30vw" r={-4} z={4} depth={0.6} drag delay={0.4} mx="44%" my="18%" mw="54vw">
+      <figure class="lv-sheet nf__sheet">
+        <i class="lv-tape"></i>
+        <LoboCorona draw="load" delay={0.8} />
+      </figure>
+    </Pieza>
+    <Pieza x="48%" y="64%" w="22vw" z={1} depth={0.25} reveal={false} mx="10%" my="58%" mw="60vw">
+      <Trazo kind="cadena" draw="load" delay={1.6} />
+    </Pieza>
+    <Pieza x="30%" y="6%" w="20vw" z={0} depth={0.12} reveal={false} mx="50%" my="6%" mw="40vw">
+      <Trazo kind="puntos" draw="load" delay={0.2} />
+    </Pieza>
+
+    <h1 class="nf__code" data-reveal="lines" data-delay="0.2">
+      <span class="lv-line"><span>404</span></span>
+    </h1>
+
+    <div class="nf__copy">
+      <p class="nf__msg" data-reveal="fade" data-delay="0.6">
+        <span data-lang="en">The wolf ate this page.</span>
+        <span data-lang="es" hidden>El lobo se comió esta página.</span>
+      </p>
+      <p class="nf__sub" data-reveal="fade" data-delay="0.75">
+        <span data-lang="en">It isn't here anymore, or it never was.</span>
+        <span data-lang="es" hidden>Ya no está aquí, o nunca estuvo.</span>
+      </p>
+      <div class="nf__cta" data-reveal="fade" data-delay="0.9">
+        <a class="lv-btn" href="/" data-home>
+          <span data-lang="en">Back home</span>
+          <span data-lang="es" hidden>Volver al inicio</span>
+        </a>
+        <a class="lv-link" href="/contact" data-contact data-pen>
+          <span data-lang="en">Write to me</span>
+          <span data-lang="es" hidden>Escríbeme</span>
+        </a>
+      </div>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .nf {
+    position: relative;
+    height: max(100svh, 640px);
+    padding: 0 var(--gutter);
+    overflow: hidden;
+  }
+
+  .nf__sheet {
+    margin: 0;
+    padding: clamp(16px, 2vw, 28px);
+    color: var(--tinta);
+  }
+
+  .nf__code {
+    position: absolute;
+    left: var(--gutter);
+    top: 14%;
+    z-index: 2;
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(9rem, 34vw, 34rem);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+  }
+
+  .nf__copy {
+    position: absolute;
+    z-index: 5;
+    left: var(--gutter);
+    bottom: 12%;
+    display: grid;
+    gap: 16px;
+    max-width: 520px;
+  }
+
+  .nf__msg {
+    font-family: var(--f-worn);
+    font-size: clamp(2rem, 4vw, 3.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .nf__sub {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--grafito);
+  }
+
+  .nf__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.8rem;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 900px) {
+    .nf__code { top: 12%; font-size: 46vw; }
+    .nf__copy { bottom: 8%; right: var(--gutter); }
+  }
+</style>
+
+<script>
+  /* Una sola 404 para todo el sitio: español si la ruta empieza con /es. */
+  function localize404() {
+    const root = document.querySelector<HTMLElement>('[data-nf]');
+    if (!root || !/^\/es(\/|$)/.test(location.pathname)) return;
+    document.documentElement.lang = 'es';
+    root.querySelectorAll<HTMLElement>('[data-lang]').forEach((el) => (el.hidden = el.dataset.lang !== 'es'));
+    root.querySelector<HTMLAnchorElement>('[data-home]')?.setAttribute('href', '/es');
+    root.querySelector<HTMLAnchorElement>('[data-contact]')?.setAttribute('href', '/es/contact');
+  }
+
+  localize404();
+  document.addEventListener('astro:page-load', localize404);
+</script>

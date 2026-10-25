@@ -1,0 +1,51 @@
+---
+/**
+ * ── 911 ───────────────────────────────────────────────
+ *
+ * Un 911 clásico de perfil, a línea de tinta, con la franja
+ * lateral roja y los rines tipo Fuchs.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Porsche 911 clásico de perfil dibujado a línea con franja roja',
+  class: className,
+} = Astro.props;
+
+const wheel = (cx: number) => {
+  const spokes = Array.from({ length: 5 }, (_, i) => {
+    const a = (i / 5) * Math.PI * 2;
+    return `M${cx} 112 L${(cx + Math.cos(a) * 13).toFixed(1)} ${(112 + Math.sin(a) * 13).toFixed(1)}`;
+  }).join(' ');
+  return spokes;
+};
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 360 150"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s d="M24 108 C22 98 28 92 40 89 C66 82 104 58 144 48 C176 41 204 42 224 52 C240 60 254 72 268 82 L316 88 C334 91 342 99 340 109 L304 111 M254 111 L114 111 M62 111 L24 108" />
+    <path data-s d="M110 80 C128 64 156 54 186 51 C202 50 214 54 222 62 L234 80 Z M170 53 L164 80" />
+    <path data-s d="M40 89 C38 96 40 102 46 106 M60 86 L74 96" />
+    <circle data-s cx="88" cy="112" r="24" />
+    <circle data-s cx="278" cy="112" r="24" />
+    <circle data-s cx="88" cy="112" r="15" stroke-width="1.6" />
+    <circle data-s cx="278" cy="112" r="15" stroke-width="1.6" />
+    <path data-s d={`${wheel(88)} ${wheel(278)}`} stroke-width="1.6" />
+  </g>
+  <circle data-s cx="314" cy="88" r="6" fill="none" stroke="currentColor" stroke-width="2.2" filter="url(#ink-fino)" />
+  <path data-s class="lv-art-red" filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" d="M64 98 L120 98 M244 98 L304 98 M124 98 L240 98" />
+</svg>

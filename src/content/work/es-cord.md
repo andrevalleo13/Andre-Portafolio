@@ -1,52 +1,69 @@
 ---
 title: "Cord"
-subtitle: "Propuesta a Pago en un Solo Link"
+subtitle: "De la Propuesta al Pago, en un Solo Link"
 role: "Fundador & CEO"
 timeline: "2026 — Presente"
-impact: "$1k MRR"
+impact: "$5k MRR"
 url: "https://cordhq.app"
 lang: "es"
 draft: false
 ---
 
-Cord es la plataforma operativa que transforma propuestas y acuerdos en transacciones pagadas al instante. Diseñada específicamente para agencias, elimina la fricción de enviar PDFs, esperar firmas y conciliar pagos manualmente. 
+Cord es una plataforma de cierre comercial: cubre el ciclo de ventas de la propuesta al pago —cotización con precios negociados, link público para el cliente, firma, cobro en línea, facturación y cobranza— para cualquier negocio, en cualquiera de los países que soporta. Nació en junio de 2026 como la versión independiente de la app de Shopify de Flouvia para cotizaciones B2B, y hoy no depende de Shopify, ni del B2B, ni de un solo país.
 
-## 1. La Capa de Cierre (The Atomic Link)
+## 1. El link de cierre
 
-Matamos el proceso manual. Todo el ciclo de cierre de clientes ocurre en un entorno web en vivo y unificado. 
+Todo el cierre pasa en un solo link web en vivo, no en PDFs y cadenas de correos.
 
-- **Cotizaciones Interactivas:** El cliente revisa el alcance (*scope*) del proyecto de forma interactiva, no en un documento estático.
-- **Acuerdo Legal Integrado:** Aprobación de términos y condiciones directamente en la plataforma.
-- **Transición a Checkout:** Al instante de aprobar, el sistema detona un modal de pago (Stripe Routing). Todo ocurre en un solo link.
+- **Cotizaciones interactivas:** partidas, precios negociados e impuestos por línea que el cliente revisa en la página.
+- **Firma en el mismo link:** los términos se aceptan donde vive la cotización.
+- **Cobro en el momento del sí:** la aprobación se convierte en checkout sin salir del link.
+- **Incrustable:** el cotizador se distribuye como Web Component (`<cord-cotizador>`) que cualquier sitio puede poner.
 
-## 2. El Motor Financiero (Cord Payments)
+## 2. Cord Payments
 
-No somos un simple *wrapper*; poseemos la pasarela de pagos operando bajo el capó mediante infraestructura de marca blanca (Stripe Connect Custom).
+Cord es dueño del riel de pagos por debajo, con Stripe Connect de marca blanca.
 
-- **KYC Automatizado:** El *onboarding* y verificación de identidad para que una agencia pueda empezar a cobrar ocurre completamente dentro de nuestra interfaz, sin fricción.
-- **Ruteo Directo (Zero-Touch):** Los fondos van directo a la cuenta conectada de la agencia. Cord procesa la transacción pero nunca retiene el dinero, clave para *compliance* y confianza.
-- **Soporte Multi-Moneda:** Ruteo de pagos internacionales de forma automática.
+- **Alta y KYC dentro de Cord:** varios titulares por cuenta, requisitos derivados del proveedor en vez de ramas por país, y captura de documentos con compuertas de calidad y guía por país.
+- **El dinero va directo al negocio:** Cord procesa el cobro pero nunca retiene los fondos.
+- **Depósitos con historial y frecuencia propia**, y tarifas por divisa.
+- **Mercado Pago en Latinoamérica:** en Brasil, Colombia, Argentina, Chile y Perú, el cobro en línea va con la cuenta de Mercado Pago del negocio.
 
-## 3. Facturación Inteligente (Cord Invoicing)
+## 3. Facturación que aguanta al fisco
 
-- **Facturación Automatizada:** Generación y envío de facturas ligadas directamente al evento de pago.
-- **Cálculo Dinámico:** Manejo automático de impuestos (taxes) y retenciones transfronterizas.
-- **Suscripciones B2B:** Capacidad nativa para manejar cobros recurrentes y *retainers* (igualas) de agencias.
+- **México:** CFDI 4.0 timbrado con Facturapi.
+- **España:** Verifactu, el sistema de facturación certificado que exige el RD 1007/2023 — huella SHA-256 encadenada verificada contra los vectores oficiales de la AEAT y envío real por SOAP validado contra el XSD oficial. En producción desde el 14 de octubre de 2026.
+- **Estados Unidos:** sales tax por estado y alta de Connect que acepta KYC estadounidense.
+- **Un solo motor de totales** para toda cotización y factura, con impuestos por línea sembrados por país.
 
-## 4. Cobranza Autónoma (La Capa de Inteligencia)
+## 4. Cobranza con IA
 
-- **IA de Cobranza:** Un agente autónomo integrado nativamente que persigue facturas sin pagar.
-- **Seguimiento en Segundo Plano:** El sistema manda recordatorios, calcula fechas de vencimiento y realiza la conciliación de forma invisible para que el operador no pierda tiempo.
-- **Reducción de DSO:** Optimizado específicamente para bajar los Días Promedio de Cobro.
+Un agente construido sobre la API de Anthropic persigue facturas sin pagar, manda recordatorios, calcula vencimientos y concilia pagos en segundo plano, para que el operador no se pase la semana cobrando.
 
-## 5. La Terminal Analítica (Dashboard Institucional)
+## 5. Hecho para cualquier país
 
-Construida con React y Remotion para físicas de resorte (*spring physics*) nivel Apple, en un modo oscuro *pixel-perfect*.
+El alta está abierta en los 12 países que Cord sostiene de punta a punta: México, EE.UU., Canadá, Brasil, España, Reino Unido, Alemania, Francia, Colombia, Argentina, Chile y Perú. Las cuentas de depósito usan el formato de cada país (CLABE, IBAN, routing, sort code, BSB…). La app y sus correos funcionan en español e inglés, y el sitio público en cinco idiomas.
 
-- **Métrica de DSO:** Medición exacta de la velocidad del flujo de caja (Days Sales Outstanding).
-- **Concentración de Riesgo:** Análisis de la diversificación en la cartera de clientes.
-- **Salud del Pipeline:** Rastreo en tiempo real de qué dinero está cotizado, aprobado y cobrado.
+## 6. Una plataforma para desarrolladores
 
-## 6. El Modelo de Apalancamiento
+- **API REST pública** (`/api/v1`) y **servidor MCP**, para operar Cord desde código o desde un asistente de IA.
+- **Cord Workflows** para automatizar pasos del ciclo.
+- Documentación, blog de desarrolladores, página de estado y comunidad propias, cada una en su subdominio.
 
-Un modelo *dual-engine*: la plataforma monetiza cobrando una suscripción SaaS por el acceso al sistema operativo, y toma un porcentaje (*basis points*) del volumen transaccional procesado por el motor financiero.
+## 7. Seguridad y multi-tenant
+
+- **Autenticación propia:** Argon2id, acceso con Google y Apple, passkeys, TOTP y SSO SAML. Reemplazó a Clerk conservando todas las identidades existentes.
+- **Aislamiento real entre organizaciones:** Neon PostgreSQL con row-level security aplicada. La app se conecta con un rol que no puede saltarse el RLS, toda consulta a datos de una organización viaja por un carril declarado y las verificaciones del CI impiden que esa deuda vuelva.
+- **Candados en cada despliegue:** un push a `main` llega a producción solo si pasan los chequeos de seguridad.
+
+## 8. El modelo de negocio
+
+Dos motores: una suscripción freemium en Stripe Billing —cinco planes con cuotas mensuales y excedentes medidos de IA, facturas, llamadas a la API y usuarios— y un porcentaje del volumen procesado por Cord Payments.
+
+## En números
+
+- **$5k MRR.**
+- **+1,600 commits** desde junio de 2026.
+- **187 tablas**, **+350 rutas de API** y **+470 archivos de pruebas**.
+- **12 países** y **5 idiomas**.
+- Construido con Astro 7 (SSR) en Vercel, Neon, Stripe, Resend, Facturapi y Anthropic.

@@ -1,0 +1,272 @@
+---
+/**
+ * ── Work: caso (EN + ES) ──────────────────────────────
+ *
+ * Portada en collage: el número de lote, el título gigante (morph
+ * desde el índice con transition:name), el dibujo pegado en su hoja
+ * y la ficha escrita a máquina con el resultado encerrado en rojo.
+ * Debajo, el caso como texto editorial con un índice lateral fijo
+ * (los H2 del markdown) y al final el lote siguiente.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import { getLangFromUrl, useTranslations, getLocalePath } from '../i18n/utils';
+import Pieza from './home/Pieza.astro';
+import Caballo from './art/Caballo.astro';
+import Cuerda from './art/Cuerda.astro';
+import Velero from './art/Velero.astro';
+import Trazo from './art/Trazo.astro';
+import { workSlug as slug } from '../lib/work';
+
+interface Props {
+  project: CollectionEntry<'work'>;
+  lot: number;
+  next?: CollectionEntry<'work'>;
+  nextLot?: number;
+}
+
+const { project, lot, next, nextLot } = Astro.props;
+const { Content, headings } = await render(project);
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const path = (p: string) => getLocalePath(p, lang);
+const pad = (n: number) => String(n).padStart(2, '0');
+const host = project.data.url ? new URL(project.data.url).host : null;
+
+const ART = { cord: Cuerda, flouvia: Velero } as const;
+const Art = ART[slug(project.id) as keyof typeof ART] ?? Caballo;
+const sections = headings.filter((h) => h.depth === 2);
+---
+
+<main class="case">
+  <header class="case-cover" data-collage>
+    <p class="lv-kicker case-kicker" data-reveal="fade" data-delay="0.1">
+      <a href={path('/work')}>← {t('home.s2')}</a> · {t('home.lot')} {pad(lot)}
+    </p>
+    <p class="case-lot" aria-hidden="true" data-reveal="fade" data-delay="0.15">{pad(lot)}</p>
+    <h1 class="case-title" transition:name={`work-title-${slug(project.id)}`}>{project.data.title}</h1>
+    <p class="case-sub" data-reveal="fade" data-delay="0.4">{project.data.subtitle}</p>
+
+    <Pieza x="56%" y="10%" w="32vw" r={3} z={3} depth={0.5} drag delay={0.4} mx="20%" my="44%" mw="76vw">
+      <figure class="lv-sheet case-sheet"><i class="lv-tape"></i><Art draw="load" delay={0.8} /></figure>
+    </Pieza>
+    <Pieza x="-3%" y="52%" w="36vw" z={0} depth={0.12} reveal={false} hideMobile>
+      <Trazo kind="cielo" draw="load" delay={0.3} />
+    </Pieza>
+
+    <div class="case-card" data-reveal="drop" data-delay="0.7">
+      <i class="lv-tape"></i>
+      <dl>
+        <div><dt>{t('home.lot.role')}</dt><dd>{project.data.role}</dd></div>
+        <div><dt>{t('home.lot.period')}</dt><dd>{project.data.timeline}</dd></div>
+        <div>
+          <dt>{t('home.lot.result')}</dt>
+          <dd class="case-result"><span data-pen data-pen-scroll data-delay="1.4">{project.data.impact}</span></dd>
+        </div>
+        {host && (
+          <div><dt>{t('home.lot.site')}</dt><dd><a href={project.data.url} target="_blank" rel="noopener noreferrer">{host} ↗</a></dd></div>
+        )}
+      </dl>
+    </div>
+  </header>
+
+  <div class="case-grid">
+    {sections.length > 0 && (
+      <nav class="case-toc" aria-label={t('home.index')}>
+        <p class="lv-kicker">{t('home.index')}</p>
+        <ol>
+          {sections.map((h, i) => (
+            <li><a href={`#${h.slug}`} data-scroll><span>{pad(i + 1)}</span>{h.text.replace(/^\d+\.\s*/, '')}</a></li>
+          ))}
+        </ol>
+      </nav>
+    )}
+    <article class="case-body lv-prose">
+      <Content />
+    </article>
+  </div>
+
+  {next && (
+    <nav class="case-next" aria-label={t('home.lot')}>
+      <p class="lv-kicker">{t('home.lot')} {pad(nextLot ?? 1)}</p>
+      <a href={path(`/work/${slug(next.id)}`)} data-pen-group>
+        <span class="case-next__name"><span data-pen="under">{next.data.title}</span></span>
+        <span class="case-next__arrow" aria-hidden="true">→</span>
+      </a>
+    </nav>
+  )}
+</main>
+
+<style>
+  .case {
+    padding: 0 var(--gutter) clamp(110px, 12vw, 180px);
+    overflow-x: clip;
+  }
+
+  .case > * { max-width: 1560px; margin-inline: auto; }
+
+  /* ── Portada ── */
+  .case-cover {
+    position: relative;
+    min-height: max(56vw, 660px);
+    padding-top: clamp(110px, 14vh, 150px);
+  }
+
+  .case-kicker a { color: inherit; text-decoration: none; }
+  .case-kicker a:hover { color: var(--rojo); }
+
+  .case-lot {
+    position: absolute;
+    right: 0;
+    bottom: 4%;
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: clamp(8rem, 26vw, 30rem);
+    line-height: 0.8;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--linea);
+    pointer-events: none;
+  }
+
+  .case-title {
+    position: relative;
+    z-index: 2;
+    margin-top: 2vw;
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(5rem, 17vw, 20rem);
+    line-height: 0.84;
+    letter-spacing: -0.05em;
+  }
+
+  .case-sub {
+    position: relative;
+    z-index: 2;
+    max-width: 22ch;
+    margin: 1.4vw 0 0 12vw;
+    font-style: italic;
+    font-size: clamp(1.5rem, 2.6vw, 2.6rem);
+    line-height: 1.1;
+  }
+
+  .case-sheet { margin: 0; padding: clamp(14px, 1.8vw, 26px); color: var(--tinta); }
+
+  .case-card {
+    position: absolute;
+    z-index: 5;
+    right: 4%;
+    bottom: 6%;
+    width: min(30vw, 400px);
+    padding: 22px 22px 18px;
+    background: var(--hoja);
+    box-shadow: var(--sombra-hoja);
+    rotate: -2deg;
+  }
+
+  .case-card dl {
+    display: grid;
+    gap: 8px;
+    font-family: var(--f-grot);
+    font-size: 0.8rem;
+  }
+
+  .case-card dl div {
+    display: grid;
+    grid-template-columns: 86px minmax(0, 1fr);
+    gap: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px dotted var(--linea);
+  }
+
+  .case-card dt { color: var(--grafito); text-transform: uppercase; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.06em; }
+  .case-card a { color: var(--tinta); }
+  .case-result span { display: inline-block; }
+
+  /* ── Cuerpo ── */
+  .case-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 8fr);
+    gap: 48px clamp(32px, 5vw, 96px);
+    padding-top: clamp(72px, 8vw, 130px);
+    border-top: 1px solid var(--tinta);
+  }
+
+  .case-toc {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+    display: grid;
+    gap: 14px;
+  }
+
+  .case-toc ol { list-style: none; display: grid; gap: 4px; }
+
+  .case-toc a {
+    display: flex;
+    gap: 0.8rem;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--linea);
+    color: var(--tinta);
+    font-size: 1rem;
+    text-decoration: none;
+  }
+
+  .case-toc a span {
+    font-family: var(--f-grot);
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1.7;
+    color: var(--rojo);
+  }
+
+  .case-toc a:hover { font-style: italic; }
+
+  .case-body { max-width: 68ch; }
+
+  /* ── Lote siguiente ── */
+  .case-next {
+    display: grid;
+    gap: 14px;
+    margin-top: clamp(80px, 9vw, 150px);
+    padding-top: 28px;
+    border-top: 1px solid var(--tinta);
+  }
+
+  .case-next a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    color: var(--tinta);
+    text-decoration: none;
+  }
+
+  .case-next__name {
+    font-family: var(--f-serif);
+    font-size: clamp(3.6rem, 10vw, 11rem);
+    line-height: 0.9;
+    letter-spacing: -0.045em;
+  }
+
+  .case-next__name > span { display: inline-block; }
+  .case-next a:hover .case-next__name { font-family: var(--f-worn); }
+
+  .case-next__arrow {
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-size: clamp(3rem, 7vw, 7rem);
+    color: var(--rojo);
+    transition: translate 0.8s var(--ease-expo);
+  }
+
+  .case-next a:hover .case-next__arrow { translate: 12px 0; }
+
+  @media (max-width: 900px) {
+    .case-cover { min-height: 0; height: 190vw; }
+    .case-title { font-size: 22vw; }
+    .case-sub { margin-left: 0; }
+    .case-card { right: auto; left: 0; bottom: 2%; width: 92%; }
+    .case-grid { grid-template-columns: minmax(0, 1fr); }
+    .case-toc { position: static; }
+  }
+</style>

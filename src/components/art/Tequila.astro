@@ -1,0 +1,57 @@
+---
+/**
+ * ── Tequila ───────────────────────────────────────────
+ *
+ * Una botella cuadrada con corcho y etiqueta de agave, un
+ * caballito servido, una rodaja de limón y sal.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Botella de tequila con caballito, limón y sal',
+  class: className,
+} = Astro.props;
+
+const bottle = 'M40 122 L40 282 C40 292 122 292 122 282 L122 122 C122 106 102 100 98 86 L98 52 L64 52 L64 86 C60 100 40 106 40 122 Z';
+const glass = 'M152 186 L200 186 L194 284 L158 284 Z';
+const agave = 'M81 222 L68 196 M81 222 L74 190 M81 222 L81 186 M81 222 L88 190 M81 222 L94 196 M81 222 L62 206 M81 222 L100 206';
+const salt = [[228, 290], [236, 286], [244, 292], [252, 288], [232, 296], [248, 297], [240, 282]];
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 280 310"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink-fino)">
+    <path data-fill d={bottle} style="fill: var(--cielo)" fill-opacity="0.35" />
+    <path data-fill d="M62 52 L100 52 L98 24 L64 24 Z" style="fill: var(--cognac)" />
+    <path data-fill d="M50 172 L112 170 L114 240 L48 242 Z" fill="#FBFAF7" />
+    <path data-fill d="M156 222 L198 222 L194 284 L158 284 Z" style="fill: var(--cielo)" fill-opacity="0.45" />
+    <path data-fill d="M210 284 C210 258 270 258 270 284 Z" style="fill: var(--verde)" />
+  </g>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s stroke-width="2.6" d={bottle} />
+    <path data-s stroke-width="2.4" d="M62 52 L100 52 L98 24 L64 24 Z" />
+    <path data-s stroke-width="2" d="M50 172 L112 170 L114 240 L48 242 Z" />
+    <path data-s stroke-width="1.8" class="lv-art-red" d={agave} />
+    <path data-s stroke-width="2.4" d={glass} />
+    <path data-s stroke-width="1.6" d="M156 222 L198 222 M160 276 L192 276" />
+    <path data-s stroke-width="2.2" d="M210 284 C210 258 270 258 270 284 Z M240 284 L224 266 M240 284 L240 260 M240 284 L256 266" />
+  </g>
+  <text data-pop x="81" y="254" text-anchor="middle" font-size="9" font-weight="800" fill="currentColor" letter-spacing="1.5" style="font-family: var(--f-grot)">TEQUILA</text>
+  <text data-pop x="81" y="232" text-anchor="middle" font-size="6" font-weight="600" fill="currentColor" letter-spacing="1" style="font-family: var(--f-grot)">100% AGAVE</text>
+  <g fill="currentColor">
+    {salt.map(([cx, cy]) => <rect data-pop x={cx} y={cy} width="3" height="3" transform={`rotate(20 ${cx} ${cy})`} />)}
+  </g>
+</svg>

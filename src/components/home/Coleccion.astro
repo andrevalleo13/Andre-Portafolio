@@ -1,0 +1,155 @@
+---
+/**
+ * ── III. Colección ────────────────────────────────────
+ *
+ * Una pared colgada a lo salón, sin retícula: marcos, hojas con
+ * cinta, una estampilla, una página de libro pintada y notas,
+ * encimadas y chuecas como en una pared de verdad. Todo se puede
+ * descolgar y mover (data-drag) y cada pieza deriva a su propio
+ * ritmo con el scroll. En móvil la pared se vuelve una columna doble.
+ */
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+import Folio from './Folio.astro';
+import Pieza from './Pieza.astro';
+import Obra from './Obra.astro';
+import LoboCorona from '../art/LoboCorona.astro';
+import Barca from '../art/Barca.astro';
+import Taza from '../art/Taza.astro';
+import Cafe from '../art/Cafe.astro';
+import Galope from '../art/Galope.astro';
+import Manga from '../art/Manga.astro';
+import Carta from '../art/Carta.astro';
+import Pagina from '../art/Pagina.astro';
+import Trazo from '../art/Trazo.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+type Key = Parameters<typeof t>[0];
+const art = (key: string) => t(`art.${key}` as Key);
+---
+
+<section class="coleccion" id="coleccion">
+  <Folio n="III" title={t('home.s3')} page={4} />
+
+  <div class="wall" data-collage>
+    <div class="wall__intro">
+      <h2 class="wall__title" data-reveal="lines">
+        <span class="lv-line"><span><em>III.</em> {t('home.s3.title')}</span></span>
+      </h2>
+      <p class="wall__lede" data-reveal="fade">{t('home.s3.lede')}</p>
+      <p class="lv-pen-note wall__hint" data-reveal="write" data-delay="0.6">{t('home.drag')} ↘</p>
+    </div>
+
+    <Pieza x="33%" y="0%" w="24vw" r={-1.5} drag depth={0.3} parallax={0.1}>
+      <Obra n={1} label={art('wolfHead')}><LoboCorona /></Obra>
+    </Pieza>
+
+    <Pieza x="70%" y="0%" w="21vw" r={3} drag depth={0.5} parallax={0.18}>
+      <Obra n={2} label={art('card')} frame="bare"><Carta /></Obra>
+    </Pieza>
+
+    <Pieza x="2%" y="28%" w="25vw" r={1} drag depth={0.4} parallax={0.06}>
+      <Obra n={3} label={art('barca')}><Barca /></Obra>
+    </Pieza>
+
+    <Pieza x="62%" y="32%" w="10vw" r={-6} z={4} drag depth={0.8} parallax={0.22}>
+      <Obra n={4} label={art('cup')} frame="bare"><Taza /></Obra>
+    </Pieza>
+
+    <Pieza x="78%" y="30%" w="13vw" r={6} z={4} drag depth={0.7} parallax={0.14}>
+      <Obra n={5} label={art('workhard')} frame="bare">
+        <div class="lv-nota lv-nota--negra"><p>Work<br />hard.</p></div>
+      </Obra>
+    </Pieza>
+
+    <Pieza x="31%" y="40%" w="25vw" r={-1} drag depth={0.35} parallax={0.08}>
+      <Obra n={6} label={art('coffee')} frame="sheet"><Cafe /></Obra>
+    </Pieza>
+
+    <Pieza x="3%" y="58%" w="22vw" r={-2.5} drag depth={0.45} parallax={0.16}>
+      <Obra n={7} label={art('page')} frame="bare"><Pagina lines={['Make art.', 'Make money.', 'Repeat.']} /></Obra>
+    </Pieza>
+
+    <Pieza x="62%" y="50%" w="21vw" r={2} drag depth={0.5} parallax={0.12}>
+      <Obra n={8} label={art('sleeve')}><Manga /></Obra>
+    </Pieza>
+
+    <Pieza x="30%" y="76%" w="36vw" r={1.5} drag depth={0.25} parallax={0.04}>
+      <Obra n={9} label={art('gallop')} frame="sheet"><Galope /></Obra>
+    </Pieza>
+
+    <Pieza x="56%" y="27%" w="11vw" z={5} depth={0.9} reveal={false} hideMobile>
+      <Trazo kind="estrellas" />
+    </Pieza>
+    <Pieza x="78%" y="80%" w="14vw" z={1} depth={0.2} reveal={false} hideMobile>
+      <Trazo kind="tachas" />
+    </Pieza>
+    <Pieza x="90%" y="58%" w="7vw" z={0} depth={0.2} reveal={false} hideMobile>
+      <Trazo kind="sol" />
+    </Pieza>
+  </div>
+</section>
+
+<style>
+  .wall {
+    position: relative;
+    height: 110vw;
+    margin-top: clamp(40px, 5vw, 72px);
+  }
+
+  .wall__intro {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 3;
+    width: min(28vw, 400px);
+    display: grid;
+    gap: 18px;
+  }
+
+  .wall__title {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 5.4vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+
+  .wall__title em { font-style: italic; color: var(--rojo); }
+
+  .wall__lede {
+    font-size: 1.02rem;
+    line-height: 1.55;
+    color: var(--grafito);
+  }
+
+  .wall__hint { rotate: -3deg; justify-self: start; }
+
+  @media (hover: none), (pointer: coarse) {
+    .wall__hint { display: none; }
+  }
+
+  /* ── Móvil: columna doble, sin posiciones libres ── */
+  @media (max-width: 900px) {
+    .wall {
+      height: auto;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 48px 20px;
+      align-items: start;
+    }
+    .wall__intro {
+      position: static;
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+    .wall :global(.pieza) {
+      position: relative;
+      left: auto;
+      top: auto;
+      width: auto;
+    }
+    .wall :global(.pieza:nth-of-type(3n + 1)) { grid-column: 1 / -1; width: 86%; }
+    .wall :global(.pieza:nth-of-type(even)) { margin-top: 32px; }
+  }
+</style>

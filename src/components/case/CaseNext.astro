@@ -1,0 +1,79 @@
+---
+/**
+ * ── Lote siguiente ────────────────────────────────────
+ *
+ * Cierre de cada caso: el siguiente proyecto en grande. El título
+ * se desgasta (Redaction 50) al pasar el cursor.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { getLangFromUrl, useTranslations, getLocalePath } from '../../i18n/utils';
+import { workSlug } from '../../lib/work';
+
+interface Props {
+  next?: CollectionEntry<'work'>;
+  nextLot?: number;
+}
+
+const { next, nextLot } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+{next && (
+  <nav class="next" aria-label={t('home.lot')}>
+    <p class="lv-kicker">{lang === 'es' ? 'Lote siguiente' : 'Next lot'} · {pad(nextLot ?? 1)}</p>
+    <a href={getLocalePath(`/work/${workSlug(next.id)}`, lang)} data-pen-group>
+      <span class="next__name"><span data-pen="under">{next.data.title}</span></span>
+      <span class="next__sub">{next.data.subtitle}</span>
+      <span class="next__arrow" aria-hidden="true">→</span>
+    </a>
+  </nav>
+)}
+
+<style>
+  .next {
+    display: grid;
+    gap: 14px;
+    padding-top: 28px;
+    border-top: 1px solid var(--tinta);
+  }
+
+  .next a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 6px 24px;
+    color: var(--tinta);
+    text-decoration: none;
+  }
+
+  .next__name {
+    font-family: var(--f-serif);
+    font-size: clamp(3.6rem, 12vw, 13rem);
+    line-height: 0.88;
+    letter-spacing: -0.05em;
+  }
+
+  .next__name > span { display: inline-block; }
+  .next a:hover .next__name { font-family: var(--f-worn); }
+
+  .next__sub {
+    grid-row: 2;
+    font-style: italic;
+    font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+    color: var(--grafito);
+  }
+
+  .next__arrow {
+    grid-row: 1 / span 2;
+    align-self: center;
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-size: clamp(3rem, 8vw, 8rem);
+    color: var(--rojo);
+    transition: translate 0.8s var(--ease-expo);
+  }
+
+  .next a:hover .next__arrow { translate: 14px 0; }
+</style>

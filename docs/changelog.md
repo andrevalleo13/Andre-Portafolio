@@ -2,6 +2,50 @@
 
 Registro cronológico de modificaciones mayores y evolución del proyecto.
 
+## [0.4.1] - 2026-10-25
+
+### Añadido
+- **Casos con página propia** (no plantilla): `CaseCord` (cordón que se dibuja con el scroll, 12 banderas pintadas, timbres fiscales, cobranza, terminal, engranes, libro de números) y `CaseFlouvia` (carta de servicios, pósters de clientes, boceto de Flouvia OS, el taller, etiqueta de composición). Contenido actualizado desde los repos `flouvia-cord` y `flouvia`; Cord a $5k MRR.
+- Dibujos nuevos: `Barca`, `TheSix`, `Cafe`, `Tequila`, `Bandera`, `Timbre`, `Doodle`; `Tigre` redibujado (naranja con rayas). Pinturas de fondo `grafiti` y `brochazo`.
+- About: sección "Reglas de la casa": sus reglas pintadas a brocha roja (`Reglas`, filtro `#brocha`), con The 6, tequila y el 911 alrededor.
+- Pared del inicio: "La manga rota" (`Manga`): reloj de acero asomando por una manga de suéter rota, en lugar de la máscara de luchador.
+- Hero: la etiqueta roja dice "i lowkey dgaf anymore".
+- Pared del inicio: el as de corazones "PLAY THE GAME" a crayón (`Carta`) reemplaza la frase en acrílico naranja (`Frase`, eliminada).
+- `data-draw="scrub"`: trazos que avanzan con el scroll.
+- Favicon: lobo crema sobre la etiqueta roja (`favicon.svg`, `favicon.png`, `apple-touch-icon.png`).
+
+### Modificado
+- Footer: "let's talk." en ambos idiomas, sin folio, sin colofón; pintura más realista (gotas orgánicas, latigazos, escurrimientos, limpiar el lienzo).
+- Filtros SVG con región amplia: los brochazos gruesos ya no se recortan.
+
+### Eliminado
+- La mancha azul circular (`acuarela`), el GAT, el plato con serpiente, el chorreado tipo peine y el salpicado tipo Pollock.
+
+## [0.4.0] - 2026-10-25
+
+### Rediseño completo: "Lujo vivido, con un toque"
+Sale del Pinterest de André (Margiela, Golden Goose, RRL, Basquiat, cerámica, lucha libre, caballos, lobos). Reemplaza "Stealth Wealth Técnico" en todo el sitio.
+
+### Añadido
+- **Composición libre tipo collage** en todas las páginas: piezas encimadas, chuecas, arrastrables (GSAP Draggable + Inertia) y en capas que siguen al mouse.
+- **Dibujos propios en SVG** (`src/components/art/`): lobo, lobo con corona, tigre, serpiente, pulpo, dálmata, caballos, máscara de luchador, reloj, 911, GAT pintado, puro, taza, velero, cuerda, estampilla, páginas y frases pintadas, y marcas abstractas (`Trazo`). Se pintan trazo por trazo.
+- **Sistema de movimiento declarativo** (`src/scripts/ink.ts`): pluma roja, `data-draw`, `data-reveal` (lines, rule, sheet, drop, type, write), contadores, pista horizontal de Holdings.
+- **Scroll con inercia** (Lenis, `src/scripts/smooth.ts`).
+- **Tipografía**: Redaction (+ corte desgastado Redaction 50) y Hubot Sans, servidas desde el sitio vía Fontsource.
+- **Marca**: etiqueta roja de ropa (`Etiqueta.astro`) con numeración 0–23 de Margiela.
+- **Home**: portada collage, Tesis, Holdings horizontal, Colección (pared a lo salón), Memos.
+- **Work, caso, About, Journal y memo** rediseñados como componentes compartidos EN/ES (`WorkIndex`, `WorkCase`, `About`, `JournalIndex`, `JournalPost`); helpers en `src/lib/work.ts` y `src/lib/journal.ts`; contenido de About en `src/data/about.ts`.
+- **Índice a pantalla completa** (navbar) compuesto como collage.
+- **Footer** oscuro con pintura salpicada por el cursor (`splatter.ts`).
+- **Contacto** con la misma lógica Typeform en la estética nueva; el dibujo cambia con la intención.
+- **Página 404** ("El lobo se comió esta página.").
+- **OG image** nueva (1200×675).
+
+### Eliminado
+- React, `@astrojs/react`, three.js y `@react-three/fiber` (y `HeroShader.jsx`).
+- Scripts del diseño anterior (`hoverFill`, `splitText`, `scrollReveal`, `hoverImage`), tokens oscuros y clases `.wrapper` / `.section*`.
+- Google Fonts.
+
 ## [0.3.1] - 2026-09-05
 
 ### Añadido

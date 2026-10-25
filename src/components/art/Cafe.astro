@@ -1,0 +1,53 @@
+---
+/**
+ * ── Café y un cigarro ─────────────────────────────────
+ *
+ * Un espresso en su plato, con un cigarro recargado en la orilla:
+ * filtro naranja, brasa roja y un hilo de humo que sube.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Un espresso en su plato con un cigarro recargado y humo',
+  class: className,
+} = Astro.props;
+
+const cup = 'M84 98 L176 98 C174 132 160 160 130 160 C100 160 86 132 84 98 Z';
+const cig = 'M188 168 L270 134 L274 143 L192 177 Z';
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 290 210"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink-fino)">
+    <ellipse data-fill cx="132" cy="166" rx="112" ry="26" fill="#FBFAF7" />
+    <path data-fill d={cup} fill="#EDE6D8" />
+    <ellipse data-fill cx="130" cy="98" rx="46" ry="10" style="fill: var(--cognac)" />
+    <path data-fill d={cig} fill="#F4F2ED" />
+    <path data-fill d="M188 168 L206 160 L210 169 L192 177 Z" style="fill: var(--pint-naranja)" />
+    <path data-fill d="M262 137 L270 134 L274 143 L266 146 Z" fill="#9A938A" />
+  </g>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s stroke-width="2.4" d="M20 166 C20 136 244 136 244 166 C244 196 20 196 20 166 Z" />
+    <path data-s stroke-width="1.4" d="M70 166 C70 152 194 152 194 166" />
+    <path data-s stroke-width="2.4" d={cup} />
+    <path data-s stroke-width="2.4" d="M84 98 C84 88 176 88 176 98" />
+    <path data-s stroke-width="2.4" d="M174 110 C198 106 200 136 168 140" />
+    <path data-s stroke-width="2" d={cig} />
+    <path data-s stroke-width="1.4" d="M276 132 C290 116 268 100 282 84 C294 70 272 56 284 40 C292 30 280 20 286 10" />
+    <path data-s stroke-width="1" d="M130 86 C120 74 140 64 128 52" />
+  </g>
+  <circle data-pop cx="273" cy="138" r="3.4" class="lv-art-red-fill" />
+</svg>

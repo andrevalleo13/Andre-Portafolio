@@ -1,0 +1,65 @@
+---
+/**
+ * ── Blaugrana ─────────────────────────────────────────
+ *
+ * Una camiseta a rayas azul y grana, de espaldas, con "VALLE 10",
+ * y un balón a tinta. El Barça de siempre, sin escudos.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Camiseta a rayas azul y grana con VALLE 10 en la espalda, y un balón',
+  class: className,
+} = Astro.props;
+
+const clipId = `barca-${Math.random().toString(36).slice(2, 8)}`;
+const shirt = 'M72 22 L98 14 C108 30 138 30 148 14 L174 22 L226 56 L204 102 L182 90 L184 246 L62 246 L64 90 L42 102 L20 56 Z';
+const stripes = Array.from({ length: 10 }, (_, i) => ({ x: 14 + i * 24, tone: i % 2 === 0 ? 'var(--azul)' : 'var(--grana)' }));
+
+/* Balón: círculo con un pentágono al centro y costuras */
+const pent = Array.from({ length: 5 }, (_, i) => {
+  const a = -Math.PI / 2 + (i * 2 * Math.PI) / 5;
+  return `${(250 + Math.cos(a) * 11).toFixed(1)} ${(222 + Math.sin(a) * 11).toFixed(1)}`;
+});
+const seams = Array.from({ length: 5 }, (_, i) => {
+  const a = -Math.PI / 2 + (i * 2 * Math.PI) / 5;
+  return `M${(250 + Math.cos(a) * 11).toFixed(1)} ${(222 + Math.sin(a) * 11).toFixed(1)} L${(250 + Math.cos(a) * 24).toFixed(1)} ${(222 + Math.sin(a) * 24).toFixed(1)}`;
+}).join(' ');
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 290 260"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <defs>
+    <clipPath id={clipId}><path d={shirt} /></clipPath>
+  </defs>
+  <g clip-path={`url(#${clipId})`} filter="url(#ink)">
+    {stripes.map((s) => <rect data-fill x={s.x} y="0" width="24" height="260" style={`fill: ${s.tone}`} />)}
+  </g>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s stroke-width="3" d={shirt} />
+    <path data-s stroke-width="2.4" d="M98 14 C108 30 138 30 148 14 M64 90 L72 60 M182 90 L176 60" />
+  </g>
+  <g fill="#F4F2ED" stroke="currentColor" stroke-width="1.2" style="font-family: var(--f-grot)" font-weight="900" text-anchor="middle">
+    <text data-pop x="123" y="86" font-size="26" letter-spacing="1" style="font-stretch: 75%">VALLE</text>
+    <text data-pop x="123" y="178" font-size="92" style="font-stretch: 75%">10</text>
+  </g>
+  <g filter="url(#ink-fino)">
+    <circle data-fill cx="250" cy="222" r="30" fill="#F4F2ED" />
+    <circle data-s cx="250" cy="222" r="30" fill="none" stroke="currentColor" stroke-width="2.6" />
+    <path data-pop d={`M${pent.join(' L')} Z`} fill="currentColor" />
+    <path data-s d={seams} fill="none" stroke="currentColor" stroke-width="2" />
+  </g>
+</svg>

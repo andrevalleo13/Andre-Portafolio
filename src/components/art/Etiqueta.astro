@@ -1,0 +1,90 @@
+---
+/**
+ * ── Etiqueta (marca) ──────────────────────────────────
+ *
+ * La marca de André: una etiqueta roja de ropa, como las de
+ * Ambush o Acne, con el nombre en Hubot Sans negra condensada.
+ *   mini  → solo el nombre (navbar)
+ *   full  → nombre + línea de origen + numeración 0–23 de Margiela,
+ *           con el número de la página actual encerrado
+ */
+interface Props {
+  variant?: 'mini' | 'full';
+  /** número encerrado en la numeración 0–23 (solo full) */
+  mark?: number;
+  class?: string;
+}
+
+const { variant = 'mini', mark = 0, class: className } = Astro.props;
+const numbers = Array.from({ length: 24 }, (_, n) => n);
+---
+
+<span class:list={['etiqueta', `etiqueta--${variant}`, className]}>
+  <span class="etiqueta__name">André Valle Ortega</span>
+  {variant === 'full' && (
+    <>
+      <span class="etiqueta__line">Finanzas × Código — Est. 2024</span>
+      <span class="etiqueta__nums" aria-hidden="true">
+        {numbers.map((n) => <i class:list={{ 'is-on': n === mark }}>{n}</i>)}
+      </span>
+    </>
+  )}
+</span>
+
+<style>
+  .etiqueta {
+    display: inline-grid;
+    gap: 6px;
+    padding: 0.42em 0.7em 0.38em;
+    background: var(--rojo);
+    color: #f4f2ed;
+    font-family: var(--f-grot);
+    font-weight: 800;
+    font-stretch: 75%;
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+
+  .etiqueta--mini { font-size: 0.82rem; }
+
+  .etiqueta--full {
+    gap: 10px;
+    padding: 18px 20px 16px;
+    font-size: clamp(1.4rem, 2.4vw, 2.2rem);
+  }
+
+  .etiqueta__line {
+    font-size: 0.36em;
+    font-weight: 600;
+    font-stretch: 90%;
+    letter-spacing: 0.1em;
+    opacity: 0.85;
+  }
+
+  .etiqueta__nums {
+    display: grid;
+    grid-template-columns: repeat(12, auto);
+    justify-content: start;
+    gap: 4px 9px;
+    margin-top: 6px;
+    font-size: 0.32em;
+    font-weight: 500;
+    font-stretch: 100%;
+    letter-spacing: 0;
+  }
+
+  .etiqueta__nums i {
+    position: relative;
+    font-style: normal;
+    text-align: center;
+  }
+
+  .etiqueta__nums i.is-on::after {
+    content: '';
+    position: absolute;
+    inset: -4px -6px;
+    border: 1.2px solid currentColor;
+    border-radius: 50%;
+  }
+</style>

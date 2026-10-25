@@ -1,0 +1,49 @@
+---
+/**
+ * ── Sardinas ──────────────────────────────────────────
+ *
+ * Dos sardinas a pluma roja, como un grabado mediterráneo.
+ * Los trazos van en línea (no <use>) para poder dibujarlos.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Dos sardinas dibujadas con pluma roja',
+  class: className,
+} = Astro.props;
+
+const peces = [
+  { x: 30, y: 12, rot: 0 },
+  { x: 128, y: 20, rot: 4 },
+];
+---
+
+<svg
+  class:list={['lv-art', 'lv-art-red', className]}
+  viewBox="0 0 240 280"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    {peces.map(({ x, y, rot }) => (
+      <g transform={`translate(${x} ${y}) rotate(${rot} 40 126)`}>
+        <path data-s d="M40 6 C58 24 66 80 62 150 C60 178 54 196 46 208 L66 246 L40 230 L14 246 L34 208 C26 196 20 178 18 150 C14 80 22 24 40 6 Z" />
+        <path data-s d="M24 50 C32 60 48 60 56 50" />
+        <path data-s d="M40 62 C42 100 42 150 40 200" />
+        <path data-s d="M24 80 L36 86 M22 96 L36 103 M21 112 L36 120 M21 128 L36 136 M22 144 L36 152 M24 160 L36 167 M27 176 L37 182" />
+        <path data-s d="M56 80 L44 86 M58 96 L44 103 M59 112 L44 120 M59 128 L44 136 M58 144 L44 152 M56 160 L44 167 M53 176 L43 182" />
+        <path data-s d="M18 118 L6 130 L19 136 M62 118 L74 130 L61 136" />
+        <circle data-pop cx="40" cy="30" r="4.5" />
+      </g>
+    ))}
+  </g>
+</svg>

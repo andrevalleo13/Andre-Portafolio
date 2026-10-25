@@ -1,0 +1,41 @@
+---
+/**
+ * ── Cuerda ────────────────────────────────────────────
+ *
+ * Una cuerda con un nudo y una etiqueta roja de lote amarrada.
+ * Ilustra Cord: todo el cierre atado en un solo link.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Cuerda anudada con una etiqueta roja amarrada',
+  class: className,
+} = Astro.props;
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 300 170"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s stroke-width="5" d="M14 118 C60 120 92 106 122 84 C150 62 192 54 202 82 C212 108 172 122 152 104 C132 86 152 54 186 52 C226 50 252 84 288 74" />
+    <path data-s stroke-width="2" d="M14 118 L4 111 M14 118 L3 118 M14 118 L5 125" />
+    <path data-s stroke-width="2" d="M288 74 L297 66 M288 74 L298 73 M288 74 L297 80" />
+  </g>
+  <g filter="url(#ink-fino)">
+    <path data-s fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M238 66 C241 78 244 90 245 102" />
+    <path data-fill class="lv-art-red-fill" d="M230 100 L262 104 L257 138 L226 133 Z" />
+    <circle data-pop class="lv-art-eye" cx="245" cy="109" r="3" />
+  </g>
+</svg>

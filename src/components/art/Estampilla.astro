@@ -1,0 +1,47 @@
+---
+/**
+ * ── Estampilla ────────────────────────────────────────
+ *
+ * Contenido de una estampilla postal: sol rojo, caballo al
+ * galope a pincel y la denominación "26". Las perforaciones
+ * las pone el marco (Obra frame="stamp").
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Estampilla con un sol rojo y un caballo al galope',
+  class: className,
+} = Astro.props;
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 160 200"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <rect width="160" height="200" style="fill: var(--pint-3)" />
+  <circle data-pop cx="98" cy="78" r="30" class="lv-art-red-fill" opacity="0.88" />
+  <g filter="url(#ink)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" transform="translate(16 74) scale(1.12)">
+    <path data-s stroke-width="17" d="M34 32 C46 26 66 26 80 30" />
+    <path data-s stroke-width="9" d="M78 29 C86 22 92 16 98 12" />
+    <path data-s stroke-width="7" d="M96 12 C102 10 108 13 113 19" />
+    <path data-s stroke-width="3.5" d="M80 35 C88 40 98 42 112 38" />
+    <path data-s stroke-width="3.5" d="M76 37 C80 46 86 52 96 56" />
+    <path data-s stroke-width="3.5" d="M38 37 C28 42 18 44 6 40" />
+    <path data-s stroke-width="3.5" d="M42 39 C40 48 34 55 24 60" />
+    <path data-s stroke-width="3" d="M28 28 C20 22 12 22 2 26" />
+  </g>
+  <text x="14" y="24" font-size="8" letter-spacing="1.5" fill="currentColor" style="font-family: var(--f-mono)">CORREO AÉREO</text>
+  <text x="14" y="186" font-size="6.5" letter-spacing="1.2" fill="currentColor" style="font-family: var(--f-mono)">A. VALLE ORTEGA</text>
+  <text x="146" y="188" text-anchor="end" font-size="40" font-style="italic" fill="currentColor" style="font-family: var(--f-display)">26</text>
+</svg>

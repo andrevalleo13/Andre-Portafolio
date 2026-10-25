@@ -1,0 +1,69 @@
+---
+/**
+ * ── Capítulo de caso ──────────────────────────────────
+ *
+ * Encabezado de cada parte de un caso: el número romano en
+ * cursiva roja, la etiqueta en grotesca y el titular en Redaction.
+ */
+interface Props {
+  n: string;
+  kicker: string;
+  title?: string;
+  class?: string;
+}
+
+const { n, kicker, title, class: className } = Astro.props;
+---
+
+<header class:list={['cap', className]}>
+  <p class="cap__kicker" data-reveal="fade"><em>{n}.</em> {kicker}</p>
+  {title && (
+    <h2 class="cap__title" data-reveal="lines">
+      <span class="lv-line"><span>{title}</span></span>
+    </h2>
+  )}
+</header>
+
+<style>
+  .cap {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: clamp(14px, 1.6vw, 22px);
+  }
+
+  .cap__kicker {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--tinta);
+    font-family: var(--f-grot);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--grafito);
+  }
+
+  .cap__kicker em {
+    font-family: var(--f-serif);
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--rojo);
+  }
+
+  .cap__title {
+    max-width: 18ch;
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(2.4rem, 5.4vw, 5.8rem);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .cap__title .lv-line > span { display: inline; }
+</style>

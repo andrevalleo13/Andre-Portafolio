@@ -1,0 +1,466 @@
+---
+/**
+ * ── About (EN + ES) ───────────────────────────────────
+ *
+ * Una biografía en collage:
+ *   I.   Portada      "ACERCA" gigante, el manifiesto encima con
+ *                     subrayados a pluma, el lobo con corona y la máscara.
+ *   II.  Experiencia  años en negra condensada, cada venture con su dibujo.
+ *   III. Competencias etiquetas de ropa cosidas que se pueden mover.
+ *   IV.  Reglas       sus reglas pintadas a brocha roja, con The 6 (Drake), el
+ *                     tequila y el 911 alrededor; todo arrastrable.
+ *   V.   Formación    instituciones + certificaciones como libro contable.
+ *
+ * Contenido en src/data/about.ts; textos de interfaz en ui.ts.
+ */
+import { getLangFromUrl, useTranslations, getLocalePath } from '../i18n/utils';
+import { about, RULES } from '../data/about';
+import Folio from './home/Folio.astro';
+import Pieza from './home/Pieza.astro';
+import Tigre from './art/Tigre.astro';
+import Puro from './art/Puro.astro';
+import Cuerda from './art/Cuerda.astro';
+import Velero from './art/Velero.astro';
+import Trazo from './art/Trazo.astro';
+import TheSix from './art/TheSix.astro';
+import Tequila from './art/Tequila.astro';
+import Porsche from './art/Porsche.astro';
+import Reglas from './art/Reglas.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const data = about[lang];
+const path = (p: string) => getLocalePath(p, lang);
+
+const ART = { cord: Cuerda, flouvia: Velero } as const;
+const terms = t('home.terms').split('|');
+const annotate = (text: string) =>
+  terms.reduce(
+    (html, term) => html.replace(term, `<span data-pen="under" data-pen-scroll data-delay="0.5">${term}</span>`),
+    text
+  );
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/* Etiquetas de competencias: color y lugar en la mesa */
+const labelStyles = [
+  { tone: 'roja', x: '3%', y: '10%', r: -4, mx: '0%', my: '6%' },
+  { tone: 'negra', x: '26%', y: '40%', r: 3, mx: '8%', my: '30%' },
+  { tone: 'naranja', x: '54%', y: '4%', r: -2, mx: '0%', my: '54%' },
+  { tone: 'hueso', x: '44%', y: '68%', r: 5, mx: '10%', my: '78%' },
+];
+---
+
+<main class="about">
+  <!-- ═════════ I. PORTADA ═════════ -->
+  <section class="ab-cover" data-collage>
+    <Pieza x="72%" y="10%" w="21vw" r={4} z={4} depth={0.6} drag delay={0.6} mx="54%" my="20%" mw="42vw">
+      <figure class="lv-sheet ab-sheet"><i class="lv-tape"></i><Tigre draw="load" delay={1} /></figure>
+    </Pieza>
+    <Pieza x="78%" y="58%" w="18vw" r={-10} z={5} depth={0.8} drag delay={0.9} mx="56%" my="44%" mw="40vw">
+      <Puro draw="load" delay={1.6} />
+    </Pieza>
+    <Pieza x="-3%" y="44%" w="30vw" r={-3} z={0} depth={0.12} reveal={false} mx="-10%" my="40%" mw="70vw">
+      <Trazo kind="verde" draw="load" delay={0.3} />
+    </Pieza>
+    <Pieza x="40%" y="80%" w="22vw" z={0} depth={0.25} reveal={false} hideMobile>
+      <Trazo kind="zigzag" draw="load" delay={2} />
+    </Pieza>
+
+    <p class="lv-kicker ab-kicker" data-reveal="fade" data-delay="0.1">Nº I — {data.labels.title}</p>
+    <h1 class="ab-title" data-reveal="lines" data-delay="0.2">
+      <span class="lv-line"><span>{data.labels.title}</span></span>
+    </h1>
+
+    <div class="ab-manifesto">
+      <h2 class="ab-heading" data-reveal="lines" data-delay="0.5">
+        {t('about.heading').split(/<br\s*\/?>/i).map((line, i) => (
+          <span class:list={['lv-line', { 'ab-heading__it': i === 1 }]}><span set:html={line} /></span>
+        ))}
+      </h2>
+      <p class="ab-p" data-reveal="fade" data-delay="0.7" set:html={annotate(t('about.p1'))} />
+      <p class="ab-p ab-p--grot" data-reveal="fade" data-delay="0.8" set:html={annotate(t('about.p2'))} />
+    </div>
+  </section>
+
+  <!-- ═════════ II. EXPERIENCIA ═════════ -->
+  <section class="ab-exp">
+    <Folio n="II" title={data.labels.experience} page={2} />
+    <ol class="ventures">
+      {data.experience.map((v, i) => {
+        const Art = ART[v.slug as keyof typeof ART];
+        return (
+          <li class:list={['venture', `venture--${i % 2 === 0 ? 'a' : 'b'}`]}>
+            <p class="venture__years" data-reveal="lines">
+              <span class="lv-line"><span>{v.years.split('—')[0].trim()}</span></span>
+              <small class="lv-kicker">— {v.years.split('—')[1]?.trim()}</small>
+            </p>
+            <div class="venture__body">
+              <p class="lv-kicker" data-reveal="fade">{v.role}</p>
+              <h3 class="venture__name">
+                <a href={path(`/work/${v.slug}`)} data-pen>{v.name}</a>
+              </h3>
+              <p class="venture__desc" data-reveal="fade">{v.desc}</p>
+            </div>
+            {Art && <div class="venture__art" data-parallax="0.12"><Art /></div>}
+          </li>
+        );
+      })}
+    </ol>
+  </section>
+
+  <!-- ═════════ III. COMPETENCIAS ═════════ -->
+  <section class="ab-skills">
+    <Folio n="III" title={data.labels.expertise} page={3} />
+    <div class="skills" data-collage>
+      <p class="lv-pen-note skills__note" data-reveal="write">{data.labels.note} ↘</p>
+      {data.expertise.map((skill, i) => {
+        const s = labelStyles[i % labelStyles.length];
+        return (
+          <Pieza x={s.x} y={s.y} w="auto" r={s.r} z={3 + i} depth={0.3 + i * 0.15} drag delay={i * 0.12} mx={s.mx} my={s.my}>
+            <span class:list={['cosida', `cosida--${s.tone}`]}>
+              <i class="cosida__st"></i><i class="cosida__st"></i>
+              <small>Nº {pad(i + 1)}</small>
+              {skill}
+            </span>
+          </Pieza>
+        );
+      })}
+    </div>
+  </section>
+
+  <!-- ═════════ IV. REGLAS DE LA CASA ═════════ -->
+  <section class="ab-soft" data-collage>
+    <Folio n="IV" title={data.soft.title} page={4} />
+    <div class="soft">
+      <Pieza x="31%" y="0%" w="31vw" r={-1.5} z={3} depth={0.25} drag mx="6%" my="0%" mw="86vw">
+        <Reglas rules={RULES} />
+      </Pieza>
+      <Pieza x="3%" y="10%" w="17vw" r={-5} z={4} depth={0.5} drag mx="2%" my="64%" mw="40vw">
+        <TheSix />
+      </Pieza>
+      <Pieza x="72%" y="4%" w="15vw" r={6} z={4} depth={0.7} drag mx="56%" my="62%" mw="38vw">
+        <Tequila />
+      </Pieza>
+      <Pieza x="64%" y="58%" w="30vw" r={-3} z={2} depth={0.4} drag mx="16%" my="84%" mw="74vw">
+        <figure class="lv-sheet soft__sheet"><i class="lv-tape"></i><Porsche /></figure>
+      </Pieza>
+      <p class="lv-pen-note soft__hint" data-reveal="write">{data.labels.note.replace(/^[^:]*:\s*/, '')} ↘</p>
+    </div>
+  </section>
+
+  <!-- ═════════ V. FORMACIÓN ═════════ -->
+  <section class="ab-edu">
+    <Folio n="V" title={`${data.labels.education} · ${data.labels.certificates}`} page={5} />
+    <div class="edu">
+      <div class="edu__col">
+        <h2 class="edu__title" data-reveal="lines"><span class="lv-line"><span>{data.labels.education}</span></span></h2>
+        <ul class="edu__list">
+          {data.education.map((e, i) => (
+            <li data-reveal="fade" data-delay={(i * 0.08).toFixed(2)}>
+              <span class="edu__n">{pad(i + 1)}</span>
+              <span class="edu__name">{e.name}</span>
+              <span class="edu__detail">{e.detail}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="edu__col">
+        <h2 class="edu__title" data-reveal="lines"><span class="lv-line"><span><em>{data.labels.certificates}</em></span></span></h2>
+        <ol class="ledger">
+          {data.certificates.map((c, i) => (
+            <li>
+              <a href={c.href} target="_blank" rel="noopener" data-pen-group>
+                <span class="ledger__n">{pad(i + 1)}</span>
+                <span class="ledger__name"><span data-pen="under">{c.name}</span></span>
+                <span class="ledger__go" aria-hidden="true">↗</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<style>
+  .about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 var(--gutter) clamp(110px, 12vw, 180px);
+    overflow-x: clip;
+  }
+
+  .about > section {
+    width: 100%;
+    max-width: 1560px;
+    margin-inline: auto;
+  }
+
+  .about > section + section { padding-top: clamp(80px, 9vw, 140px); }
+
+  /* ── I. Portada ── */
+  .ab-cover {
+    position: relative;
+    min-height: max(56vw, 640px);
+    padding-top: clamp(110px, 14vh, 150px);
+  }
+
+  .ab-kicker { position: relative; z-index: 3; }
+
+  .ab-title {
+    position: relative;
+    z-index: 1;
+    margin-top: 1vw;
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(6rem, 25vw, 30rem);
+    line-height: 0.78;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+
+  .ab-manifesto {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    gap: 22px;
+    width: min(56vw, 760px);
+    margin: -6vw 0 0 14vw;
+    padding: clamp(20px, 2.4vw, 34px);
+    background: color-mix(in srgb, var(--papel) 88%, transparent);
+  }
+
+  .ab-heading {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(2.2rem, 4.4vw, 4.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+  }
+
+  .ab-heading__it { font-style: italic; padding-left: 6vw; }
+
+  .ab-p {
+    font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+    line-height: 1.35;
+  }
+
+  .ab-p--grot {
+    max-width: 46ch;
+    margin-left: auto;
+    font-family: var(--f-grot);
+    font-size: 0.95rem;
+    font-stretch: 92%;
+    line-height: 1.6;
+    color: var(--grafito);
+  }
+
+  .ab-sheet {
+    margin: 0;
+    padding: clamp(14px, 1.8vw, 26px);
+    color: var(--tinta);
+  }
+
+  /* ── II. Experiencia ── */
+  .ventures { list-style: none; display: grid; gap: clamp(64px, 8vw, 130px); margin-top: clamp(48px, 6vw, 96px); }
+
+  .venture {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) minmax(0, 3fr);
+    gap: 24px clamp(24px, 3vw, 56px);
+    align-items: start;
+  }
+
+  .venture--b { grid-template-columns: minmax(0, 3fr) minmax(0, 6fr) minmax(0, 5fr); }
+  .venture--b .venture__years { order: 3; text-align: right; }
+  .venture--b .venture__art { order: 1; }
+  .venture--b .venture__body { order: 2; }
+
+  .venture__years {
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(5rem, 13vw, 15rem);
+    line-height: 0.8;
+    letter-spacing: -0.03em;
+  }
+
+  .venture__years small { display: block; margin-top: 12px; letter-spacing: 0.08em; }
+
+  .venture__body { display: grid; gap: 14px; padding-top: 1vw; }
+
+  .venture__name {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(3rem, 6vw, 6.4rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+
+  .venture__name a { color: var(--tinta); text-decoration: none; }
+  .venture__name a:hover { font-family: var(--f-worn); }
+
+  .venture__desc {
+    max-width: 52ch;
+    font-size: 1.12rem;
+    line-height: 1.5;
+    color: var(--grafito);
+  }
+
+  .venture__art { color: var(--tinta); padding-top: 3vw; }
+
+  /* ── III. Etiquetas cosidas ── */
+  .skills {
+    position: relative;
+    height: max(34vw, 380px);
+    margin-top: clamp(24px, 3vw, 48px);
+  }
+
+  .skills__note { position: absolute; right: 4%; top: 0; rotate: -3deg; }
+
+  .cosida {
+    position: relative;
+    display: inline-grid;
+    gap: 10px;
+    padding: 22px 34px 20px;
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(1.5rem, 3.2vw, 3.4rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: var(--sombra-hoja);
+  }
+
+  .cosida small {
+    font-size: 0.66rem;
+    font-weight: 600;
+    font-stretch: 90%;
+    letter-spacing: 0.1em;
+    opacity: 0.75;
+  }
+
+  .cosida__st {
+    position: absolute;
+    top: 50%;
+    width: 2px;
+    height: 14px;
+    translate: 0 -50%;
+    background: currentColor;
+    opacity: 0.55;
+  }
+  .cosida__st:first-child { left: 10px; }
+  .cosida__st:nth-child(2) { right: 10px; }
+
+  .cosida--roja { background: var(--rojo); color: #f4f2ed; }
+  .cosida--negra { background: var(--tinta-fija); color: #f4f2ed; }
+  .cosida--naranja { background: var(--pint-naranja); color: var(--tinta-fija); }
+  .cosida--hueso { background: var(--hoja); color: var(--tinta); border: 1px solid var(--linea); }
+
+
+  /* ── IV. Reglas de la casa ── */
+  .soft {
+    position: relative;
+    height: max(58vw, 640px);
+    margin-top: clamp(24px, 3vw, 48px);
+  }
+
+  .soft__sheet { margin: 0; padding: clamp(14px, 1.8vw, 24px); color: var(--tinta); }
+  .soft__hint { position: absolute; left: 6%; bottom: 14%; rotate: -3deg; }
+
+  /* ── V. Formación ── */
+  .edu {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 48px 6vw;
+    margin-top: clamp(40px, 5vw, 80px);
+  }
+
+  .edu__title {
+    margin-bottom: 28px;
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(2.4rem, 4.6vw, 4.8rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+
+  .edu__title em { font-style: italic; }
+
+  .edu__list { list-style: none; display: grid; border-top: 1px solid var(--tinta); }
+
+  .edu__list li {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 4px 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  .edu__n {
+    grid-row: span 2;
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--rojo);
+  }
+
+  .edu__name { font-size: clamp(1.4rem, 2.2vw, 2rem); line-height: 1.1; }
+
+  .edu__detail {
+    font-family: var(--f-grot);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--grafito);
+  }
+
+  .ledger { list-style: none; border-top: 1px solid var(--tinta); }
+
+  .ledger a {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--linea);
+    color: var(--tinta);
+    text-decoration: none;
+    transition: translate 0.7s var(--ease-expo);
+  }
+
+  .ledger a:hover { translate: 10px 0; }
+
+  .ledger__n {
+    font-family: var(--f-grot);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--grafito);
+  }
+
+  .ledger__name { font-size: 1.2rem; }
+  .ledger__name > span { display: inline-block; }
+  .ledger__go { font-family: var(--f-grot); color: var(--rojo); }
+
+  /* ── Móvil ── */
+  @media (max-width: 900px) {
+    .ab-cover { min-height: 0; padding-bottom: 40px; }
+    .ab-title { font-size: 30vw; }
+    .ab-manifesto { width: 100%; margin: 46vw 0 0; padding: 0; background: none; }
+    .venture,
+    .venture--b { grid-template-columns: minmax(0, 1fr); }
+    .venture--b .venture__years { order: 0; text-align: left; }
+    .venture__art { width: 70%; padding-top: 0; }
+    .skills { height: 130vw; }
+    .cosida { white-space: normal; max-width: 80vw; }
+    .edu { grid-template-columns: minmax(0, 1fr); }
+    .soft { height: 236vw; }
+    .soft__hint { display: none; }
+  }
+</style>

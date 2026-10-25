@@ -1,0 +1,49 @@
+---
+/**
+ * ── Velero ────────────────────────────────────────────
+ *
+ * Velero de regata con la vela mayor en rojo, sobre olas
+ * azules. Ilustra Flouvia (flujo, mar abierto).
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Velero con la vela mayor roja sobre olas azules',
+  class: className,
+} = Astro.props;
+
+const hull = 'M66 146 C110 160 190 160 236 146 L222 164 C186 172 112 172 82 164 Z';
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 300 210"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s stroke-width="3.5" d="M150 24 L150 146" />
+    <path data-s stroke-width="3" d="M146 40 L146 136 L80 136 Z" />
+    <path data-s stroke-width="3" d={hull} />
+  </g>
+  <g filter="url(#ink)" class="lv-art-red">
+    <path data-fill fill="currentColor" d="M155 30 L155 136 L232 136 Z" />
+    <path data-s fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M150 24 L168 30 L150 36" />
+  </g>
+  <g filter="url(#ink)">
+    <path data-fill fill="currentColor" d={hull} />
+  </g>
+  <g filter="url(#ink-fino)" class="lv-art-blue" fill="none" stroke="currentColor" stroke-linecap="round">
+    <path data-s stroke-width="3" d="M14 186 C34 178 54 194 74 186 S114 178 134 186 S174 194 194 186 S234 178 254 186 S274 194 290 186" />
+    <path data-s stroke-width="2.4" d="M50 202 C70 195 90 209 110 202 S150 195 170 202 S210 209 230 202" />
+  </g>
+</svg>

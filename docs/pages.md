@@ -1,28 +1,24 @@
 # Páginas
 
-Estado y descripción de cada ruta del portafolio.
+El idioma principal (inglés) se sirve desde `/` y el español desde `/es/`. Cada archivo de `src/pages` es un envoltorio de una línea sobre un componente compartido (ver `components.md`); el idioma sale de la URL.
 
-## Enrutamiento y Estructura
-
-El sitio utiliza el enrutamiento basado en archivos de Astro.
-Todas las páginas están envueltas por el layout `src/layouts/Base.astro`.
-El idioma principal (Inglés) se sirve desde la raíz `/`.
-El idioma Español se sirve desde el subdirectorio `/es/`.
-
-## Directorio de Páginas
-
-| Ruta (EN) | Ruta (ES) | Estado | Propósito |
+| Ruta (EN) | Ruta (ES) | Componente | Contenido |
 |---|---|---|---|
-| `/` | `/es/` | ✅ Completa | Landing page. Contiene el Hero con el Shader 3D, declaración de Ethos, CTAs a proyectos y un feed dinámico de "Recent Intelligence" extraído del Journal. |
-| `/work` | `/es/work` | 🔲 Pendiente | Mostrará proyectos seleccionados, emprendimientos y trabajo técnico. |
-| `/about` | `/es/about` | ✅ Completa | Sección "Acerca de". Filosofía, background como estudiante de finanzas y operador, ventures (Cord, Flouvia) y certificaciones. |
-| `/journal` | `/es/journal` | ✅ Completa | Espacio tipo ensayos. Utiliza un diseño asimétrico tipo póster ("Bento Grid" V1) sin cajas visibles, con patrón 3-1-2 y finaliza con `Newsletter.astro`. |
-| `/contact` | `/es/contact` | ✅ Completa | Motor avanzado de calificación de leads. Flujo estilo Typeform dinámico impulsado por JS Vanilla, animaciones GSAP y LocalStorage. |
+| `/` | `/es/` | `Home` | Portada collage · I. Tesis · II. Holdings · III. Colección · IV. Memos |
+| `/work` | `/es/work` | `WorkIndex` | Holdings & Ventures |
+| `/work/[id]` | `/es/work/[id]` | `WorkCase` | Caso por proyecto (colección `work`) |
+| `/about` | `/es/about` | `About` | Manifiesto, experiencia, competencias, formación |
+| `/journal` | `/es/journal` | `JournalIndex` | Primera plana de memos + cupón |
+| `/journal/[slug]` | `/es/journal/[slug]` | `JournalPost` | Memo (colección `journal`) |
+| `/contact` | `/es/contact` | `TypeformContact` | Formulario paso a paso |
+| `/404` | — | `pages/404.astro` | "El lobo se comió esta página." Cambia a español en el navegador si la ruta empieza con `/es` |
 
-## Mantenimiento
+## Agregar una página
 
-Al crear o modificar una página:
-1. Crear el archivo base en `src/pages/`.
-2. Usar el layout `Base`.
-3. Integrar las traducciones con `useTranslations(lang)`.
-4. Duplicar el archivo en `src/pages/es/`, asegurando que los imports apunten un nivel más arriba (`../../`).
+1. Crear el componente en `src/components/` (saca el idioma con `getLangFromUrl(Astro.url)`).
+2. Crear `src/pages/<ruta>.astro` y `src/pages/es/<ruta>.astro` que solo hacen `<Base title=…><Componente /></Base>`.
+3. Textos de interfaz en `src/i18n/ui.ts` (EN + ES); contenido estructurado en `src/data/`.
+
+## OG image
+
+`public/og-image.jpg` (1200×675) se rindió con los mismos componentes del sitio (lobo, etiqueta, trazos) desde una página temporal y se capturó con Chrome headless. Para regenerarla, repetir ese proceso y borrar la página temporal.

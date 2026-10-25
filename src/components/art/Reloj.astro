@@ -1,0 +1,58 @@
+---
+/**
+ * ── Reloj ─────────────────────────────────────────────
+ *
+ * Reloj de acero a línea: brazalete de eslabones, bisel estriado,
+ * índices, ventana de fecha, corona y segundero rojo.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Reloj de acero dibujado a línea con segundero rojo',
+  class: className,
+} = Astro.props;
+
+const C = { x: 110, y: 160 };
+const polar = (r: number, a: number) => `${(C.x + Math.cos(a) * r).toFixed(1)} ${(C.y + Math.sin(a) * r).toFixed(1)}`;
+const flutes = Array.from({ length: 48 }, (_, i) => {
+  const a = (i / 48) * Math.PI * 2;
+  return `M${polar(58, a)} L${polar(66, a)}`;
+}).join(' ');
+const indices = Array.from({ length: 12 }, (_, i) => {
+  const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
+  return i === 3 ? '' : `M${polar(36, a)} L${polar(i % 3 === 0 ? 46 : 43, a)}`;
+}).join(' ');
+const links = [0, 1, 2, 3].map((i) => i * 22);
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 220 320"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    {links.map((dy) => <path data-s d={`M84 ${10 + dy} L136 ${10 + dy} L134 ${30 + dy} L86 ${30 + dy} Z M100 ${10 + dy} L100 ${30 + dy} M120 ${10 + dy} L120 ${30 + dy}`} />)}
+    {links.map((dy) => <path data-s d={`M86 ${232 + dy} L134 ${232 + dy} L136 ${252 + dy} L84 ${252 + dy} Z M100 ${232 + dy} L100 ${252 + dy} M120 ${232 + dy} L120 ${252 + dy}`} />)}
+    <path data-s d="M80 98 L140 98 M80 222 L140 222" />
+    <circle data-s cx={C.x} cy={C.y} r="68" />
+    <path data-s d={flutes} stroke-width="1.4" />
+    <circle data-s cx={C.x} cy={C.y} r="52" />
+    <path data-s d={indices} stroke-width="3" />
+    <path data-s d="M140 154 L154 154 L154 166 L140 166 Z" />
+    <path data-s d="M178 152 L188 152 L188 168 L178 168 Z" stroke-width="2.6" />
+    <path data-s d={`M${C.x} ${C.y} L${C.x} ${C.y - 40}`} stroke-width="3.4" />
+    <path data-s d={`M${C.x} ${C.y} L${C.x + 26} ${C.y + 14}`} stroke-width="4" />
+  </g>
+  <path data-s class="lv-art-red" filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d={`M${C.x - 8} ${C.y + 12} L${C.x + 22} ${C.y - 34}`} />
+  <circle data-pop cx={C.x} cy={C.y} r="3.4" fill="currentColor" />
+</svg>

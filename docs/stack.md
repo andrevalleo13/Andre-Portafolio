@@ -2,62 +2,38 @@
 
 Tecnologías, dependencias y configuración del proyecto.
 
-## Framework
+## Dependencias
 
-| Capa | Tecnología | Versión |
+| Capa | Paquete | Uso |
 |---|---|---|
-| Framework principal | Astro | 7.x |
-| Integración React | `@astrojs/react` | 6.x |
-| UI runtime | React + React DOM | 19.x |
-| 3D / WebGL | Three.js | latest |
-| 3D abstraction | `@react-three/fiber` | latest |
-| Animaciones | GSAP | 3.x |
-| Navegación SPA | `astro:transitions` | nativo |
+| Framework | `astro` 7.x | Sitio estático + View Transitions (`astro:transitions`) |
+| Deploy | `@astrojs/vercel` | Adapter; solo `src/pages/api/*` es serverless |
+| Animación | `gsap` 3.15 | ScrollTrigger, DrawSVG, Draggable, Inertia (incluidos y gratis desde 3.13) |
+| Scroll | `lenis` 1.3 | Scroll con inercia, sincronizado con el reloj de GSAP |
+| Fuentes | `@fontsource/redaction`, `@fontsource/redaction-50`, `@fontsource-variable/hubot-sans` | Servidas desde el propio sitio (sin Google Fonts) |
+| Email | `resend` | Formularios (ver CLAUDE.md) |
+| Analítica | `@vercel/analytics` | |
 
-## Dev Server
+Sin React ni three.js: los dibujos son SVG en componentes Astro y la pintura del footer es Canvas 2D.
 
-```bash
-npx astro dev --background   # arrancar en segundo plano
-astro dev stop               # detener
-astro dev status             # ver estado
-astro dev logs               # ver logs
-```
-
-URL local: `http://localhost:4321`
-
-## Scripts disponibles
+## Scripts
 
 ```bash
-npm run dev      # dev server
+npm run dev      # dev server (http://localhost:4321)
 npm run build    # build de producción
-npm run preview  # preview del build
+npm run check    # astro check (debe salir en 0 errores)
 ```
+
+## Scripts de cliente (`src/scripts/`)
+
+| Archivo | Qué hace |
+|---|---|
+| `ink.ts` | Pluma roja, dibujos que se pintan, revelados con scroll, contadores, arrastre, capas con el mouse, pista horizontal de Holdings. `initInk()` / `killInk()` |
+| `smooth.ts` | Lenis + links internos `[data-scroll]` |
+| `splatter.ts` | Pintura salpicada con el cursor en el footer |
+
+Todos se inicializan en `Base.astro` (al cargar y en `astro:page-load`) y se limpian en `astro:before-swap`.
 
 ## Configuración
 
-### `astro.config.mjs`
-
-```js
-import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
-
-export default defineConfig({
-  integrations: [react()]
-});
-```
-
-### `tsconfig.json`
-
-Extend de `astro/tsconfigs/strict` con soporte para JSX de React.
-
-## Tipografía
-
-**Helvetica Neue** — fuente del sistema, sin carga de red.
-Stack: `'Helvetica Neue', Helvetica, Arial, sans-serif`
-
-No se usa Google Fonts ni ninguna fuente externa en este proyecto.
-
-## Nota de dependencias
-
-- `preserveDrawingBuffer` removido del Canvas de Three.js (no necesario en producción)
-- El vertex shader dibuja en clip-space para independencia total del aspect ratio
+`astro.config.mjs`: `site: 'https://andrevalle.xyz'` + adapter de Vercel. `tsconfig.json` extiende `astro/tsconfigs/strict`.

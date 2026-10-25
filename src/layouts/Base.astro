@@ -1,23 +1,36 @@
 ---
 /**
  * ── Base Layout ───────────────────────────────────────
- * 
+ *
  * Wraps every page with <head>, Navbar, and Footer.
- * Receives `title` and optional `description` as props.
+ * Receives `title` and optional `description`.
+ * Estética "Lujo vivido": papel, tinta y pluma roja (ver docs/design.md).
  */
 import { ClientRouter } from 'astro:transitions';
 import Navbar from '../components/Navbar.astro';
-import { getLangFromUrl, useTranslations, getLocalePath } from '../i18n/utils';
+import Footer from '../components/Footer.astro';
+import InkDefs from '../components/art/InkDefs.astro';
+import { getLangFromUrl } from '../i18n/utils';
 import Analytics from '@vercel/analytics/astro';
+
+/* Dos familias, ambas libres y poco vistas:
+   Redaction (serif con cortes "desgastados") y Hubot Sans (grotesca de GitHub, variable en ancho). */
+import '@fontsource/redaction/400.css';
+import '@fontsource/redaction/400-italic.css';
+import '@fontsource/redaction/700.css';
+import '@fontsource/redaction-50/400.css';
+import '@fontsource-variable/hubot-sans/standard.css';
 
 interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = 'André Valle Ortega — Ventures, capital allocation & digital infrastructure.' } = Astro.props;
+const {
+  title,
+  description = 'André Valle Ortega — Ventures, capital allocation & digital infrastructure.',
+} = Astro.props;
 const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
 
 const siteUrl = Astro.site ?? new URL('https://andrevalle.xyz');
 const canonical = new URL(Astro.url.pathname, siteUrl).href;
@@ -52,7 +65,10 @@ const personSchema = {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="256x256" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta name="theme-color" content="#F4F2ED" />
   <title>{title}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
@@ -90,248 +106,447 @@ const personSchema = {
     }
 
     :root {
-      --dark:        #1c1917;
-      --dark-mid:    #332E29;
-      --bone:        #d6cfc6;
-      --bone-light:  #ede9e4;
-      --taupe:       #8c8078;
-      --ecru:        #a89e94;
+      /* ── Lujo vivido: papel, tinta y dos plumas ── */
+      --papel:       #F4F2ED;   /* fondo — el papel de los dibujos en tinta */
+      --hoja:        #FBFAF7;   /* hojas sueltas, etiqueta del footer */
+      --tinta:       #191713;   /* texto y trazos */
+      --grafito:     #5F5A52;   /* texto secundario */
+      --linea:       #D9D4CA;   /* líneas finas */
+      --rojo:        #B3261C;   /* pluma roja del analista, sardinas */
+      --azul:        #25437D;   /* rayas oxford, mar */
+      --cinta:       rgba(214, 199, 160, 0.55);
+      --sombra-hoja: 0 1px 0 rgba(40, 30, 20, 0.05), 0 18px 30px -24px rgba(40, 30, 20, 0.45);
+
+      /* Pintura fija de los cuadros (igual en cualquier superficie) */
+      --tinta-fija:  #1A1712;
+      --pint-1:      #E2682B;   /* naranja */
+      --pint-2:      #C2401C;   /* naranja quemado */
+      --pint-3:      #EE8A4E;   /* naranja claro (nada de amarillo) */
+      --pint-4:      #A8321A;
+      --pint-naranja:#E2682B;
+      --verde:       #56704A;   /* verde olivo (tigre, cadena) */
+      --grana:       #8E1F3B;   /* grana blaugrana */
+      --cielo:       #9DB8D8;   /* azul cielo, aguada clara */
+      --cognac:      #7A4A2A;   /* puros, piel */
+
+      --f-serif:   'Redaction', 'Times New Roman', Times, serif;
+      --f-worn:    'Redaction 50', 'Redaction', 'Times New Roman', serif;
+      --f-grot:    'Hubot Sans Variable', 'Helvetica Neue', Arial, sans-serif;
+      /* Roles */
+      --f-display: var(--f-serif);
+      --f-text:    var(--f-serif);
+      --f-mono:    var(--f-grot);    /* etiquetas, datos, fichas */
+      --f-pen:     var(--f-serif);   /* notas en rojo (itálica) */
+      --f-brush:   var(--f-grot);    /* frases de los cuadros (negra condensada) */
+
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --gutter:    clamp(1.25rem, 7vw, 9rem);
+
+      /* ── Superficie (alias que usan navbar, índice y footer) ── */
+      --bg:      var(--papel);
+      --fg:      var(--tinta);
+      --fg-soft: var(--grafito);
+      --rule:    var(--linea);
+      --accent:  var(--rojo);
     }
+
 
     html {
       scroll-behavior: smooth;
     }
 
+    /* Lenis (scroll con inercia) */
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-stopped { overflow: hidden; }
+    .lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+
     body {
       width: 100%;
       min-height: 100vh;
-      background-color: var(--dark);
-      color: var(--bone-light);
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-weight: 300;
+      overflow-x: clip;
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--f-text);
+      font-weight: 400;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Grano de papel: el desgaste Golden Goose, casi invisible. */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    ::selection {
+      background: var(--rojo);
+      color: var(--hoja);
+    }
+
+    :focus-visible {
+      outline: 1.5px solid var(--accent);
+      outline-offset: 4px;
     }
 
     a {
       color: inherit;
     }
 
-    /* ── Shared Section Styles ──── */
-    .wrapper {
-      padding: 0 12vw;
-      margin: 0 auto;
-      max-width: 1400px;
-    }
-
-    .section {
-      padding: 6rem 5vw;
-      border-top: 1px solid rgba(140, 128, 120, 0.15);
-    }
-
-    .section__eyebrow {
-      font-size: 0.6rem;
-      letter-spacing: 0.3em;
+    /* ════════════════════════════════════════
+       LUJO VIVIDO — piezas compartidas (prefijo lv-)
+    ════════════════════════════════════════ */
+    .lv-kicker {
+      font-family: var(--f-grot);
+      font-size: 0.68rem;
+      font-weight: 600;
+      font-stretch: 88%;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--taupe);
-      margin-bottom: 2rem;
+      color: var(--grafito);
     }
 
-    .section__heading {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      font-size: clamp(2rem, 4vw, 3.5rem);
-      font-weight: 200;
-      line-height: 1.15;
-      color: var(--bone-light);
-      letter-spacing: -0.02em;
-      margin-bottom: 2rem;
+    .lv-h2 {
+      font-family: var(--f-display);
+      font-weight: 400;
+      font-size: clamp(2.4rem, 5vw, 4.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.025em;
+      text-wrap: balance;
     }
 
-    .section__text {
-      font-size: 0.85rem;
-      line-height: 1.9;
-      color: var(--ecru);
-      max-width: 600px;
+    .lv-h2 em { font-style: italic; }
+
+    /* Línea de título que sube desde su propia máscara */
+    .lv-line {
+      display: block;
+      overflow: hidden;
+      /* Aire para tildes, descendentes y la caída de las itálicas
+         (el margen negativo lo compensa: la posición no cambia). */
+      padding: 0.18em 0.1em 0.12em;
+      margin: -0.18em -0.1em -0.12em;
     }
 
-    .section__text + .section__text {
-      margin-top: 1.2rem;
+    .lv-line > span { display: inline-block; }
+
+    .lv-fig {
+      font-family: var(--f-grot);
+      font-size: 0.64rem;
+      font-weight: 500;
+      font-stretch: 90%;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.5;
+      color: var(--grafito);
     }
 
-    /* ── Footer ──────────────────── */
-    .footer {
-      padding: 5rem 5vw 3rem 5vw;
-      display: flex;
-      flex-direction: column;
-      gap: 4rem;
-      border-top: 1px solid rgba(237, 233, 228, 0.1);
-      
-      /* Block shader overlap */
-      position: relative;
-      z-index: 10;
-      background-color: var(--dark);
+    .lv-pen-note {
+      display: inline-block;
+      font-family: var(--f-serif);
+      font-style: italic;
+      font-size: 1.12rem;
+      line-height: 1.1;
+      color: var(--rojo);
     }
 
-    .footer__top {
-      width: 100%;
-    }
-
-    .copy-email {
-      font-size: clamp(1.5rem, 3vw, 3rem);
-      font-weight: 300;
-      letter-spacing: -0.02em;
-      color: var(--bone-light);
-      background: none;
-      border: none;
-      border-bottom: 1px solid rgba(237, 233, 228, 0.2);
-      font-family: inherit;
-      padding: 0.2em 0.4em 0.3em 0;
-      cursor: pointer;
-      text-align: left;
-      text-transform: lowercase;
+    .lv-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.95rem 1.35rem;
+      border-radius: 2px;
+      background: var(--tinta);
+      color: var(--papel);
+      font-family: var(--f-grot);
+      font-size: 0.74rem;
+      font-weight: 600;
+      font-stretch: 90%;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 1.5rem;
+      transition: background-color 0.5s var(--ease-expo);
     }
 
-    .copy-email :global(.fill-text) {
-      display: inline-flex;
-      align-items: center;
-      gap: 1.5rem;
+    .lv-btn svg { transition: translate 0.6s var(--ease-expo); }
+    .lv-btn:hover { background: var(--rojo); }
+    .lv-btn:hover svg { translate: 3px -3px; }
+
+    .lv-link {
+      position: relative;
+      font-family: var(--f-display);
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--tinta);
+      text-decoration: none;
     }
 
-    .email-arrow {
-      margin-left: 1.5rem;
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    
-    .copy-email:hover .email-arrow {
-      transform: translate(0.1em, -0.1em);
+    /* Hoja suelta con cinta: la inclinación va en `rotate` para que GSAP
+       pueda animar `transform` sin perderla. */
+    .lv-sheet {
+      position: relative;
+      background: var(--hoja);
+      box-shadow: var(--sombra-hoja);
+      rotate: var(--rot, 0deg);
     }
 
-    .footer__bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
+    .lv-tape {
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      z-index: 2;
+      width: 92px;
+      height: 26px;
+      translate: -50% 0;
+      rotate: -2.5deg;
+      background: var(--cinta);
+    }
+
+    .lv-rule {
+      display: block;
+      height: 1px;
+      background: var(--linea);
+    }
+
+    .lv-rule--ink { background: var(--tinta); }
+
+    .lv-art {
+      display: block;
       width: 100%;
+      height: auto;
+      overflow: visible;
     }
 
-    .footer__links {
-      display: flex;
-      gap: 3rem;
+    .lv-art-red { color: var(--rojo); }
+    .lv-art-blue { color: var(--azul); }
+    .lv-art-red-fill { fill: var(--rojo); }
+    .lv-art-eye { fill: var(--hoja); }
+
+    /* Texto largo (casos de Work, memos del Journal) */
+    .lv-prose { max-width: 68ch; }
+
+    .lv-prose h1 {
+      margin-bottom: 1.2em;
+      font-family: var(--f-serif);
+      font-weight: 400;
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      line-height: 1;
+      letter-spacing: -0.03em;
     }
 
-    .footer__links a,
-    .footer__links button {
-      font-size: 0.75rem;
+    .lv-prose h2 {
+      margin: 2.4em 0 0.8em;
+      padding-top: 0.9em;
+      border-top: 1px solid var(--linea);
+      font-family: var(--f-serif);
+      font-weight: 400;
+      font-style: italic;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      scroll-margin-top: 100px;
+    }
+
+    .lv-prose h2:first-child { margin-top: 0; border-top: 0; padding-top: 0; }
+
+    .lv-prose h3 {
+      margin: 1.8em 0 0.6em;
+      font-family: var(--f-grot);
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: rgba(237, 233, 228, 0.6);
-      transition: color 0.3s ease;
-      background: none;
-      border: none;
-      font-family: inherit;
-      padding: 0;
-      cursor: pointer;
     }
 
-    .footer__links a:hover,
-    .footer__links button:hover {
-      color: var(--bone-light);
+    .lv-prose p {
+      margin-bottom: 1.1em;
+      font-size: 1.2rem;
+      line-height: 1.6;
     }
 
-    .footer__socials {
+    .lv-prose > p:first-of-type {
+      font-size: clamp(1.4rem, 2vw, 1.8rem);
+      line-height: 1.35;
+    }
+
+    .lv-prose strong { font-weight: 700; }
+
+    .lv-prose ul,
+    .lv-prose ol {
+      list-style: none;
+      margin: 0 0 1.4em;
+      display: grid;
+      gap: 0.7em;
+    }
+
+    .lv-prose li {
+      position: relative;
+      padding-left: 1.6em;
+      font-size: 1.12rem;
+      line-height: 1.55;
+    }
+
+    .lv-prose ul li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--rojo);
+    }
+
+    .lv-prose ol { counter-reset: lv-li; }
+    .lv-prose ol li { counter-increment: lv-li; }
+    .lv-prose ol li::before {
+      content: counter(lv-li, decimal-leading-zero);
+      position: absolute;
+      left: 0;
+      top: 0.3em;
+      font-family: var(--f-grot);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--rojo);
+    }
+
+    .lv-prose blockquote {
+      margin: 1.6em 0;
+      padding-left: 1.2em;
+      border-left: 3px solid var(--rojo);
+      font-style: italic;
+      font-size: 1.5rem;
+      line-height: 1.3;
+    }
+
+    .lv-prose a { color: var(--tinta); text-decoration-color: var(--rojo); text-underline-offset: 3px; }
+
+    .lv-prose hr { margin: 2.4em 0; border: 0; border-top: 1px solid var(--linea); }
+
+    /* Pluma roja (la inyecta scripts/ink.ts) */
+    [data-pen] { position: relative; }
+
+    .lv-pen-circle,
+    .lv-pen-under {
+      position: absolute;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .lv-pen-circle {
+      left: -16%;
+      top: -34%;
+      width: 132%;
+      height: 168%;
+    }
+
+    .lv-pen-under {
+      left: -3%;
+      bottom: -0.38em;
+      width: 106%;
+      height: 0.55em;
+    }
+
+    .lv-pen-circle path,
+    .lv-pen-under path {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 2.4;
+      stroke-linecap: round;
+    }
+
+    /* Estampilla: perforaciones en el borde (máscara) */
+    .lv-perforado {
+      padding: 8px;
+      background: var(--hoja);
+      -webkit-mask:
+        radial-gradient(circle 4.6px, #0000 97%, #000) -8px -8px / 16px 16px repeat,
+        linear-gradient(#000 0 0) content-box;
+      mask:
+        radial-gradient(circle 4.6px, #0000 97%, #000) -8px -8px / 16px 16px repeat,
+        linear-gradient(#000 0 0) content-box;
+      filter: drop-shadow(0 10px 14px rgba(40, 30, 20, 0.25));
+    }
+
+    .lv-perforado .lv-art { display: block; }
+
+    /* Notas a mano: tarjeta naranja o pizarra negra */
+    .lv-nota {
+      position: relative;
       display: flex;
-      gap: 1.5rem;
       align-items: center;
+      justify-content: center;
+      aspect-ratio: 1;
+      padding: 14%;
+      background: var(--pint-naranja);
+      box-shadow: var(--sombra-hoja);
     }
 
-    .social-icon {
-      width: 18px;
-      height: 18px;
-      stroke: rgba(237, 233, 228, 0.6);
-      transition: stroke 0.3s ease, transform 0.3s ease;
-    }
-
-    .footer__links a:hover .social-icon {
-      stroke: var(--bone-light);
-      transform: translateY(-2px);
-    }
-
-    .footer__copy {
-      font-size: 0.62rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      color: rgba(237, 233, 228, 0.3);
+    .lv-nota p {
+      font-family: var(--f-grot);
+      font-weight: 900;
+      font-stretch: 75%;
+      font-size: clamp(1.4rem, 2.4vw, 2.6rem);
+      line-height: 0.9;
       text-transform: uppercase;
+      color: var(--tinta-fija);
+      text-align: center;
+      rotate: -3deg;
     }
 
-    @media (max-width: 768px) {
-      .footer {
-        padding: 4rem 5vw 2rem 5vw;
-        gap: 3rem;
-      }
-      .footer__bottom {
-        flex-direction: column-reverse;
-        align-items: flex-start;
-        gap: 1.5rem;
+    .lv-nota--negra { background: var(--tinta-fija); }
+
+    .lv-nota--negra p {
+      color: #F4F2ED;
+      font-size: clamp(1.8rem, 3.2vw, 3.4rem);
+    }
+
+    /* Etiqueta roja (tipo label de ropa) */
+    .lv-nota--roja { background: var(--rojo); aspect-ratio: auto; padding: 10% 12%; }
+    .lv-nota--roja p { color: #F4F2ED; rotate: 0deg; text-align: left; }
+
+    .lv-sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    /* Estados iniciales: ocultos solo si hay JS, hasta que ink.ts los prepara.
+       Si el script fallara, aparecen solos a los 3 s. */
+    @media (scripting: enabled) {
+      [data-reveal]:not(.is-ready),
+      [data-draw]:not(.is-ready) {
+        visibility: hidden;
+        animation: lv-failsafe 0s linear 3s forwards;
       }
     }
+
+    @keyframes lv-failsafe {
+      to { visibility: visible; }
+    }
+
   </style>
 </head>
 <body>
+  <InkDefs />
   <Navbar />
   <slot />
-  <footer class="footer">
-    <div class="footer__top">
-      <a href={getLocalePath('/contact', lang)} class="hover-fill copy-email" id="footer-contact-link">
-        <span class="email-text">andrevalleo13@gmail.com</span>
-        <svg class="email-arrow" width="0.8em" height="0.8em" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.5"/>
-        </svg>
-      </a>
-    </div>
-    <div class="footer__bottom">
-      <p class="footer__copy">{t('footer.copy')}</p>
-      <nav class="footer__links">
-        <div class="footer__socials">
-        <a href="https://www.linkedin.com/in/andrevalleo" target="_blank" rel="noopener" aria-label="LinkedIn">
-          <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-            <rect x="2" y="9" width="4" height="12"></rect>
-            <circle cx="4" cy="4" r="2"></circle>
-          </svg>
-        </a>
-        <a href="https://x.com/andrevalleee" target="_blank" rel="noopener" aria-label="X (Twitter)">
-          <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4l11.733 16h4.267l-11.733 -16z"></path>
-            <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path>
-          </svg>
-        </a>
-        <a href="https://www.instagram.com/andre.valleee/" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-          </svg>
-        </a>
-      </div>
-    </nav>
-    </div>
-  </footer>
+  <Footer />
 
     <script>
-    import { initHoverFill } from '../scripts/hoverFill';
-    import { initHeroAnimation } from '../scripts/splitText';
-    import { initScrollReveal } from '../scripts/scrollReveal';
-    import { initHoverImage } from '../scripts/hoverImage';
+    import { initInk, killInk } from '../scripts/ink';
+    import { initSplatter } from '../scripts/splatter';
+    import { initSmooth, refreshSmooth, initScrollLinks } from '../scripts/smooth';
 
     function initAll() {
-      initHoverFill();
-      initHeroAnimation();
-      initScrollReveal();
-      initHoverImage();
+      initSmooth();
+      initScrollLinks();
+      initInk();
+      initSplatter();
+      refreshSmooth();
     }
 
     // Initialize on load
@@ -341,6 +556,9 @@ const personSchema = {
     document.addEventListener('astro:page-load', () => {
       initAll();
     });
+
+    // Soltar los ScrollTriggers de la página que se va
+    document.addEventListener('astro:before-swap', killInk);
 
     </script>
   <Analytics />

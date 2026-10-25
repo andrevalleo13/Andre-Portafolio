@@ -1,0 +1,374 @@
+---
+/**
+ * ── II. Holdings ──────────────────────────────────────
+ *
+ * Scroll horizontal fijado (desktop): cada proyecto es una lámina
+ * compuesta como collage. El título gigante corre por la lámina, el
+ * dibujo va pegado encima en su hoja y la ficha es una tarjeta
+ * escrita a máquina con el resultado encerrado en rojo.
+ * Las láminas alternan composición (a / b). En móvil se apilan.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { getLangFromUrl, useTranslations, getLocalePath } from '../../i18n/utils';
+import Folio from './Folio.astro';
+import Pieza from './Pieza.astro';
+import Caballo from '../art/Caballo.astro';
+import Cuerda from '../art/Cuerda.astro';
+import Velero from '../art/Velero.astro';
+import CaballosRojos from '../art/CaballosRojos.astro';
+import Trazo from '../art/Trazo.astro';
+import { workSlug as slug } from '../../lib/work';
+
+interface Props {
+  work: CollectionEntry<'work'>[];
+}
+
+const { work } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const path = (p: string) => getLocalePath(p, lang);
+const pad = (n: number) => String(n).padStart(2, '0');
+const host = (url?: string) => (url ? new URL(url).host : '—');
+
+const ART = { cord: Cuerda, flouvia: Velero } as const;
+const FIG = { cord: 'art.rope', flouvia: 'art.sailboat' } as const;
+type Key = Parameters<typeof t>[0];
+const figOf = (key: string) => t((FIG[key as keyof typeof FIG] ?? 'art.rope') as Key).split('|');
+---
+
+<section class="holdings" id="holdings">
+  <Folio n="II" title={t('home.s2')} page={3} />
+
+  <div class="holdings__pin" data-holdings>
+    <header class="holdings__head">
+      <h2 class="holdings__title" data-reveal="lines">
+        <span class="lv-line"><span><em>II.</em> {t('work.heading')}</span></span>
+      </h2>
+      <div class="holdings__meta">
+        <span class="lv-pen-note" data-reveal="write">{t('home.lot.note')}</span>
+        <span class="holdings__count"><b data-holdings-current>01</b> / {pad(work.length)}</span>
+        <i class="holdings__bar" aria-hidden="true"><i data-holdings-bar></i></i>
+      </div>
+    </header>
+
+    <div class="holdings__viewport">
+      <div class="holdings__track" data-holdings-track>
+        {work.map((project, i) => {
+          const key = slug(project.id) as keyof typeof ART;
+          const Art = ART[key] ?? Caballo;
+          const fig = figOf(key);
+          const variant = i % 2 === 0 ? 'a' : 'b';
+          return (
+            <article class:list={['plate', `plate--${variant}`]} data-plate>
+              <p class="plate__lot" aria-hidden="true"><small>{t('home.lot')}</small>{pad(i + 1)}</p>
+
+              <h3 class="plate__title">
+                <a href={path(`/work/${slug(project.id)}`)} transition:name={`work-title-${slug(project.id)}`}>{project.data.title}</a>
+              </h3>
+
+              <Pieza
+                class="plate__art"
+                x={variant === 'a' ? '50%' : '6%'}
+                y="4%"
+                w="30vw"
+                r={variant === 'a' ? 3 : -3}
+                z={3}
+                drag
+                reveal={false}
+                mx="18%" my="22%" mw="76vw"
+              >
+                <figure class="lv-sheet plate__sheet" data-plate-sheet>
+                  <i class="lv-tape"></i>
+                  <Art draw="manual" />
+                  <figcaption class="lv-fig">Fig. {i + 2} · {fig[0]} · {fig[1]}</figcaption>
+                </figure>
+              </Pieza>
+
+              <p class="plate__sub">{project.data.subtitle}</p>
+
+              <div class="plate__card" data-plate-card>
+                <i class="lv-tape"></i>
+                <dl>
+                  <div><dt>{t('home.lot.role')}</dt><dd>{project.data.role}</dd></div>
+                  <div><dt>{t('home.lot.period')}</dt><dd>{project.data.timeline}</dd></div>
+                  <div>
+                    <dt>{t('home.lot.result')}</dt>
+                    <dd class="plate__result">
+                      <span>{project.data.impact}</span>
+                      <Trazo kind="garabato" class="plate__circle" draw="manual" />
+                    </dd>
+                  </div>
+                  <div><dt>{t('home.lot.site')}</dt><dd>{host(project.data.url)}</dd></div>
+                </dl>
+              </div>
+
+              <a class="lv-btn plate__cta" href={path(`/work/${slug(project.id)}`)}>
+                {t('home.s2.cta')}
+                <svg width="9" height="9" viewBox="0 0 8 8" fill="none" aria-hidden="true">
+                  <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.9" />
+                </svg>
+              </a>
+            </article>
+          );
+        })}
+
+        <article class="plate plate--end" data-plate>
+          <div class="plate__end-art"><CaballosRojos draw="manual" /></div>
+          <a class="plate__all" href={path('/work')} data-pen>{t('home.s2.all')} →</a>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .holdings__pin {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(20px, 3vh, 36px);
+    padding-top: clamp(36px, 5vw, 64px);
+  }
+
+  .holdings__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+  }
+
+  .holdings__title {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(2.2rem, 4.4vw, 4.4rem);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+  }
+
+  .holdings__title em { font-style: italic; color: var(--rojo); }
+
+  .holdings__meta {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    font-family: var(--f-mono);
+    font-size: 0.76rem;
+    color: var(--grafito);
+  }
+
+  .holdings__meta .lv-pen-note { rotate: -4deg; }
+  .holdings__count b { color: var(--tinta); font-weight: 400; }
+
+  .holdings__bar {
+    position: relative;
+    display: block;
+    width: 120px;
+    height: 1px;
+    background: var(--linea);
+  }
+
+  .holdings__bar i {
+    position: absolute;
+    inset: 0;
+    background: var(--tinta);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+
+  .holdings__viewport { position: relative; }
+
+  .holdings__track {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+  }
+
+  /* ── Lámina ── */
+  .plate {
+    position: relative;
+    flex-shrink: 0;
+    height: max(78vh, 620px);
+    border-top: 1px solid var(--tinta);
+  }
+
+  .plate__lot {
+    position: absolute;
+    top: 3%;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: clamp(4rem, 9vw, 9rem);
+    line-height: 0.8;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--tinta);
+  }
+
+  .plate__lot small {
+    display: block;
+    margin-bottom: 8px;
+    font-family: var(--f-mono);
+    font-style: normal;
+    font-size: 0.72rem;
+    color: var(--grafito);
+    -webkit-text-stroke: 0;
+  }
+
+  .plate__title {
+    position: absolute;
+    z-index: 2;
+    top: 30%;
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(5rem, 15vw, 17rem);
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    white-space: nowrap;
+  }
+
+  .plate__title a {
+    color: var(--tinta);
+    text-decoration: none;
+  }
+
+  .plate__sheet {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: clamp(12px, 1.6vw, 24px);
+    color: var(--tinta);
+  }
+
+  .plate__sub {
+    position: absolute;
+    z-index: 4;
+    top: 66%;
+    width: min(28vw, 380px);
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: clamp(1.3rem, 2vw, 2rem);
+    line-height: 1.15;
+  }
+
+  .plate__card {
+    position: absolute;
+    z-index: 5;
+    top: 58%;
+    width: min(27vw, 380px);
+    padding: 22px 22px 18px;
+    background: var(--hoja);
+    box-shadow: var(--sombra-hoja);
+    rotate: -2deg;
+  }
+
+  .plate__card .lv-tape { width: 70px; }
+
+  .plate__card dl {
+    display: grid;
+    gap: 8px;
+    font-family: var(--f-mono);
+    font-size: 0.82rem;
+  }
+
+  .plate__card dl div {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px dotted var(--linea);
+  }
+
+  .plate__card dt { color: var(--grafito); }
+
+  .plate__result {
+    position: relative;
+    justify-self: start;
+  }
+
+  .plate__result :global(.plate__circle) {
+    position: absolute;
+    left: -14%;
+    top: -55%;
+    width: 128%;
+    height: 210%;
+  }
+
+  .plate__cta {
+    position: absolute;
+    z-index: 5;
+    top: 88%;
+  }
+
+  /* Composición A: título a la izquierda, dibujo a la derecha arriba */
+  .plate--a .plate__lot { left: 0; }
+  .plate--a .plate__title { left: -0.5%; }
+  .plate--a .plate__card { left: 56%; }
+  .plate--a .plate__sub { left: 22%; }
+  .plate--a .plate__cta { left: 22%; }
+
+  /* Composición B: espejo */
+  .plate--b .plate__lot { right: 0; text-align: right; }
+  .plate--b .plate__title { right: -0.5%; }
+  .plate--b .plate__card { left: 4%; rotate: 2.5deg; }
+  .plate--b .plate__sub { left: 52%; }
+  .plate--b .plate__cta { left: 52%; }
+
+  /* Cierre */
+  .plate--end {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 40px;
+    border-top: 0;
+  }
+
+  .plate__end-art { width: min(44vw, 560px); color: var(--tinta); }
+
+  .plate__all {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: clamp(2.6rem, 6vw, 6rem);
+    line-height: 1;
+    color: var(--tinta);
+    text-decoration: none;
+  }
+
+  /* ── Desktop: pista horizontal (sin movimiento reducido) ── */
+  @media (min-width: 901px) {
+    .plate { height: max(86vh, 680px); }
+  }
+
+  @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+    .holdings__pin {
+      height: 100svh;
+      padding-top: clamp(84px, 11vh, 120px);
+      padding-bottom: 32px;
+    }
+    .holdings__viewport { flex: 1; min-height: 0; }
+    .holdings__track {
+      flex-direction: row;
+      gap: 6vw;
+      height: 100%;
+      width: max-content;
+    }
+    .plate { width: 84vw; height: 100%; border-top: 0; }
+    .plate--end { width: 60vw; }
+  }
+
+  /* ── Móvil ── */
+  @media (max-width: 900px) {
+    .holdings__head { flex-direction: column; align-items: flex-start; }
+    .holdings__bar { display: none; }
+    .plate { height: 190vw; }
+    .plate__lot { top: 2%; font-size: 18vw; }
+    .plate__title { top: 6%; font-size: 21vw; }
+    .plate--a .plate__title,
+    .plate--b .plate__title { left: auto; right: 0; }
+    .plate__sub,
+    .plate--a .plate__sub,
+    .plate--b .plate__sub { top: 60%; left: 0; width: 100%; }
+    .plate__card,
+    .plate--a .plate__card,
+    .plate--b .plate__card { top: 76%; left: 6%; width: 88%; }
+    .plate__cta { display: none; }
+    .plate--end { height: auto; padding: 40px 0; }
+    .plate__end-art { width: 80vw; }
+  }
+</style>

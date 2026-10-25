@@ -1,52 +1,69 @@
 ---
 title: "Cord"
-subtitle: "Proposal to Payment in a Single Link"
+subtitle: "From Proposal to Payment, in a Single Link"
 role: "Founder & CEO"
 timeline: "2026 — Present"
-impact: "$1k MRR"
+impact: "$5k MRR"
 url: "https://cordhq.app"
 lang: "en"
 draft: false
 ---
 
-Cord is the operating platform that transforms proposals and agreements into instantly paid transactions. Built specifically for agencies, it eliminates the friction of sending PDFs, waiting for signatures, and manually reconciling payments.
+Cord is a closing platform: it covers the sales cycle from the proposal to the payment — a quote with negotiated prices, a public link for the client, signature, online payment, invoicing and collections — for any business, in any of the countries it supports. It started in June 2026 as the standalone version of Flouvia's Shopify app for B2B quotes, and today it does not depend on Shopify, on B2B or on a single country.
 
-## 1. The Closing Layer (The Atomic Link)
+## 1. The closing link
 
-We killed the manual process. The entire client closing cycle happens in a unified, live web environment.
+The whole close happens in one live web link, not in PDFs and email threads.
 
-- **Interactive Quotes:** The client reviews the project scope interactively, not in a static document.
-- **Integrated Legal Agreement:** Terms and conditions are approved directly within the platform.
-- **Checkout Transition:** Instantly upon approval, the system triggers a payment modal (Stripe Routing). Everything happens in a single link.
+- **Interactive quotes:** line items, negotiated prices and per-line taxes that the client reviews on the page.
+- **Signature on the same link:** terms are accepted where the quote lives.
+- **Payment at the moment of yes:** approval turns into checkout without leaving the link.
+- **Embeddable:** the quote builder ships as a Web Component (`<cord-cotizador>`) that any website can drop in.
 
-## 2. The Financial Engine (Cord Payments)
+## 2. Cord Payments
 
-We are not a wrapper; we own the payment gateway operating under the hood using white-label infrastructure (Stripe Connect Custom).
+Cord owns the payment rail under the hood with white-label Stripe Connect.
 
-- **Automated KYC:** Onboarding and identity verification for new agencies to start collecting payments happens entirely within our frictionless interface.
-- **Zero-Touch Routing:** Funds go straight to the agency's connected account. Cord processes the transaction but never holds the money—key for compliance and trust.
-- **Multi-Currency Support:** Automatic routing of international payments.
+- **Onboarding and KYC inside Cord:** multiple owners per account, requirements derived from the provider instead of country-by-country branches, and document capture with quality gates and country-specific guidance.
+- **Money goes straight to the business:** Cord processes the charge but never holds the funds.
+- **Payouts with history and their own schedule**, and fees per currency.
+- **Mercado Pago in Latin America:** in Brazil, Colombia, Argentina, Chile and Peru, online payment runs through the business's own Mercado Pago account.
 
-## 3. Intelligent Billing (Cord Invoicing)
+## 3. Invoicing that holds up to tax authorities
 
-- **Automated Invoicing:** Generation and sending of invoices linked directly to the payment event.
-- **Dynamic Calculation:** Automatic handling of taxes and cross-border withholdings.
-- **B2B Subscriptions:** Native capacity to handle recurring charges and agency retainers.
+- **Mexico:** CFDI 4.0 stamped through Facturapi.
+- **Spain:** Verifactu, the certified invoicing system required by RD 1007/2023 — SHA-256 chained fingerprints checked against the AEAT's official vectors and real SOAP submission validated against the official XSD. Live in production since October 14, 2026.
+- **United States:** sales tax per state, and Connect onboarding that accepts US KYC.
+- **One totals engine** for every quote and invoice, with per-line taxes seeded by country.
 
-## 4. Autonomous Collections (The Intelligence Layer)
+## 4. Collections with AI
 
-- **Collections AI:** A natively integrated autonomous agent that chases unpaid invoices.
-- **Background Tracking:** The system sends reminders, calculates due dates, and performs invisible reconciliation so operators don't waste time.
-- **DSO Reduction:** Specifically optimized to lower Days Sales Outstanding.
+An agent built on the Anthropic API chases unpaid invoices, sends reminders, tracks due dates and reconciles payments in the background, so the operator does not spend the week chasing money.
 
-## 5. The Analytical Terminal (Institutional Dashboard)
+## 5. Built for any country
 
-Built with React and Remotion for Apple-level spring physics, presented in a pixel-perfect dark mode.
+Signup is open in the 12 countries Cord supports end to end: Mexico, the US, Canada, Brazil, Spain, the UK, Germany, France, Colombia, Argentina, Chile and Peru. Deposit accounts use each country's format (CLABE, IBAN, routing, sort code, BSB…). The app and its emails run in Spanish and English, and the public site in five languages.
 
-- **DSO Metric:** Exact measurement of cash flow velocity.
-- **Risk Concentration:** Analysis of client portfolio diversification.
-- **Pipeline Health:** Real-time tracking of money quoted, approved, and collected.
+## 6. A platform for developers
 
-## 6. The Leverage Model
+- **Public REST API** (`/api/v1`) and an **MCP server**, so Cord can be operated from code or from an AI assistant.
+- **Cord Workflows** to automate steps of the cycle.
+- Its own documentation, developer blog, status page and community, each on its own subdomain.
 
-A dual-engine monetization model: the platform charges a SaaS subscription for access to the operating system, and takes a percentage (basis points) of the transactional volume processed by the financial engine.
+## 7. Security and multi-tenancy
+
+- **Own authentication:** Argon2id, Google and Apple sign-in, passkeys, TOTP and SAML SSO. It replaced Clerk while keeping every existing identity.
+- **Real tenant isolation:** Neon PostgreSQL with row-level security enforced. The app connects with a role that cannot bypass RLS, every query that touches tenant data travels on a declared lane, and CI checks stop that debt from coming back.
+- **Guards on every deploy:** a push to `main` ships to production only after security checks pass.
+
+## 8. The business model
+
+Two engines: a freemium subscription on Stripe Billing — five plans with monthly quotas and metered overage for AI, invoices, API calls and seats — and a share of the volume processed through Cord Payments.
+
+## By the numbers
+
+- **$5k MRR.**
+- **1,600+ commits** since June 2026.
+- **187 database tables**, **350+ API routes** and **470+ test files**.
+- **12 countries** and **5 languages**.
+- Built on Astro 7 (SSR) on Vercel, Neon, Stripe, Resend, Facturapi and Anthropic.

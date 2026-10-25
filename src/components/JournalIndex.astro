@@ -1,0 +1,274 @@
+---
+/**
+ * ── Journal: índice (EN + ES) ─────────────────────────
+ *
+ * La primera plana de un periódico, pasada por collage:
+ *   · Cabecera "DIARIO" en negra condensada, línea de edición.
+ *   · Nota principal: el memo más reciente con extracto.
+ *   · El resto como recortes pegados sobre la mesa, chuecos.
+ *   · Al final, el cupón de suscripción.
+ */
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getMemos, memoHref, memoDate, excerpt } from '../lib/journal';
+import Pieza from './home/Pieza.astro';
+import Pulpo from './art/Pulpo.astro';
+import Signos from './art/Signos.astro';
+import Trazo from './art/Trazo.astro';
+import Newsletter from './Newsletter.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const memos = await getMemos(lang);
+const [lead, ...rest] = memos;
+const pad = (n: number) => String(n).padStart(2, '0');
+const [word, more] = t('journal.heading').split(/\s*&\s*/);
+const now = new Date();
+const edition = `${pad(now.getMonth() + 1)}.${now.getFullYear()}`;
+const readLabel = lang === 'es' ? 'Leer memo' : 'Read memo';
+---
+
+<main class="journal">
+  <header class="j-mast" data-collage>
+    <p class="lv-kicker j-line" data-reveal="fade" data-delay="0.1">
+      <span>Nº IV — {t('home.s4')}</span>
+      <span>{t('home.edition')} {edition}</span>
+      <span>{pad(memos.length)} {t('home.meta.memos')}</span>
+    </p>
+    <h1 class="j-title" data-reveal="lines" data-delay="0.2">
+      <span class="lv-line"><span>{t('nav.journal')}</span></span>
+    </h1>
+    <p class="j-sub" data-reveal="fade" data-delay="0.5">{word} <em>&amp; {more}</em></p>
+    <i class="lv-rule lv-rule--ink j-rule" data-reveal="rule" data-delay="0.3" aria-hidden="true"></i>
+
+    <Pieza x="70%" y="10%" w="22vw" r={8} z={3} depth={0.6} drag delay={0.6} mx="58%" my="8%" mw="40vw">
+      <Pulpo draw="load" delay={0.9} />
+    </Pieza>
+    <Pieza x="56%" y="6%" w="16vw" z={0} depth={0.15} reveal={false} hideMobile>
+      <Trazo kind="espiral" draw="load" delay={0.3} />
+    </Pieza>
+    <Pieza x="8%" y="40%" w="44vw" z={0} depth={0.1} reveal={false} hideMobile>
+      <Trazo kind="brochazo" tone="rojo" draw="load" delay={0.5} />
+    </Pieza>
+  </header>
+
+  {lead && (
+    <section class="j-lead">
+      <a href={memoHref(lead, lang)} class="j-lead__link" data-pen-group>
+        <p class="lv-kicker j-lead__meta">
+          <span>Nº {pad(memos.length)}</span>
+          <span data-reveal="type">{memoDate(lead.data.date)}</span>
+          <span>{lead.data.readTime}</span>
+        </p>
+        <h2 class="j-lead__title" data-reveal="lines">
+          <span class="lv-line"><span>{lead.data.title}</span></span>
+        </h2>
+        <p class="j-lead__excerpt" data-reveal="fade">{excerpt(lead, 260)}</p>
+        <span class="lv-link j-lead__go"><span data-pen="under">{readLabel}</span> →</span>
+      </a>
+      <div class="j-lead__art" data-parallax="0.1"><Signos /></div>
+    </section>
+  )}
+
+  {rest.length > 0 && (
+    <ol class="j-clips">
+      {rest.map((memo, i) => (
+        <li class:list={['j-clip', `j-clip--${(i % 3) + 1}`]} data-reveal="drop" data-delay={((i % 3) * 0.1).toFixed(2)}>
+          <a href={memoHref(memo, lang)} data-pen-group>
+            {i % 2 === 0 && <i class="lv-tape"></i>}
+            <span class="j-clip__meta">
+              <span>Nº {pad(memos.length - i - 1)}</span>
+              <span>{memoDate(memo.data.date)}</span>
+            </span>
+            <span class="j-clip__title"><span data-pen="under">{memo.data.title}</span></span>
+            <span class="j-clip__excerpt">{excerpt(memo, 150)}</span>
+            <span class="j-clip__time">{memo.data.readTime} →</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  )}
+
+  {memos.length === 0 && (
+    <p class="j-empty">{lang === 'es' ? 'No hay memos publicados aún.' : 'No memos published yet.'}</p>
+  )}
+
+  <section class="j-coupon">
+    <Newsletter />
+  </section>
+</main>
+
+<style>
+  .journal {
+    padding: 0 var(--gutter) clamp(110px, 12vw, 180px);
+    overflow-x: clip;
+  }
+
+  .journal > * { max-width: 1560px; margin-inline: auto; }
+
+  /* ── Cabecera ── */
+  .j-mast {
+    position: relative;
+    padding-top: clamp(110px, 14vh, 150px);
+    padding-bottom: clamp(28px, 3vw, 44px);
+  }
+
+  .j-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--tinta);
+  }
+
+  .j-title {
+    position: relative;
+    z-index: 2;
+    margin-top: 1.2vw;
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(5rem, 24vw, 29rem);
+    line-height: 0.8;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+
+  .j-sub {
+    position: relative;
+    z-index: 2;
+    margin: 1vw 0 0 30vw;
+    font-size: clamp(1.8rem, 4vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .j-sub em { font-style: italic; color: var(--rojo); }
+
+  .j-rule { margin-top: clamp(24px, 3vw, 44px); }
+
+  /* ── Nota principal ── */
+  .j-lead {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    gap: 40px clamp(32px, 5vw, 96px);
+    align-items: start;
+    padding: clamp(48px, 6vw, 96px) 0;
+    border-bottom: 1px solid var(--tinta);
+  }
+
+  .j-lead__link {
+    display: grid;
+    gap: clamp(16px, 2vw, 26px);
+    color: var(--tinta);
+    text-decoration: none;
+  }
+
+  .j-lead__meta { display: flex; gap: 24px; }
+
+  .j-lead__title {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: clamp(2.8rem, 7vw, 8rem);
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .j-lead__link:hover .j-lead__title { font-family: var(--f-worn); }
+
+  .j-lead__excerpt {
+    max-width: 52ch;
+    font-size: clamp(1.15rem, 1.6vw, 1.45rem);
+    line-height: 1.45;
+    color: var(--grafito);
+  }
+
+  .j-lead__go { justify-self: start; }
+  .j-lead__go > span { display: inline-block; }
+
+  .j-lead__art { padding-top: 4vw; }
+
+  /* ── Recortes ── */
+  .j-clips {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(40px, 5vw, 80px) clamp(24px, 3vw, 48px);
+    align-items: start;
+    padding: clamp(56px, 7vw, 110px) 0;
+  }
+
+  .j-clip--1 { rotate: -1.5deg; }
+  .j-clip--2 { rotate: 1deg; margin-top: 5vw; }
+  .j-clip--3 { rotate: -0.6deg; margin-top: 2vw; }
+
+  .j-clip a {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    padding: clamp(20px, 2.2vw, 30px);
+    background: var(--hoja);
+    box-shadow: var(--sombra-hoja);
+    color: var(--tinta);
+    text-decoration: none;
+    transition: translate 0.8s var(--ease-expo), rotate 0.8s var(--ease-expo);
+  }
+
+  .j-clip a:hover { translate: 0 -8px; rotate: 1deg; }
+
+  .j-clip__meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--f-grot);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--grafito);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  .j-clip__title {
+    font-family: var(--f-serif);
+    font-size: clamp(1.5rem, 2.4vw, 2.3rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+
+  .j-clip__title > span { display: inline; }
+
+  .j-clip__excerpt {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--grafito);
+  }
+
+  .j-clip__time {
+    font-family: var(--f-grot);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--rojo);
+  }
+
+  .j-empty { padding: 80px 0; font-style: italic; color: var(--grafito); }
+
+  .j-coupon { display: flex; justify-content: center; padding-top: clamp(24px, 3vw, 48px); }
+
+  @media (max-width: 1000px) {
+    .j-clips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .j-clip--2 { margin-top: 0; }
+  }
+
+  @media (max-width: 700px) {
+    .j-line span:nth-child(2) { display: none; }
+    .j-title { font-size: 30vw; }
+    .j-sub { margin-left: 8vw; }
+    .j-lead { grid-template-columns: minmax(0, 1fr); }
+    .j-lead__art { display: none; }
+    .j-clips { grid-template-columns: minmax(0, 1fr); }
+    .j-clip--3 { margin-top: 0; }
+  }
+</style>

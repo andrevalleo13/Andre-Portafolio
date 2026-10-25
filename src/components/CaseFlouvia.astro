@@ -1,0 +1,545 @@
+---
+/**
+ * ── Caso: Flouvia (EN + ES) ───────────────────────────
+ *
+ * Página propia, no plantilla:
+ *   Portada      "Flouvia" gigante, el velero, el pin de CDMX y un timbre
+ *                con las infraestructuras desplegadas.
+ *   I.   Carta   los servicios como la carta de un restaurante:
+ *                precio "por aplicación".
+ *   II.  Trabajo tres pósters colgados: Cord (la cuerda), El Zarco (un
+ *                huacal de la Central de Abasto), shwcs (la lupa).
+ *   III. OS      el portal de clientes como boceto en servilleta, con
+ *                sus cinco pantallas anotadas a mano.
+ *   IV.  Taller  Gota, Flouvia Sans y 3D por script.
+ *   V.   Etiqueta el stack como etiqueta de composición de una prenda.
+ * Contenido en src/data/cases/flouvia.ts.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { getLangFromUrl, useTranslations, getLocalePath } from '../i18n/utils';
+import { flouviaCase } from '../data/cases/flouvia';
+import { workSlug } from '../lib/work';
+import Pieza from './home/Pieza.astro';
+import Capitulo from './case/Capitulo.astro';
+import CaseNext from './case/CaseNext.astro';
+import Velero from './art/Velero.astro';
+import Cuerda from './art/Cuerda.astro';
+import Timbre from './art/Timbre.astro';
+import Doodle from './art/Doodle.astro';
+import Trazo from './art/Trazo.astro';
+
+interface Props {
+  project: CollectionEntry<'work'>;
+  lot: number;
+  next?: CollectionEntry<'work'>;
+  nextLot?: number;
+}
+
+const { project, lot, next, nextLot } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const f = flouviaCase[lang];
+const pad = (n: number) => String(n).padStart(2, '0');
+const host = project.data.url ? new URL(project.data.url).host : null;
+const infra = project.data.impact.match(/\d+/)?.[0] ?? '12';
+const isExternal = (href: string) => href.startsWith('http');
+const workshopArt = ['gota', 'letra', 'cubo'] as const;
+---
+
+<main class="cf">
+  <!-- ═════════ PORTADA ═════════ -->
+  <header class="cf-cover" data-collage>
+    <Pieza x="40%" y="4%" w="40vw" r={-4} z={0} depth={0.12} reveal={false} mx="10%" my="10%" mw="90vw">
+      <Trazo kind="brochazo" tone="naranja" draw="load" delay={0.2} />
+    </Pieza>
+
+    <p class="lv-kicker cf-kicker" data-reveal="fade" data-delay="0.1">
+      <a href={getLocalePath('/work', lang)}>← {t('home.s2')}</a> · {t('home.lot')} {pad(lot)}
+    </p>
+    <h1 class="cf-title" transition:name={`work-title-${workSlug(project.id)}`}>{project.data.title}</h1>
+    <p class="cf-sub" data-reveal="fade" data-delay="0.4">{project.data.subtitle}</p>
+
+    <Pieza x="60%" y="50%" w="30vw" r={3} z={3} depth={0.4} drag delay={0.4} mx="30%" my="44%" mw="66vw">
+      <figure class="lv-sheet cf-sheet"><i class="lv-tape"></i><Velero draw="load" delay={0.7} /></figure>
+    </Pieza>
+    <Pieza x="54%" y="56%" w="5.5vw" r={-8} z={4} depth={0.7} drag delay={0.8} mx="80%" my="30%" mw="15vw">
+      <Doodle kind="pin" draw="load" delay={1.2} />
+    </Pieza>
+    <Pieza x="85%" y="38%" w="12vw" r={12} z={5} depth={0.9} drag delay={1} mx="2%" my="34%" mw="28vw">
+      <Timbre top={lang === 'es' ? 'Desplegadas' : 'Deployed'} center={`+${infra}`} tone="azul" />
+    </Pieza>
+
+    <p class="cf-lede" data-reveal="fade" data-delay="0.6">{f.lede}</p>
+
+    <div class="cf-card" data-reveal="drop" data-delay="0.8">
+      <i class="lv-tape"></i>
+      <dl>
+        <div><dt>{t('home.lot.role')}</dt><dd>{project.data.role}</dd></div>
+        <div><dt>{t('home.lot.period')}</dt><dd>{project.data.timeline}</dd></div>
+        {host && <div><dt>{t('home.lot.site')}</dt><dd><a href={project.data.url} target="_blank" rel="noopener noreferrer">{host} ↗</a></dd></div>}
+      </dl>
+    </div>
+  </header>
+
+  <!-- ═════════ I. LA CARTA ═════════ -->
+  <section class="cf-sec cf-menu-sec">
+    <Capitulo n="I" kicker={f.chapters.menu} />
+    <div class="cf-menu" data-reveal="sheet" style="--rot:-1.2deg">
+      <i class="lv-tape"></i>
+      <p class="cf-menu__house">Flouvia · CDMX</p>
+      <h2 class="cf-menu__title">{f.menu.title}</h2>
+      <ol class="cf-menu__list">
+        {f.menu.items.map((it, i) => (
+          <li data-reveal="fade" data-delay={(i * 0.06).toFixed(2)}>
+            <span class="cf-menu__name">{it.name}</span>
+            <span class="cf-menu__dots" aria-hidden="true"></span>
+            <span class="cf-menu__price">{f.menu.price}</span>
+            <span class="cf-menu__desc">{it.desc}</span>
+          </li>
+        ))}
+      </ol>
+      <p class="cf-menu__foot">{f.menu.foot}</p>
+    </div>
+  </section>
+
+  <!-- ═════════ II. EL TRABAJO ═════════ -->
+  <section class="cf-sec cf-work">
+    <Capitulo n="II" kicker={f.chapters.work} title={f.work.title} />
+    <ul class="cf-posters">
+      {f.work.items.map((w, i) => (
+        <li class:list={['cf-poster', `cf-poster--${i + 1}`]} data-reveal="drop" data-delay={(i * 0.12).toFixed(2)}>
+          <a href={isExternal(w.href) ? w.href : getLocalePath(w.href, lang)} target={isExternal(w.href) ? '_blank' : undefined} rel={isExternal(w.href) ? 'noopener' : undefined} data-pen-group>
+            <span class="cf-poster__art">
+              {w.slug === 'cord' && <Cuerda />}
+              {w.slug === 'el-zarco' && <Doodle kind="huacal" />}
+              {w.slug === 'shwcs' && <Doodle kind="lupa" />}
+            </span>
+            <span class="cf-poster__tag">{w.tag}</span>
+            <span class="cf-poster__name">{w.name}</span>
+            <span class="cf-poster__line">{w.line}</span>
+            <span class="cf-poster__text">{w.text}</span>
+            <span class="cf-poster__cta"><span data-pen="under">{w.cta}</span> {isExternal(w.href) ? '↗' : '→'}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- ═════════ III. FLOUVIA OS ═════════ -->
+  <section class="cf-sec cf-os">
+    <Capitulo n="III" kicker={f.chapters.os} title={f.os.title} />
+    <p class="cf-intro" data-reveal="fade">{f.os.intro}</p>
+    <figure class="cf-napkin">
+      <div class="cf-napkin__sheet" data-reveal="sheet" style="--rot:1deg"><Doodle kind="portal" /></div>
+      {f.os.panels.map((p, i) => (
+        <figcaption class:list={['cf-note', `cf-note--${i + 1}`]} data-reveal="write" data-delay={(0.4 + i * 0.15).toFixed(2)}>
+          <b>{p.title}</b>
+          <span>{p.text}</span>
+        </figcaption>
+      ))}
+    </figure>
+    <p class="lv-pen-note cf-os__note" data-reveal="write">{f.os.note}</p>
+    <div class="cf-ops" data-reveal="fade">
+      <b>{f.os.ops.title}</b>
+      <p>{f.os.ops.text}</p>
+    </div>
+  </section>
+
+  <!-- ═════════ IV. EL TALLER ═════════ -->
+  <section class="cf-sec cf-shop" data-collage>
+    <Capitulo n="IV" kicker={f.chapters.workshop} title={f.workshop.title} />
+    <ul class="cf-tools">
+      {f.workshop.items.map((it, i) => (
+        <li class:list={['cf-tool', `cf-tool--${i + 1}`]}>
+          <div class="cf-tool__art" data-drag><Doodle kind={workshopArt[i]} /></div>
+          <b data-reveal="fade">{it.title}</b>
+          <p data-reveal="fade" data-delay="0.1">{it.text}</p>
+        </li>
+      ))}
+    </ul>
+    <Pieza x="70%" y="6%" w="24vw" z={0} depth={0.15} reveal={false} hideMobile>
+      <Trazo kind="grafiti" />
+    </Pieza>
+  </section>
+
+  <!-- ═════════ V. ETIQUETA DE COMPOSICIÓN ═════════ -->
+  <section class="cf-sec cf-label-sec">
+    <div class="cf-label" data-reveal="sheet" style="--rot:-2deg">
+      <i class="cf-label__st"></i><i class="cf-label__st"></i>
+      <p class="cf-label__title">{f.label.title}</p>
+      <ul>
+        {f.label.lines.map((l) => <li>{l}</li>)}
+      </ul>
+      <p class="cf-label__made">{f.label.made}</p>
+      <p class="cf-label__care">
+        <span aria-hidden="true">◯ △ ▢</span>
+        {f.label.care}
+      </p>
+    </div>
+  </section>
+
+  <CaseNext next={next} nextLot={nextLot} />
+</main>
+
+<style>
+  .cf {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(110px, 13vw, 200px);
+    padding: 0 var(--gutter) clamp(110px, 12vw, 180px);
+    overflow-x: clip;
+  }
+
+  .cf > * { width: 100%; max-width: 1560px; margin-inline: auto; }
+
+  .cf-sec { position: relative; display: grid; gap: clamp(24px, 3vw, 44px); }
+
+  .cf-intro { max-width: 52ch; font-size: clamp(1.15rem, 1.6vw, 1.45rem); line-height: 1.45; }
+
+  /* ── Portada ── */
+  .cf-cover {
+    position: relative;
+    min-height: max(58vw, 680px);
+    padding-top: clamp(110px, 14vh, 150px);
+  }
+
+  .cf-kicker { position: relative; z-index: 4; }
+  .cf-kicker a { color: inherit; text-decoration: none; }
+  .cf-kicker a:hover { color: var(--rojo); }
+
+  .cf-title {
+    position: relative;
+    z-index: 2;
+    margin-top: 1vw;
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(6rem, 22vw, 26rem);
+    line-height: 0.78;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+
+  .cf-sub {
+    position: relative;
+    z-index: 2;
+    max-width: 20ch;
+    margin-top: 1.4vw;
+    font-style: italic;
+    font-size: clamp(1.5rem, 2.8vw, 2.8rem);
+    line-height: 1.05;
+  }
+
+  .cf-lede {
+    position: relative;
+    z-index: 3;
+    max-width: 44ch;
+    margin-top: clamp(28px, 3.4vw, 56px);
+    font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+    line-height: 1.5;
+  }
+
+  .cf-sheet { margin: 0; padding: clamp(14px, 1.8vw, 26px); color: var(--tinta); }
+
+  .cf-card {
+    position: absolute;
+    z-index: 5;
+    left: 30%;
+    bottom: 2%;
+    width: min(26vw, 360px);
+    padding: 22px 22px 18px;
+    background: var(--hoja);
+    box-shadow: var(--sombra-hoja);
+    rotate: 2deg;
+  }
+
+  .cf-card dl { display: grid; gap: 8px; font-family: var(--f-grot); font-size: 0.8rem; }
+  .cf-card dl div { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 10px; padding-bottom: 6px; border-bottom: 1px dotted var(--linea); }
+  .cf-card dt { color: var(--grafito); text-transform: uppercase; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.06em; }
+  .cf-card a { color: var(--tinta); }
+
+  /* ── I. La carta ── */
+  .cf-menu-sec { justify-items: center; }
+  .cf-menu-sec :global(.cap) { justify-self: stretch; }
+
+  .cf-menu {
+    position: relative;
+    width: min(100%, 760px);
+    padding: clamp(32px, 5vw, 64px) clamp(24px, 4vw, 56px);
+    background: var(--hoja);
+    box-shadow: var(--sombra-hoja);
+    outline: 1px solid var(--tinta);
+    outline-offset: -14px;
+    text-align: center;
+  }
+
+  .cf-menu__house {
+    font-family: var(--f-grot);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--rojo);
+  }
+
+  .cf-menu__title {
+    margin: 10px 0 clamp(24px, 3vw, 40px);
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(3rem, 6vw, 5.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+
+  .cf-menu__list { list-style: none; display: grid; gap: 18px; text-align: left; }
+
+  .cf-menu__list li {
+    display: grid;
+    grid-template-columns: auto minmax(20px, 1fr) auto;
+    align-items: baseline;
+    gap: 2px 12px;
+  }
+
+  .cf-menu__name { font-size: clamp(1.3rem, 2.2vw, 1.9rem); line-height: 1.1; }
+  .cf-menu__dots { border-bottom: 2px dotted var(--grafito); translate: 0 -0.3em; opacity: 0.55; }
+
+  .cf-menu__price {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--rojo);
+  }
+
+  .cf-menu__desc {
+    grid-column: 1 / -1;
+    font-family: var(--f-grot);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--grafito);
+  }
+
+  .cf-menu__foot {
+    margin-top: clamp(24px, 3vw, 40px);
+    font-style: italic;
+    color: var(--grafito);
+  }
+
+  /* ── II. Pósters ── */
+  .cf-posters {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 48px clamp(40px, 4.4vw, 76px);
+    align-items: start;
+  }
+
+  .cf-poster--1 { rotate: -1.2deg; }
+  .cf-poster--2 { rotate: 0.8deg; margin-top: 6vw; }
+  .cf-poster--3 { rotate: -0.6deg; margin-top: 2vw; }
+
+  .cf-poster a {
+    display: grid;
+    gap: 12px;
+    padding: clamp(18px, 2vw, 28px);
+    background: var(--hoja);
+    border: 7px solid var(--tinta);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08), 0 26px 36px -26px rgba(30, 20, 10, 0.55);
+    color: var(--tinta);
+    text-decoration: none;
+    transition: translate 0.8s var(--ease-expo);
+  }
+
+  .cf-poster a:hover { translate: 0 -8px; }
+
+  .cf-poster__art {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    max-width: 100%;
+    margin-bottom: 8px;
+    padding: 6%;
+    background: var(--papel);
+  }
+
+  .cf-poster__art :global(svg) { max-height: 100%; }
+
+  .cf-poster__tag {
+    font-family: var(--f-grot);
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--rojo);
+  }
+
+  .cf-poster__name { font-family: var(--f-serif); font-size: clamp(2.2rem, 3.6vw, 3.6rem); line-height: 0.95; letter-spacing: -0.03em; }
+  .cf-poster a:hover .cf-poster__name { font-family: var(--f-worn); }
+  .cf-poster__line { font-style: italic; font-size: 1.1rem; line-height: 1.3; }
+  .cf-poster__text { font-size: 0.98rem; line-height: 1.5; color: var(--grafito); }
+
+  .cf-poster__cta {
+    font-family: var(--f-grot);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cf-poster__cta > span { display: inline-block; }
+
+  /* ── III. Servilleta ── */
+  .cf-napkin {
+    position: relative;
+    margin: clamp(24px, 3vw, 48px) 0 0;
+    padding: 6% 22%;
+  }
+
+  .cf-napkin__sheet {
+    position: relative;
+    padding: 4%;
+    background: #fbfaf7;
+    box-shadow: var(--sombra-hoja);
+    rotate: var(--rot);
+    color: var(--tinta);
+  }
+
+  .cf-note {
+    position: absolute;
+    z-index: 3;
+    display: grid;
+    gap: 4px;
+    width: 18%;
+    font-size: 0.95rem;
+    line-height: 1.35;
+    color: var(--grafito);
+  }
+
+  .cf-note b {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.3rem, 1.9vw, 1.8rem);
+    color: var(--rojo);
+  }
+
+  .cf-note::before {
+    content: '';
+    position: absolute;
+    top: 0.9em;
+    width: 3.4vw;
+    border-top: 1.5px solid var(--rojo);
+  }
+
+  .cf-note--1 { left: 0; top: 8%; }
+  .cf-note--2 { left: 0; top: 44%; }
+  .cf-note--3 { right: 0; top: 4%; text-align: right; }
+  .cf-note--4 { right: 0; top: 40%; text-align: right; }
+  .cf-note--5 { right: 6%; bottom: -2%; text-align: right; }
+  .cf-note--1::before, .cf-note--2::before { left: 104%; }
+  .cf-note--3::before, .cf-note--4::before, .cf-note--5::before { right: 104%; }
+
+  .cf-os__note { justify-self: center; max-width: 60ch; text-align: center; rotate: -1deg; }
+
+  .cf-ops {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px 32px;
+    align-items: baseline;
+    padding-top: 22px;
+    border-top: 1px solid var(--linea);
+  }
+
+  .cf-ops b {
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(1.8rem, 3vw, 3rem);
+    text-transform: uppercase;
+  }
+
+  .cf-ops p { max-width: 60ch; font-size: 1.08rem; line-height: 1.5; color: var(--grafito); }
+
+  /* ── IV. Taller ── */
+  .cf-tools {
+    position: relative;
+    z-index: 2;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 48px clamp(28px, 4vw, 72px);
+    align-items: start;
+  }
+
+  .cf-tool { display: grid; gap: 14px; }
+  .cf-tool--2 { margin-top: 7vw; }
+  .cf-tool--3 { margin-top: 2vw; }
+  .cf-tool__art { width: min(100%, 260px); color: var(--tinta); }
+  .cf-tool--1 .cf-tool__art { rotate: -4deg; }
+  .cf-tool--3 .cf-tool__art { rotate: 5deg; }
+
+  .cf-tool b {
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(2rem, 3.4vw, 3.4rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .cf-tool p { max-width: 32ch; font-size: 1.02rem; line-height: 1.5; color: var(--grafito); }
+
+  /* ── V. Etiqueta de composición ── */
+  .cf-label-sec { justify-items: center; }
+
+  .cf-label {
+    position: relative;
+    display: grid;
+    gap: 12px;
+    width: min(100%, 420px);
+    padding: 34px 40px 30px;
+    background: #F4F2ED;
+    border: 1px solid var(--linea);
+    box-shadow: var(--sombra-hoja);
+    rotate: var(--rot);
+    font-family: var(--f-grot);
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .cf-label__st {
+    position: absolute;
+    top: 50%;
+    width: 2px;
+    height: 16px;
+    translate: 0 -50%;
+    background: var(--grafito);
+  }
+  .cf-label__st:first-child { left: 12px; }
+  .cf-label__st:nth-child(2) { right: 12px; }
+
+  .cf-label__title { font-size: 0.8rem; font-weight: 800; letter-spacing: 0.24em; }
+  .cf-label ul { list-style: none; display: grid; gap: 6px; font-size: 0.86rem; font-weight: 600; letter-spacing: 0.08em; }
+  .cf-label__made { padding-top: 10px; border-top: 1px solid var(--linea); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; color: var(--rojo); }
+  .cf-label__care { display: grid; gap: 6px; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.12em; color: var(--grafito); }
+  .cf-label__care span { font-size: 1rem; letter-spacing: 0.5em; color: var(--tinta); }
+
+  /* ── Móvil ── */
+  @media (max-width: 900px) {
+    .cf-cover { min-height: 0; height: 200vw; }
+    .cf-title { font-size: 26vw; }
+    .cf-lede { position: absolute; top: 118vw; left: 0; right: 0; }
+    .cf-card { left: 0; bottom: 2%; width: 92%; }
+
+    .cf-posters, .cf-tools { grid-template-columns: minmax(0, 1fr); }
+    .cf-poster--2, .cf-poster--3, .cf-tool--2, .cf-tool--3 { margin-top: 0; }
+
+    .cf-napkin { padding: 0; display: grid; gap: 22px; }
+    .cf-note { position: static; width: auto; text-align: left !important; }
+    .cf-note::before { display: none; }
+
+    .cf-ops { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

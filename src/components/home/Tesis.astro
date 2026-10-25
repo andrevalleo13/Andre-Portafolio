@@ -1,0 +1,206 @@
+---
+/**
+ * ── I. Tesis ──────────────────────────────────────────
+ *
+ * Composición tipográfica libre: el titular escalonado, un caballo
+ * en acuarela metido entre las líneas, dos párrafos en voces
+ * distintas (serif = finanzas, grotesca = código) y los KPIs como
+ * anotaciones sueltas que cuentan al entrar en pantalla.
+ */
+import { getLangFromUrl, useTranslations, getLocalePath } from '../../i18n/utils';
+import Folio from './Folio.astro';
+import Pieza from './Pieza.astro';
+import Reloj from '../art/Reloj.astro';
+import Trazo from '../art/Trazo.astro';
+
+interface Kpi {
+  value: number;
+  suffix?: string;
+  label: string;
+}
+
+interface Props {
+  kpis: Kpi[];
+}
+
+const { kpis } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const lines = t('about.heading').split(/<br\s*\/?>/i);
+
+/* Subraya a pluma roja los términos clave del párrafo. */
+const terms = t('home.terms').split('|');
+const annotate = (text: string) =>
+  terms.reduce(
+    (html, term) => html.replace(term, `<span class="tesis__term" data-pen="under" data-pen-scroll data-delay="0.4">${term}</span>`),
+    text
+  );
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section class="tesis" id="tesis">
+  <Folio n="I" title={t('home.s1')} page={2} />
+
+  <div class="tesis__stage">
+    <h2 class="tesis__title" data-reveal="lines">
+      {lines.map((line, i) => (
+        <span class:list={['lv-line', `tesis__l${i + 1}`]}><span set:html={line} /></span>
+      ))}
+    </h2>
+
+    <Pieza x="62%" y="-4%" w="30vw" r={-4} z={0} depth={0.15} reveal={false} mx="40%" my="0%" mw="56vw">
+      <Trazo kind="rayas" />
+    </Pieza>
+    <Pieza x="70%" y="0%" w="15vw" r={-8} z={1} depth={0.35} drag mx="60%" my="2%" mw="30vw">
+      <Reloj />
+    </Pieza>
+
+    <p class="tesis__p tesis__p1" data-reveal="fade" set:html={annotate(t('about.p1'))} />
+    <p class="tesis__p tesis__p2" data-reveal="fade" data-delay="0.15" set:html={annotate(t('about.p2'))} />
+
+
+    <ul class="kpis">
+      {kpis.map((kpi, i) => (
+        <li class:list={['kpi', `kpi--${i + 1}`]} data-reveal="drop" data-delay={(i * 0.12).toFixed(2)}>
+          <span class="kpi__n">
+            <span data-count={kpi.value} data-suffix={kpi.suffix ?? ''}>{pad(kpi.value)}{kpi.suffix}</span>
+            {i === 1 && <Trazo kind="garabato" class="kpi__circle" delay={0.6} />}
+          </span>
+          <span class="kpi__l">{kpi.label}</span>
+        </li>
+      ))}
+    </ul>
+
+    <div class="tesis__end">
+      <p class="lv-pen-note" data-reveal="write">{t('home.s1.note')} →</p>
+      <a class="lv-link" href={getLocalePath('/about', lang)} data-pen data-reveal="fade">{t('home.about.cta')}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tesis__stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 24px;
+    padding-top: clamp(56px, 7vw, 110px);
+  }
+
+  .tesis__title {
+    position: relative;
+    z-index: 2;
+    grid-column: 1 / span 10;
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(3rem, 7.6vw, 9.4rem);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+  }
+
+  .tesis__l2 {
+    padding-left: 13vw;
+    font-style: italic;
+  }
+
+  .tesis__p {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Voz financiera: serif grande */
+  .tesis__p1 {
+    grid-column: 2 / span 5;
+    margin-top: clamp(48px, 7vw, 120px);
+    font-family: var(--f-display);
+    font-size: clamp(1.3rem, 1.9vw, 1.8rem);
+    line-height: 1.32;
+  }
+
+  /* Voz de código: grotesca, más abajo y a la derecha */
+  .tesis__p2 {
+    grid-column: 8 / span 4;
+    margin-top: clamp(96px, 13vw, 220px);
+    font-family: var(--f-grot);
+    font-size: 0.95rem;
+    font-stretch: 92%;
+    line-height: 1.6;
+    color: var(--grafito);
+  }
+
+  .tesis__p :global(.tesis__term) { color: var(--tinta); }
+
+  /* ── KPIs como anotaciones sueltas ── */
+  .kpis {
+    position: relative;
+    z-index: 2;
+    grid-column: 1 / -1;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 32px;
+    margin-top: clamp(64px, 9vw, 150px);
+  }
+
+  .kpi {
+    display: grid;
+    gap: 10px;
+    max-width: 22ch;
+  }
+
+  .kpi--1 { rotate: -2deg; }
+  .kpi--2 { rotate: 1.5deg; margin-top: -4vw; }
+  .kpi--3 { rotate: -1deg; margin-top: 3vw; margin-right: 6vw; }
+
+  .kpi__n {
+    position: relative;
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: clamp(4.4rem, 11vw, 12rem);
+    line-height: 0.85;
+    letter-spacing: -0.03em;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .kpi__n :global(.kpi__circle) {
+    position: absolute;
+    left: -18%;
+    top: -12%;
+    width: 140%;
+    height: 124%;
+  }
+
+  .kpi__l {
+    font-family: var(--f-grot);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--grafito);
+  }
+
+  .tesis__end {
+    grid-column: 7 / -1;
+    display: flex;
+    align-items: baseline;
+    gap: 1.2rem;
+    margin-top: clamp(56px, 7vw, 110px);
+  }
+
+  @media (max-width: 900px) {
+    .tesis__title { grid-column: 1 / -1; font-size: 13vw; }
+    .tesis__l2 { padding-left: 8vw; }
+    .tesis__p1,
+    .tesis__p2,
+    .tesis__end { grid-column: 1 / -1; }
+    .tesis__p1 { margin-top: 44vw; }
+    .tesis__p2 { margin-top: 32px; padding-left: 14vw; }
+    .kpis { flex-direction: column; gap: 40px; }
+    .kpi--2 { margin: 0 0 0 auto; }
+    .kpi--3 { margin: 0 0 0 10vw; }
+    .kpi__n { font-size: 22vw; }
+  }
+</style>

@@ -1,0 +1,81 @@
+---
+/**
+ * ── Tigre ─────────────────────────────────────────────
+ *
+ * Tigre caminando de perfil, pintado como un cuadro folk: cuerpo
+ * naranja, rayas negras afiladas, mejillas y hocico blancos, cola
+ * levantada con anillos. Primero el color, luego las rayas, al
+ * final el contorno a tinta.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Tigre naranja con rayas negras caminando de perfil',
+  class: className,
+} = Astro.props;
+
+const body = 'M72 98 C92 70 170 64 232 72 C264 76 282 90 288 110 C292 132 278 152 248 156 L112 158 C82 158 62 142 62 122 C62 112 66 104 72 98 Z';
+const head = 'M266 96 C264 68 286 54 306 56 C330 58 344 76 342 98 C340 122 324 136 302 136 C280 136 268 120 266 96 Z';
+const legs = [
+  'M90 142 C86 170 88 188 90 200 L112 200 C112 186 114 168 118 150 Z',
+  'M124 152 C124 174 128 190 130 200 L150 200 C148 186 148 170 148 154 Z',
+  'M232 150 C232 174 234 190 236 200 L258 200 C256 186 256 170 258 148 Z',
+  'M260 140 C264 166 270 186 272 200 L294 200 C290 182 286 162 282 138 Z',
+];
+const tail = 'M66 108 C38 104 20 82 26 56 C30 40 46 34 54 44';
+
+/* Rayas afiladas: cuñas que bajan del lomo y suben de la panza */
+const wedge = (x: number, y: number, len: number, lean: number, w = 7) =>
+  `M${x - w} ${y} Q${x + lean * 0.4} ${y + len * 0.55} ${x + lean} ${y + len} Q${x + lean * 0.2 + 2} ${y + len * 0.5} ${x + w} ${y} Z`;
+const stripesTop = [96, 118, 140, 162, 184, 206, 228, 252].map((x, i) => wedge(x, 70 + (i % 2) * 2, 34 + (i % 3) * 10, i % 2 ? 6 : -4));
+const stripesBottom = [110, 134, 158, 182, 206, 230, 256].map((x, i) => wedge(x, 157, -(22 + (i % 2) * 10), i % 2 ? -5 : 5, 6));
+const legStripes = 'M92 166 L116 168 M90 180 L114 182 M126 170 L148 170 M128 184 L150 184 M234 168 L258 166 M236 182 L258 180 M266 164 L286 160 M268 178 L290 176';
+const headStripes = 'M296 60 L300 74 M308 58 L308 72 M320 62 L316 74 M276 84 L288 88 M276 96 L288 98';
+const tailRings = 'M30 74 L44 70 M24 60 L38 60 M36 46 L46 52 M48 92 L56 82';
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 360 220"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink)">
+    <path data-fill d={tail} fill="none" style="stroke: var(--pint-naranja)" stroke-width="16" stroke-linecap="round" />
+    {legs.map((d) => <path data-fill d={d} style="fill: var(--pint-naranja)" />)}
+    <path data-fill d={body} style="fill: var(--pint-naranja)" />
+    <path data-fill d={head} style="fill: var(--pint-naranja)" />
+    <path data-fill d="M276 64 C272 46 288 42 296 58 Z M314 56 C318 40 334 44 332 62 Z" style="fill: var(--pint-naranja)" />
+    <!-- mejillas, hocico y panza blancos -->
+    <path data-fill d="M300 104 C312 94 336 96 342 110 C340 126 322 136 304 132 C294 128 292 112 300 104 Z" fill="#F4F2ED" />
+    <path data-fill d="M150 152 C180 146 220 146 244 152 C222 160 176 160 150 152 Z" fill="#F4F2ED" />
+  </g>
+  <g filter="url(#ink)" fill="currentColor">
+    {stripesTop.map((d) => <path data-pop d={d} />)}
+    {stripesBottom.map((d) => <path data-pop d={d} />)}
+  </g>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s stroke-width="4" d={legStripes} />
+    <path data-s stroke-width="4" d={headStripes} />
+    <path data-s stroke-width="5" d={tailRings} />
+    <path data-s stroke-width="2.6" d={body} />
+    <path data-s stroke-width="2.6" d={head} />
+    {legs.map((d) => <path data-s stroke-width="2.4" d={d} />)}
+    <path data-s stroke-width="2.4" d="M276 64 C272 46 288 42 296 58 M314 56 C318 40 334 44 332 62" />
+    <!-- ojo, nariz, boca y bigotes -->
+    <path data-s stroke-width="2.4" d="M298 86 C304 80 314 80 318 86 C312 90 304 90 298 86 Z" />
+    <path data-s stroke-width="2" d="M330 108 L340 112 M326 118 C330 124 338 124 342 120 M318 112 L298 106 M318 116 L296 118 M336 114 L354 108 M336 118 L356 120" />
+    <path data-s stroke-width="2.2" d="M88 200 L114 200 M128 200 L152 200 M234 200 L260 200 M270 200 L296 200" />
+  </g>
+  <circle data-pop cx="309" cy="86" r="2.6" fill="currentColor" />
+  <path data-pop d="M334 102 L344 104 L338 112 Z" fill="currentColor" />
+</svg>

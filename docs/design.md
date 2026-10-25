@@ -4,99 +4,68 @@ Decisiones estéticas, tokens, tipografía y principios del portafolio.
 
 ## Estética
 
-**"Stealth Wealth Técnico"**
+**"Lujo vivido, con un toque"**
 
-El portafolio de alguien que ya llegó. No necesita gritar, decorar, ni convencer.
-La tipografía limpia, el espacio en blanco y el silencio visual son el lujo.
+Cosas buenas que se usan, no que se exhiben. Sale del Pinterest de André: Margiela (Tabi, GATs pintados), Golden Goose, Gucci, RRL, Cartier asomando por una manga de mezclilla rota, Basquiat, cerámica pintada a mano, lucha libre, caballos, lobos.
 
-Referentes:
-- Maison Margiela — deconstrucción, austeridad, intención
-- Golden Goose — lujo discreto, textura sobre brillo
-- Porsche — ingeniería como diseño, precisión sin exceso
-- Editoriales de Bali / Ibiza — naturaleza, calm, premium sin ostentación
+**La regla del toque: 90 % clásico, 10 % raro.** Cada pieza tiene una base seria (finanzas) y un detalle que nadie más pondría (dev, arte, humor).
 
-## Micro-Interacciones (GSAP)
+- **Composición libre, tipo collage.** Nada de "texto a la izquierda, imagen a la derecha". Las piezas se enciman, van chuecas, flotan en capas con el mouse y muchas se pueden arrastrar.
+- **Dibujos propios** (SVG a mano en `src/components/art/`), pintados trazo por trazo con GSAP.
+- **Frases duras, no blandas**: *Work hard*, *Play the game*, *i lowkey dgaf anymore*, *Make art, make money*, y las reglas de la casa. Los cuadros conservan su texto en inglés en ambos idiomas.
+- **El animal de André es el lobo.**
+- **Sin amarillo.** Naranja sí.
 
-Las animaciones separan un sitio web promedio de uno de lujo. 
+## Tipografía (solo dos familias)
 
-### Reglas de Animación
-- **Curvas de Easing**: Usamos siempre curvas fluidas y cinemáticas, principalmente `expo.out` o `power3.inOut`. NUNCA `bounce` o animaciones lineales.
-- **Split Text**: La tipografía de título no debe "aparecer" en bloque. Debe formarse de manera fluida (letra por letra o palabra por palabra) con ligeros staggers y traslaciones, usando `src/scripts/splitText.ts`.
-- **Hover States**: Los botones (`hover-fill`) tienen un efecto magnético de relleno cuadrado y suave controlado por GSAP, asegurando que la entrada y la salida del cursor generen la misma fluidez independientemente de la velocidad del usuario.
-- **Transiciones SPA**: La navegación entre páginas está envuelta en el `ClientRouter` de Astro. No hay pantallas blancas de carga; todo es inmersivo y preserva el estado visual y la memoria de las animaciones.
+| Familia | Rol | Notas |
+|---|---|---|
+| **Redaction** (`@fontsource/redaction`, `redaction-50`) | Titulares, texto, notas en rojo (itálica) | Serif libre hecha para un proyecto de arte sobre expedientes judiciales. `Redaction 50` es el corte "desgastado" (pixelado): se usa en "Ortega" y como hover (el título se desgasta). |
+| **Hubot Sans** (`@fontsource-variable/hubot-sans`) | Etiquetas, datos, frases de cuadros, enunciados en negra | Grotesca de GitHub, variable en peso (200–900) y ancho (75–125 %). Negra condensada (`900`, `font-stretch: 75%`) = la letra de las frases y etiquetas de ropa. Minúsculas negras rojas = "creative director of my life" ("let's talk." del footer). |
 
-### Grid Tipográfico (Journal)
-En la sección Journal, se implementó un grid asimétrico ("Bento Grid V1") prescindiendo completamente de contenedores visibles, bordes o divisores. 
-- La tipografía flota en una cuadrícula CSS oculta utilizando lógicas de `:nth-child` para generar ritmos de 3 elementos, 1 gigante, y 2 elementos, creando una composición visual estilo póster.
+Tokens en `Base.astro`: `--f-serif`, `--f-worn`, `--f-grot` y los roles `--f-display`, `--f-text`, `--f-mono` (etiquetas → Hubot), `--f-pen` (notas → Redaction itálica), `--f-brush` (frases → Hubot negra).
 
-### Espaciado (Layout & Spacing)
-- **Extremos Margenes:** Los márgenes globales (`.wrapper`, `.navbar`) pasaron de `5vw` a `12vw` (en desktop) para asegurar que el contenido nunca esté pegado al borde y mantenga un aire fuertemente editorial y lujoso. La clase `.wrapper` está definida globalmente en `Base.astro` para mantener la consistencia en todas las páginas (Work, About, Journal, etc).
-- **Flujo:** Uso de `CSS Grid` avanzado y `flexbox`. Se evitan anchos fijos de contenedor en favor de rellenos fluidos.
+No se usan fuentes manuscritas: la mano la ponen los dibujos y la pluma roja (SVG).
 
-## Tokens CSS
-
-Definidos en `src/layouts/Base.astro` como variables globales.
+## Paleta
 
 ```css
-:root {
-  --dark:        #1c1917;   /* Fondo base — negro cálido */
-  --dark-mid:    #332E29;   /* Fondo del shader */
-  --bone:        #d6cfc6;   /* Texto secundario */
-  --bone-light:  #ede9e4;   /* Texto principal */
-  --taupe:       #8c8078;   /* Texto de apoyo, líneas sutiles */
-  --ecru:        #a89e94;   /* Descriptores, párrafos de apoyo */
-}
+--papel: #F4F2ED;  --hoja: #FBFAF7;  --tinta: #191713;  --grafito: #5F5A52;  --linea: #D9D4CA;
+--rojo:  #B3261C;  /* pluma roja del analista */
+--azul:  #25437D;  /* rayas oxford, mar */
+--pint-naranja / --pint-1..4  /* naranjas para pintura (sin amarillo) */
+--verde: #56704A;  --cielo: #9DB8D8;  --cognac: #7A4A2A;
 ```
 
-## Tipografía
+Papel y tinta hacen casi todo; rojo y azul van poco y con intención. El footer es tinta (`#15130F`).
 
-**Familia:** `'Helvetica Neue', Helvetica, Arial, sans-serif`
+## Piezas compartidas (prefijo `lv-`, globales en `Base.astro`)
 
-| Uso | Peso | Tamaño | Letter-spacing |
-|---|---|---|---|
-| Nombre / Display | 200 | `clamp(2.4rem, 5.8vw, 6rem)` | `-0.03em` |
-| Headings de sección | 200 | `clamp(2rem, 4vw, 3.5rem)` | `-0.02em` |
-| Nav links | 300 | `0.62rem` | `0.22em` |
-| Descriptores | 300 | `0.58rem` | `0.30em` |
-| CTA texto | 400 | `0.62rem` | `0.22em` |
-| Body / párrafos | 300 | `0.85rem` | normal |
+`lv-kicker`, `lv-fig` (etiquetas), `lv-h2`, `lv-line` (máscara para revelar líneas), `lv-pen-note`, `lv-btn`, `lv-link`, `lv-sheet` + `lv-tape` (hoja con cinta), `lv-rule`, `lv-art*`, `lv-perforado` (estampilla), `lv-nota` (`--negra`, `--roja`), `lv-prose` (texto largo), `lv-pen-circle` / `lv-pen-under` (los inyecta `ink.ts`).
 
-## Principios UI
+## Movimiento (todo imita un gesto sobre papel)
 
-1. **Sin bordes decorativos** — los botones son texto puro. La tipografía es el diseño.
-2. **Sin redondeos** — cero `border-radius`. Geometría limpia.
-3. **Sin sombras** — el depth viene del shader, no del CSS.
-4. **Sin colores de acento** — solo la paleta nude/bone. Nada de azul tech.
-5. **Espacio generoso** — el vacío es intencional. No llenar por llenar.
-6. **Mayúsculas espaciadas** — todo en `text-transform: uppercase` con `letter-spacing: 0.22em`.
+Vive en `src/scripts/ink.ts` y se declara con atributos:
 
-## Animaciones
+| Atributo | Efecto |
+|---|---|
+| `data-pen` / `="under"` | La pluma roja encierra o subraya al pasar el cursor. `aria-current="page"` o `data-pen-on` lo deja trazado; `data-pen-scroll` lo traza al entrar. |
+| `data-draw` (`load` · `scroll` · `manual`) | El SVG se pinta trazo por trazo (`data-s`), luego rellenos (`data-fill`) y detalles (`data-pop`). |
+| `data-reveal` | `lines` (sube desde su máscara) · `fade` · `rule` (línea con regla) · `sheet` (hoja que cae y se pega la cinta) · `drop` (pieza que se deja caer sobre la mesa) · `type` (máquina de escribir) · `write` (se escribe de izquierda a derecha). |
+| `data-count` | Número que cuenta desde cero. |
+| `data-drag` | Pieza arrastrable con inercia (GSAP Draggable). |
+| `data-depth` (dentro de `data-collage`) | Capa que flota con el mouse. |
+| `data-parallax` | Deriva vertical con el scroll. |
 
-```css
-/* Reveal — entrada editorial */
-animation: reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+Curvas: `expo.out` por defecto, `power3.inOut` para líneas. Nada de rebotes. Scroll con inercia: Lenis (`src/scripts/smooth.ts`). Con `prefers-reduced-motion` todo aparece en su estado final y Lenis no se activa.
 
-@keyframes reveal {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-```
+Los estados iniciales ocultos viven en CSS bajo `@media (scripting: enabled)` hasta que el elemento recibe `.is-ready` (con failsafe a los 3 s).
 
-Nada de bounces, nada de flips, nada de pulsos. Solo revelación limpia.
+## Detalles únicos
 
-## Navbar — comportamiento de scroll
-
-- **Sobre el hero:** `background: transparent`
-- **Al scroll (>40px):** `background: rgba(20, 17, 15, 0.75)` + `backdrop-filter: blur(18px)`
-- **Transición:** `0.5s ease`
-
-## Paleta del Shader
-
-El shader usa una paleta independiente definida directamente en GLSL:
-
-```glsl
-colorBase      = vec3(0.20, 0.18, 0.16)  /* Taupe oscuro — fondo */
-albedoShadow   = vec3(0.65, 0.58, 0.52)  /* Arcilla apagada */
-albedoMid      = vec3(0.86, 0.81, 0.75)  /* Nude / lino natural */
-albedoHighlight= vec3(0.96, 0.94, 0.92)  /* Bone white / yeso */
-```
+- **Etiqueta roja** (`Etiqueta.astro`) como marca, estilo label de ropa; la versión completa lleva la numeración 0–23 de Margiela con la página actual encerrada.
+- **Índice a pantalla completa** como collage, abierto con una gota de tinta (`clip-path`).
+- **Holdings** en scroll horizontal fijado; cada proyecto es una lámina.
+- **Footer**: "let's talk." (igual en ambos idiomas) sobre un fondo que se pinta: manchas orgánicas, latigazos y escurrimientos con el cursor (`splatter.ts`), como los GATs pintados.
+- **Títulos que se desgastan** al pasar el cursor (Redaction → Redaction 50).
+- **Journal** como primera plana de periódico, con cupón de suscripción recortable.

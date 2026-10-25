@@ -1,0 +1,59 @@
+---
+/**
+ * ── Folio ─────────────────────────────────────────────
+ *
+ * Encabezado corrido de catálogo impreso:
+ *   Nº II — Holdings      André Valle Ortega · Catálogo MMXXVI      p. 03
+ * La línea fina de abajo se traza al entrar en pantalla.
+ */
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+interface Props {
+  n: string;
+  title: string;
+  page: number;
+  tone?: 'light' | 'dark';
+}
+
+const { n, title, page, tone = 'light' } = Astro.props;
+const t = useTranslations(getLangFromUrl(Astro.url));
+---
+
+<div class:list={['folio', `folio--${tone}`]}>
+  <span data-reveal="fade">Nº {n} — {title}</span>
+  <span class="folio__mid" data-reveal="fade" data-delay="0.05">André Valle Ortega · {t('home.catalog')}</span>
+  <span class="folio__p" data-reveal="fade" data-delay="0.1">p. {String(page).padStart(2, '0')}</span>
+  <i class="lv-rule folio__rule" data-reveal="rule" aria-hidden="true"></i>
+</div>
+
+<style>
+  .folio {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 16px;
+    padding-bottom: 12px;
+    font-family: var(--f-grot);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--grafito);
+  }
+
+  .folio__p { text-align: right; }
+
+  .folio__rule {
+    position: absolute;
+    inset: auto 0 0;
+    background: var(--tinta);
+  }
+
+  .folio--dark { color: rgba(244, 242, 237, 0.55); }
+  .folio--dark .folio__rule { background: rgba(244, 242, 237, 0.25); }
+
+  @media (max-width: 640px) {
+    .folio { grid-template-columns: minmax(0, 1fr) auto; }
+    .folio__mid { display: none; }
+  }
+</style>

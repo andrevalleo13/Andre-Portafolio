@@ -1,0 +1,53 @@
+---
+/**
+ * ── Caballo azul ──────────────────────────────────────
+ *
+ * Franjas de aguada azul y celeste con un caballo al galope
+ * trazado a pluma encima, con líneas sueltas y repetidas (boceto).
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Caballo al galope trazado a pluma sobre franjas de aguada azul',
+  class: className,
+} = Astro.props;
+
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 300 240"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#pintura)" fill="none" stroke-linecap="round">
+    <path data-fill d="M28 78 C100 68 200 88 272 74" stroke-width="40" style="stroke: var(--cielo)" stroke-opacity="0.75" />
+    <path data-fill d="M40 138 C120 148 190 128 262 140" stroke-width="32" style="stroke: var(--azul)" stroke-opacity="0.35" />
+    <path data-fill d="M50 194 C120 186 200 202 252 190" stroke-width="24" style="stroke: var(--cielo)" stroke-opacity="0.6" />
+  </g>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s d="M212 44 C196 48 176 62 150 82" />
+    <path data-s d="M150 82 C130 76 105 80 88 96" />
+    <path data-s d="M212 44 C222 40 232 44 240 56 C244 62 242 68 236 68 C228 68 222 64 216 62" />
+    <path data-s d="M214 44 L220 30 L224 44" />
+    <path data-s d="M216 62 C206 72 198 84 192 96 C186 108 178 116 170 120" />
+    <path data-s d="M170 120 C150 132 120 134 98 128" />
+    <path data-s d="M88 96 C76 108 74 122 86 132 C90 134 94 132 98 128" />
+    <path data-s d="M176 118 C190 128 206 136 226 132 L236 138" />
+    <path data-s d="M164 126 C168 142 162 154 172 166 L180 168" />
+    <path data-s d="M86 130 C72 144 58 154 40 158 L30 154" />
+    <path data-s d="M100 132 C106 150 102 166 114 178 L122 180" />
+    <path data-s d="M88 98 C72 90 58 96 42 86 M86 102 C72 104 60 110 48 106" />
+    <path data-s stroke-width="1.2" d="M152 86 C132 80 108 84 92 98 M174 122 C152 136 122 138 100 132 M208 48 C192 54 172 66 154 84" />
+  </g>
+  <circle data-pop cx="226" cy="52" r="2" fill="currentColor" />
+</svg>

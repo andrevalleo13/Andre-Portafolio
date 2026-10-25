@@ -1,0 +1,73 @@
+---
+/**
+ * ── As de corazones ───────────────────────────────────
+ *
+ * Un naipe (as de corazones) con "PLAY THE GAME" pintado encima a
+ * crayón: cada letra en azul con trazos desfasados en naranja y
+ * rojo, y un corazón rojo detrás de "THE". Sin amarillo: el naranja
+ * hace su papel.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'As de corazones con PLAY THE GAME pintado a crayón',
+  class: className,
+} = Astro.props;
+
+const words = [
+  { text: 'PLAY', y: 112 },
+  { text: 'THE', y: 200 },
+  { text: 'GAME', y: 282 },
+];
+const layers = [
+  { dx: -3.5, dy: -2.5, color: 'var(--pint-naranja)', opacity: 0.95 },
+  { dx: 3, dy: 2.5, color: 'var(--rojo)', opacity: 0.85 },
+  { dx: 0, dy: 0, color: 'var(--azul)', opacity: 1 },
+];
+const heart = (cx: number, cy: number, s: number) =>
+  `M${cx} ${cy + s * 0.9} C${cx - s * 1.4} ${cy} ${cx - s} ${cy - s} ${cx} ${cy - s * 0.4} C${cx + s} ${cy - s} ${cx + s * 1.4} ${cy} ${cx} ${cy + s * 0.9} Z`;
+---
+
+<svg
+  class:list={['lv-art', 'carta', className]}
+  viewBox="0 0 240 340"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <rect data-fill x="4" y="4" width="232" height="332" rx="14" fill="#F3EEE3" stroke="#CFC8BA" stroke-width="1.5" />
+
+  <!-- índices de esquina -->
+  <g class="lv-art-red" fill="currentColor">
+    <text data-pop x="24" y="42" text-anchor="middle" font-size="30" style="font-family: var(--f-serif)">A</text>
+    <path data-pop d={heart(24, 58, 9)} />
+    <g transform="rotate(180 120 170)">
+      <text data-pop x="24" y="42" text-anchor="middle" font-size="30" style="font-family: var(--f-serif)">A</text>
+      <path data-pop d={heart(24, 58, 9)} />
+    </g>
+  </g>
+
+  <!-- corazón grande detrás de THE -->
+  <path data-fill filter="url(#brocha)" d={heart(120, 188, 30)} class="lv-art-red-fill" fill-opacity="0.92" />
+
+  <!-- PLAY THE GAME a crayón -->
+  <g filter="url(#brocha)" text-anchor="middle" font-size="70" font-weight="900" style="font-family: var(--f-grot); font-stretch: 75%">
+    {layers.map((l) => (
+      <g data-fill fill={l.color} fill-opacity={l.opacity} transform={`translate(${l.dx} ${l.dy})`}>
+        {words.map((w) => <text x="120" y={w.y} letter-spacing="2">{w.text}</text>)}
+      </g>
+    ))}
+  </g>
+</svg>
+
+<style>
+  .carta { filter: drop-shadow(0 18px 18px rgba(40, 30, 20, 0.22)); }
+</style>

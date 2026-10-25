@@ -1,0 +1,97 @@
+---
+/**
+ * ── Reglas ────────────────────────────────────────────
+ *
+ * Las reglas de André, pintadas a brocha roja sobre una hoja:
+ * "RULES" con su raya, y cada regla con su número, chueca y a
+ * su propia altura, como escritas de corrido. Al entrar en
+ * pantalla se pintan una por una. En inglés en ambos idiomas,
+ * como los demás cuadros. El texto vive en src/data/about.ts.
+ */
+interface Props {
+  rules: string[];
+  class?: string;
+}
+
+const { rules, class: className } = Astro.props;
+
+/* Inclinación y sangría de cada renglón: a mano, nunca igual */
+const tilt = [-2, 1.5, -1, 2, -2.5, 1, -1.5, 2.5, -1];
+const indent = [6, 2, 0, 4, 1, 3, 0, 5, 2];
+---
+
+<div class:list={['reglas', className]}>
+  <p class="reglas__title" data-reveal="write">Rules</p>
+  <svg class="reglas__rule" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true" data-draw="scroll" data-delay="0.5">
+    <path data-s filter="url(#brocha)" d="M8 26 C110 14 260 30 392 12" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" />
+  </svg>
+  <ol class="reglas__list">
+    {rules.map((rule, i) => (
+      <li
+        data-reveal="write"
+        data-delay={(0.7 + i * 0.16).toFixed(2)}
+        style={`--tilt:${tilt[i % tilt.length]}deg; --indent:${indent[i % indent.length]}cqi`}
+      >
+        <span class="reglas__n">{i + 1}</span>
+        <span>{rule}</span>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .reglas {
+    container-type: inline-size;
+    position: relative;
+    display: grid;
+    align-content: start;
+    aspect-ratio: 3 / 4;
+    max-width: 100%;
+    padding: 8% 7% 6%;
+    background: var(--hoja);
+    box-shadow: var(--sombra-hoja);
+    color: var(--rojo);
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    text-transform: uppercase;
+  }
+
+  .reglas__title {
+    padding-left: 16cqi;
+    font-size: 24cqi;
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    filter: url(#brocha);
+    rotate: -1.5deg;
+  }
+
+  .reglas__rule {
+    width: 78%;
+    height: 5.6cqi;
+    margin: 0 0 4cqi 6cqi;
+    overflow: visible;
+  }
+
+  .reglas__list {
+    list-style: none;
+    display: grid;
+    gap: 3cqi;
+    filter: url(#brocha);
+  }
+
+  .reglas__list li {
+    display: flex;
+    align-items: baseline;
+    gap: 2.4cqi;
+    padding-left: var(--indent);
+    font-size: 8.8cqi;
+    line-height: 1;
+    rotate: var(--tilt);
+  }
+
+  .reglas__n {
+    min-width: 5cqi;
+    font-size: 1.15em;
+  }
+</style>

@@ -1,0 +1,235 @@
+---
+/**
+ * ── Trazos abstractos ─────────────────────────────────
+ *
+ * Marcas sueltas para componer: pinceladas, manchas y garabatos.
+ *   rojo        pincelada roja seca (subraya)
+ *   ocre        pincelada ancha de acrílico
+ *   salpicadura gotas de tinta
+ *   garabato    círculo rojo a pluma, rápido (encierra)
+ *   estrella    estrella roja a pluma
+ *   twombly     nudos de crayón de colores, como dibujo de niño
+ *   verde       bloque de pintura verde olivo
+ *   puntos      lunares rojos (como la tela de la pintura de luchadores)
+ *   rayas       rayas azul marino a mano (camiseta marinera)
+ *   sol         disco rojo sólido, como el sol de una estampilla
+ *   zigzag      zigzag negro de barra de óleo
+ *   espiral     espiral azul
+ *   tachas      cuentas tachadas y una X roja, a lo Basquiat
+ *   cadena      eslabones verdes
+ *   estrellas   estrellitas de colores
+ *   cielo       aguada azul cielo, rectangular
+ *   corona      corona de tres picos a pluma
+ *   grafiti     tags de colores en bucle, con chorreados (fondos de pintura)
+ *   brochazo    brochazo seco ancho, con cerdas (tone)
+ */
+interface Props {
+  kind:
+    | 'rojo' | 'ocre' | 'salpicadura' | 'garabato' | 'estrella' | 'twombly'
+    | 'verde' | 'puntos' | 'rayas' | 'sol' | 'zigzag' | 'espiral' | 'tachas' | 'cadena' | 'estrellas' | 'cielo' | 'corona'
+    | 'grafiti' | 'brochazo';
+  /** color de 'brochazo' */
+  tone?: 'rojo' | 'azul' | 'naranja' | 'verde' | 'grana' | 'tinta';
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  class?: string;
+}
+
+const { kind, tone, draw = 'scroll', delay = 0, class: className } = Astro.props;
+const TONES = {
+  rojo: 'var(--rojo)', azul: 'var(--azul)', naranja: 'var(--pint-naranja)',
+  verde: 'var(--verde)', grana: 'var(--grana)', tinta: 'var(--tinta)',
+} as const;
+const toneColor = TONES[tone ?? (kind === 'brochazo' ? 'naranja' : 'rojo')];
+
+const drawAttr = draw === 'none' ? undefined : draw;
+
+const dots = Array.from({ length: 20 }, (_, i) => [18 + (i % 5) * 42 + (Math.floor(i / 5) % 2) * 21, 18 + Math.floor(i / 5) * 40]);
+const spiral = Array.from({ length: 90 }, (_, i) => {
+  const a = i * 0.32;
+  const r = 4 + i * 1.05;
+  return `${(110 + Math.cos(a) * r).toFixed(1)} ${(100 + Math.sin(a) * r).toFixed(1)}`;
+});
+const starPath = (cx: number, cy: number, R: number) => {
+  const pts = Array.from({ length: 10 }, (_, i) => {
+    const a = -Math.PI / 2 + (i * Math.PI) / 5;
+    const r = i % 2 === 0 ? R : R * 0.42;
+    return `${(cx + Math.cos(a) * r).toFixed(1)} ${(cy + Math.sin(a) * r).toFixed(1)}`;
+  });
+  return `M${pts.join(' L')} Z`;
+};
+const stars = [
+  [30, 40, 16, 'var(--rojo)'], [86, 22, 10, 'var(--azul)'], [134, 52, 14, 'var(--pint-naranja)'],
+  [70, 82, 9, 'var(--verde)'], [180, 30, 11, 'var(--tinta)'], [214, 74, 15, 'var(--rojo)'], [160, 96, 8, 'var(--azul)'],
+];
+
+const drops = [
+  [40, 40, 9], [62, 30, 4], [24, 58, 5], [70, 62, 3], [52, 72, 6], [86, 44, 2.5],
+  [30, 20, 2], [94, 70, 2], [12, 36, 2.5], [48, 52, 3], [76, 24, 1.8], [18, 78, 1.5],
+];
+---
+
+{kind === 'rojo' && (
+  <svg class:list={['lv-art', 'lv-art-red', className]} viewBox="0 0 600 80" aria-hidden="true" data-draw={drawAttr} data-delay={delay} data-speed="0.7">
+    <g filter="url(#pintura)" fill="none" stroke="currentColor" stroke-linecap="round">
+      <path data-s stroke-width="14" d="M10 50 C120 20 260 70 380 40 C470 18 540 30 590 22" />
+      <path data-s stroke-width="4" opacity="0.7" d="M30 60 C150 36 280 76 400 52 C480 36 540 42 580 36" />
+    </g>
+  </svg>
+)}
+
+{kind === 'ocre' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 700 260" aria-hidden="true" data-draw={drawAttr} data-delay={delay} data-speed="0.8">
+    <g filter="url(#pintura)" fill="none" stroke-linecap="round">
+      <path data-s stroke-width="70" style="stroke: var(--pint-2)" opacity="0.8" d="M20 220 C180 120 380 80 680 30" />
+      <path data-s stroke-width="34" style="stroke: var(--pint-1)" opacity="0.9" d="M40 236 C200 150 400 104 690 66" />
+      <path data-s stroke-width="16" style="stroke: var(--pint-3)" opacity="0.9" d="M60 200 C220 116 420 76 670 22" />
+    </g>
+  </svg>
+)}
+
+{kind === 'salpicadura' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 100 100" aria-hidden="true" data-draw={drawAttr} data-delay={delay}>
+    <g filter="url(#ink)" fill="currentColor">
+      {drops.map(([cx, cy, r]) => <circle data-pop cx={cx} cy={cy} r={r} />)}
+    </g>
+  </svg>
+)}
+
+{kind === 'garabato' && (
+  <svg class:list={['lv-art', 'lv-art-red', className]} viewBox="0 0 320 120" aria-hidden="true" data-draw={drawAttr} data-delay={delay} data-speed="0.6" preserveAspectRatio="none">
+    <path data-s filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M24 70 C30 18 250 4 300 44 C334 76 220 114 110 106 C36 100 8 74 28 42 C48 16 150 10 214 16 C250 20 278 30 290 40" />
+  </svg>
+)}
+
+{kind === 'estrella' && (
+  <svg class:list={['lv-art', 'lv-art-red', className]} viewBox="-4 -6 60 50" aria-hidden="true" data-draw={drawAttr} data-delay={delay}>
+    <path data-s filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" d="M24 12 L30 -4 L35 12 L52 12 L39 22 L44 38 L30 28 L16 38 L21 22 L8 12 Z" />
+  </svg>
+)}
+
+{kind === 'twombly' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 300 220" aria-hidden="true" data-draw={drawAttr} data-delay={delay} data-speed="1.4">
+    <g filter="url(#pintura)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path data-s stroke-width="9" style="stroke: var(--pint-naranja)" d="M40 60 C20 30 70 10 80 40 C90 70 40 80 36 54 C32 28 84 20 88 52 C92 80 50 96 44 70" />
+      <path data-s stroke-width="7" style="stroke: var(--tinta)" d="M120 40 C112 70 150 80 144 50 C138 20 104 40 118 66 C130 88 168 70 160 44" />
+      <path data-s stroke-width="6" style="stroke: var(--azul)" d="M200 30 C230 20 262 40 246 70 C230 98 196 80 210 56 C224 34 266 54 258 84" />
+      <path data-s stroke-width="8" style="stroke: var(--rojo)" d="M60 150 C80 120 120 170 140 140 C160 110 190 170 214 140 C236 112 262 160 280 132" />
+      <path data-s stroke-width="5" style="stroke: var(--azul)" d="M30 190 C60 170 70 210 100 186 M90 200 L120 170 L130 204 L160 172" />
+      <path data-s stroke-width="10" style="stroke: var(--tinta)" d="M220 180 C232 168 246 170 252 184 C258 198 236 206 228 194" />
+    </g>
+  </svg>
+)}
+
+{kind === 'verde' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 300 200" aria-hidden="true" data-draw={drawAttr} data-delay={delay}>
+    <path data-fill filter="url(#pintura)" style="fill: var(--verde)" fill-opacity="0.9" d="M14 22 L286 10 L292 186 L8 194 Z" />
+  </svg>
+)}
+
+{kind === 'puntos' && (
+  <svg class:list={['lv-art', 'lv-art-red', className]} viewBox="0 0 230 180" aria-hidden="true" data-draw={drawAttr} data-delay={delay}>
+    <g filter="url(#ink-fino)" fill="currentColor">
+      {dots.map(([cx, cy], i) => <circle data-pop cx={cx} cy={cy} r={7 + (i % 3)} />)}
+    </g>
+  </svg>
+)}
+
+{kind === 'rayas' && (
+  <svg class:list={['lv-art', 'lv-art-blue', className]} viewBox="0 0 300 200" aria-hidden="true" data-draw={drawAttr} data-delay={delay} data-speed="1.6">
+    <g filter="url(#pintura)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="13">
+      {[24, 52, 80, 108, 136, 164].map((y, i) => <path data-s d={`M${10 + (i % 2) * 6} ${y} C90 ${y - 4} 200 ${y + 5} ${290 - (i % 2) * 8} ${y - 1}`} />)}
+    </g>
+  </svg>
+)}
+
+{kind === 'sol' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 200 200" aria-hidden="true" data-draw={drawAttr} data-delay={delay}>
+    <circle data-fill filter="url(#ink)" cx="100" cy="100" r="86" class="lv-art-red-fill" />
+  </svg>
+)}
+
+{kind === 'zigzag' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 320 80" aria-hidden="true" data-draw={drawAttr} data-delay={delay} data-speed="0.8">
+    <path data-s filter="url(#ink)" fill="none" stroke="currentColor" stroke-width="9" stroke-linejoin="round" stroke-linecap="round" d="M10 60 L40 16 L70 62 L100 14 L130 64 L160 16 L190 62 L220 18 L250 64 L280 20 L310 58" />
+  </svg>
+)}
+
+{kind === 'espiral' && (
+  <svg class:list={['lv-art', 'lv-art-blue', className]} viewBox="0 0 220 200" aria-hidden="true" data-draw={drawAttr} data-delay={delay} data-speed="0.5">
+    <path data-s filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" d={`M${spiral.join(' L')}`} />
+  </svg>
+)}
+
+{kind === 'tachas' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 260 120" aria-hidden="true" data-draw={drawAttr} data-delay={delay}>
+    <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round">
+      <path data-s d="M20 20 L18 96 M40 22 L40 98 M60 20 L62 96 M80 22 L80 98 M8 80 L94 32" />
+      <path data-s d="M120 20 L118 96 M140 22 L140 98 M160 20 L162 96 M180 22 L180 98 M108 82 L194 30" />
+    </g>
+    <path data-s class="lv-art-red" filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" d="M212 26 L250 92 M250 26 L212 92" />
+  </svg>
+)}
+
+{kind === 'cadena' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 300 120" aria-hidden="true" data-draw={drawAttr} data-delay={delay}>
+    <g filter="url(#ink-fino)" fill="none" style="stroke: var(--verde)" stroke-width="7">
+      {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+        <ellipse data-s cx={30 + i * 40} cy={60 + (i % 2 ? -10 : 10)} rx="26" ry="14" transform={`rotate(${i % 2 ? 24 : -24} ${30 + i * 40} ${60 + (i % 2 ? -10 : 10)})`} />
+      ))}
+    </g>
+  </svg>
+)}
+
+{kind === 'estrellas' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 240 120" aria-hidden="true" data-draw={drawAttr} data-delay={delay}>
+    <g filter="url(#ink-fino)">
+      {stars.map(([cx, cy, r, c]) => <path data-pop d={starPath(cx as number, cy as number, r as number)} style={`fill: ${c}`} />)}
+    </g>
+  </svg>
+)}
+
+{kind === 'cielo' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 360 220" aria-hidden="true" data-draw={drawAttr} data-delay={delay}>
+    <g filter="url(#acuarela)">
+      <path data-fill style="fill: var(--cielo)" fill-opacity="0.7" d="M20 40 C80 20 280 14 340 36 C352 90 348 150 334 196 C250 210 100 212 28 194 C14 140 12 90 20 40 Z" />
+    </g>
+  </svg>
+)}
+
+{kind === 'corona' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 140 90" aria-hidden="true" data-draw={drawAttr} data-delay={delay}>
+    <path data-s filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" d="M14 78 L24 22 L50 56 L70 10 L90 56 L116 22 L126 78 Z M14 78 L126 78" />
+    <g class="lv-art-red" fill="currentColor"><circle data-pop cx="24" cy="18" r="5" /><circle data-pop cx="70" cy="8" r="5" /><circle data-pop cx="116" cy="18" r="5" /></g>
+  </svg>
+)}
+
+{kind === 'grafiti' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 600 320" aria-hidden="true" data-draw={drawAttr} data-delay={delay} data-speed="0.7">
+    <g filter="url(#pintura)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path data-s stroke-width="11" style="stroke: var(--azul)" d="M24 210 C50 90 116 70 136 150 C148 200 96 214 108 160 C120 100 196 64 218 134 C230 186 186 204 198 150 C214 82 292 70 306 140 C314 190 268 196 280 148 C296 96 360 90 378 152 C390 198 340 204 352 156 C368 104 430 98 448 160 C458 200 412 206 424 160 C440 110 520 100 560 170" />
+      <path data-s stroke-width="6" style="stroke: var(--rojo)" d="M50 262 C82 228 104 270 136 240 S188 262 220 236 S282 262 322 234 S386 262 426 236 S500 260 548 230" />
+      <path data-s stroke-width="9" style="stroke: var(--pint-naranja)" d="M430 70 C470 30 540 50 530 100 C520 150 450 140 460 96 C468 60 520 66 516 96" />
+      <path data-s stroke-width="5" style="stroke: var(--tinta)" d="M60 60 L84 40 L92 74 L118 44 M140 70 C150 40 180 40 176 70 C172 96 140 96 148 70" />
+    </g>
+    <g filter="url(#ink-fino)" fill="none" stroke-linecap="round" style="stroke: var(--azul)">
+      <path data-s stroke-width="3" d="M136 150 L136 214 M218 134 L218 196 M306 140 L306 230 M378 152 L378 200 M448 160 L448 244" />
+    </g>
+    <g filter="url(#ink-fino)" style="fill: var(--azul)">
+      <circle data-pop cx="136" cy="218" r="4" /><circle data-pop cx="218" cy="200" r="3.4" /><circle data-pop cx="306" cy="234" r="4.4" />
+      <circle data-pop cx="378" cy="204" r="3" /><circle data-pop cx="448" cy="248" r="4" />
+    </g>
+  </svg>
+)}
+
+{kind === 'brochazo' && (
+  <svg class:list={['lv-art', className]} viewBox="0 0 600 200" aria-hidden="true" data-draw={drawAttr} data-delay={delay} data-speed="0.7">
+    <g filter="url(#pintura)" fill="none" stroke-linecap="round" style={`stroke: ${toneColor}`}>
+      <path data-s stroke-width="70" stroke-opacity="0.9" d="M30 110 C180 70 380 130 570 84" />
+      <path data-s stroke-width="5" stroke-opacity="0.55" d="M20 58 C180 22 380 84 584 40" />
+      <path data-s stroke-width="3" stroke-opacity="0.5" d="M40 160 C200 124 400 182 560 134" />
+      <path data-s stroke-width="2" stroke-opacity="0.45" d="M60 172 C220 140 420 192 540 150" />
+    </g>
+  </svg>
+)}
+

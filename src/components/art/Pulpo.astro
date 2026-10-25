@@ -1,0 +1,56 @@
+---
+/**
+ * ── Pulpo ─────────────────────────────────────────────
+ *
+ * Pulpo a tinta, como un mosaico de piso: cabeza de cúpula y
+ * ocho tentáculos que se enroscan, con ventosas punteadas.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Pulpo dibujado a tinta con tentáculos enroscados',
+  class: className,
+} = Astro.props;
+
+const arms = [
+  'M124 92 C100 110 60 104 44 128 C30 150 52 170 66 158 C76 148 64 136 56 144',
+  'M128 96 C112 130 82 150 84 186 C86 210 112 212 114 194 C116 180 98 180 100 192',
+  'M134 98 C130 140 116 180 130 214 C140 236 164 228 158 210 C154 198 140 204 146 214',
+  'M142 98 C150 140 168 176 160 214',
+  'M148 98 C166 132 196 150 198 190 C200 214 174 220 172 200 C170 186 186 184 186 196',
+  'M154 94 C178 108 218 104 232 128 C246 152 222 170 210 158 C200 148 214 136 220 146',
+  'M118 86 C92 80 60 60 40 76 C24 90 40 110 54 100',
+  'M160 86 C186 78 218 58 238 74 C254 88 238 108 224 98',
+];
+/* Ventosas: puntos a lo largo de cada brazo (aprox. con muestreo lineal de controles) */
+const suckers = [
+  [96, 108], [72, 112], [54, 132], [108, 136], [92, 162], [96, 188], [126, 150], [124, 182], [138, 210],
+  [166, 132], [190, 160], [190, 186], [190, 112], [216, 116], [232, 136], [86, 74], [60, 70], [192, 72], [218, 68],
+];
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 280 250"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s stroke-width="5" d="M110 48 C110 14 172 14 172 48 C172 76 162 94 141 98 C120 94 110 76 110 48 Z" />
+    {arms.map((d) => <path data-s stroke-width="4" d={d} />)}
+  </g>
+  <g filter="url(#ink-fino)" fill="currentColor">
+    <circle data-pop cx="128" cy="58" r="4" />
+    <circle data-pop cx="154" cy="58" r="4" />
+    {suckers.map(([cx, cy]) => <circle data-pop cx={cx} cy={cy} r="2.4" />)}
+  </g>
+</svg>

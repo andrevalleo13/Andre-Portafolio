@@ -1,0 +1,62 @@
+---
+/**
+ * ── Dálmata con estrella ──────────────────────────────
+ *
+ * Dálmata de perfil a tinta, con sus manchas, jalando una
+ * estrella roja.
+ */
+interface Props {
+  draw?: 'load' | 'scroll' | 'manual' | 'none';
+  delay?: number;
+  label?: string;
+  class?: string;
+}
+
+const {
+  draw = 'scroll',
+  delay = 0,
+  label = 'Dálmata dibujado a tinta con una estrella roja',
+  class: className,
+} = Astro.props;
+
+/* [cx, cy, rx, ry] */
+const spots = [
+  [100, 92, 7, 5], [124, 100, 5, 4], [148, 88, 8, 5], [170, 104, 6, 4], [192, 92, 7, 5],
+  [86, 104, 5, 4], [134, 112, 6, 4], [160, 114, 5, 3], [204, 104, 4, 3], [232, 74, 4, 3],
+  [220, 86, 5, 4], [112, 84, 4, 3], [182, 82, 5, 3], [95, 140, 3, 4], [93, 156, 3, 3],
+  [120, 146, 3, 4], [189, 140, 3, 4], [208, 150, 3, 4], [58, 62, 3, 2], [50, 54, 2.5, 2],
+];
+---
+
+<svg
+  class:list={['lv-art', className]}
+  viewBox="0 0 300 200"
+  role="img"
+  aria-label={label}
+  data-draw={draw === 'none' ? undefined : draw}
+  data-delay={delay}
+>
+  <g filter="url(#ink-fino)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path data-s d="M70 80 C110 72 170 74 210 78" />
+    <path data-s d="M210 78 C216 70 226 60 242 60 C254 60 262 68 262 78 L274 84 C274 90 266 94 256 92 C250 98 240 100 230 96" />
+    <path data-s d="M244 62 C238 70 238 82 246 88" />
+    <path data-s d="M230 96 C226 108 220 116 208 120 C176 126 122 126 94 118" />
+    <path data-s d="M70 80 C62 88 62 104 74 116 C80 120 88 120 94 118" />
+    <path data-s d="M70 82 C58 74 48 62 42 46" />
+    <path data-s d="M206 120 L210 170 L220 172" />
+    <path data-s d="M190 122 L186 170 L196 172" />
+    <path data-s d="M98 118 L92 168 L102 170" />
+    <path data-s d="M116 122 L122 168 L132 170" />
+  </g>
+  <g filter="url(#ink-fino)" fill="currentColor">
+    <circle data-pop cx="250" cy="72" r="2.2" />
+    <circle data-pop cx="273" cy="85" r="3" />
+    {spots.map(([cx, cy, rx, ry]) => <ellipse data-pop cx={cx} cy={cy} rx={rx} ry={ry} />)}
+  </g>
+  <path
+    data-pop
+    class="lv-art-red-fill"
+    filter="url(#ink-fino)"
+    d="M282 24 L286.7 36.5 L300 37 L289.6 45 L293.3 58 L282 50.5 L270.7 58 L274.4 45 L264 37 L277.3 36.5 Z"
+  />
+</svg>

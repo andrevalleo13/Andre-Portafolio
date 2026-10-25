@@ -1,0 +1,244 @@
+---
+/**
+ * ── Portada (collage) ─────────────────────────────────
+ *
+ * Nada de "texto a la izquierda, imagen a la derecha": una
+ * composición libre, como un collage sobre la mesa.
+ *
+ *   · El nombre partido en tres palabras y tres voces:
+ *     "André" Redaction itálica · "VALLE" Hubot negra condensada ·
+ *     "Ortega" Redaction 50 (el corte desgastado).
+ *   · Encima: el lobo en su hoja, la estampilla, el dálmata y la
+ *     etiqueta roja ("i lowkey dgaf anymore"). Se pueden arrastrar.
+ *   · Debajo: pincelada naranja, grafiti de colores con chorreados,
+ *     crayones, gotas de tinta y una corona.
+ *   · Todo flota en capas con el mouse (data-depth).
+ *
+ * La composición se mide en vw (alto incluido) para que escale
+ * igual en cualquier ancho. En móvil hay otra composición.
+ */
+import { getLangFromUrl, useTranslations, getLocalePath } from '../../i18n/utils';
+import Pieza from './Pieza.astro';
+import Lobo from '../art/Lobo.astro';
+import Dalmata from '../art/Dalmata.astro';
+import Estampilla from '../art/Estampilla.astro';
+import Trazo from '../art/Trazo.astro';
+
+interface Props {
+  lots: number;
+  memos: number;
+  edition: string;
+}
+
+const { lots, memos, edition } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section class="cover" id="portada" data-collage>
+  <!-- ── Fondo: manchas y pinceladas ── -->
+  <Pieza x="50%" y="12%" w="41vw" z={0} depth={0.15} mx="24%" my="17%" mw="72vw" reveal={false}>
+    <Trazo kind="ocre" draw="load" delay={0.2} />
+  </Pieza>
+  <Pieza x="-1%" y="47%" w="33vw" r={-4} z={0} depth={0.1} mx="-6%" my="52%" mw="76vw" reveal={false}>
+    <Trazo kind="grafiti" draw="load" delay={0.6} />
+  </Pieza>
+  <Pieza x="16%" y="44.5%" w="7.5vw" r={-10} z={3} depth={0.45} mx="62%" my="45%" mw="18vw" reveal={false}>
+    <Trazo kind="corona" draw="load" delay={2.6} />
+  </Pieza>
+  <Pieza x="74%" y="70%" w="22vw" z={0} depth={0.25} reveal={false} hideMobile>
+    <Trazo kind="twombly" draw="load" delay={2.4} />
+  </Pieza>
+  <Pieza x="48%" y="46%" w="9vw" z={1} depth={0.35} mx="82%" my="58%" mw="15vw" reveal={false}>
+    <Trazo kind="salpicadura" draw="load" delay={1.6} />
+  </Pieza>
+
+  <!-- ── El nombre ── -->
+  <h1 class="cover__name" data-reveal="lines" data-delay="0.3">
+    <span class="lv-line cover__w cover__w1"><span>André</span></span>
+    <span class="lv-line cover__w cover__w2"><span>Valle</span></span>
+    <span class="lv-line cover__w cover__w3"><span>Ortega</span></span>
+  </h1>
+
+  <Pieza x="2%" y="34%" w="40vw" z={1} depth={0.05} mx="0%" my="24%" mw="70vw" reveal={false}>
+    <Trazo kind="rojo" draw="load" delay={1.1} />
+  </Pieza>
+  <Pieza x="31%" y="34%" w="37vw" z={3} depth={0.05} mx="-3%" my="43.5%" mw="66vw" reveal={false}>
+    <Trazo kind="garabato" draw="load" delay={2.2} />
+  </Pieza>
+  <Pieza x="45%" y="10%" w="4.6vw" z={3} depth={0.4} mx="80%" my="10%" mw="10vw" reveal={false}>
+    <Trazo kind="estrella" draw="load" delay={1.9} />
+  </Pieza>
+
+  <!-- ── Piezas que se pueden mover ── -->
+  <Pieza x="56%" y="7%" w="28vw" r={3} z={4} depth={0.6} drag delay={0.55} mx="34%" my="21%" mw="62vw">
+    <figure class="lv-sheet cover__sheet">
+      <i class="lv-tape"></i>
+      <Lobo draw="load" delay={1.2} />
+      <figcaption class="lv-fig">{t('hero.fig')}</figcaption>
+    </figure>
+  </Pieza>
+
+  <Pieza x="4%" y="40%" w="8.5vw" r={-9} z={5} depth={0.8} drag delay={0.85} mx="76%" my="49%" mw="20vw">
+    <div class="lv-perforado"><Estampilla draw="load" delay={1.7} /></div>
+  </Pieza>
+
+  <Pieza x="64%" y="66%" w="19vw" z={4} depth={0.7} drag delay={1} mx="44%" my="63.5%" mw="50vw">
+    <Dalmata draw="load" delay={2} />
+  </Pieza>
+
+  <Pieza x="85%" y="45%" w="12vw" r={6} z={5} depth={0.9} drag delay={1.15} mx="2%" my="64%" mw="32vw" mr={-4}>
+    <div class="lv-nota lv-nota--roja cover__sticker">
+      <i class="lv-tape"></i>
+      <p>{t('home.sticker')}</p>
+    </div>
+  </Pieza>
+
+  <!-- ── Texto ── -->
+  <p class="lv-kicker cover__kicker" data-reveal="fade" data-delay="0.15">{t('hero.descriptor')}</p>
+
+  <div class="cover__intro">
+    <p class="cover__lede" data-reveal="fade" data-delay="0.9">{t('hero.lede')}</p>
+    <div class="cover__cta" data-reveal="fade" data-delay="1">
+      <a class="lv-btn" href={getLocalePath('/work', lang)} id="hero-work-cta">
+        {t('hero.cta.work')}
+        <svg width="9" height="9" viewBox="0 0 8 8" fill="none" aria-hidden="true">
+          <path d="M0.5 7.5L7.5 0.5M7.5 0.5H1.5M7.5 0.5V6.5" stroke="currentColor" stroke-width="0.9" />
+        </svg>
+      </a>
+      <a class="lv-link" href={getLocalePath('/contact', lang)} id="hero-contact-cta" data-pen>{t('hero.cta.contact')}</a>
+    </div>
+  </div>
+
+  <p class="lv-pen-note cover__drag-note" data-reveal="write" data-delay="2.8">↖ {t('home.drag')}</p>
+  <p class="lv-kicker cover__meta" data-reveal="fade" data-delay="1.2">
+    {t('home.meta.lots')} 01—{pad(lots)} · {t('home.meta.memos')} {pad(memos)} · {t('home.edition')} {edition}
+  </p>
+</section>
+
+<style>
+  .cover {
+    position: relative;
+    height: max(64vw, 640px);
+    margin-inline: calc(var(--gutter) * -0.5);
+  }
+
+  /* ── Tres palabras, tres voces ── */
+  .cover__w {
+    position: absolute;
+    z-index: 2;
+    white-space: nowrap;
+    font-weight: 400;
+    line-height: 0.84;
+  }
+
+  .cover__w1 {
+    left: 2.5%;
+    top: 11%;
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 17.5vw;
+    letter-spacing: -0.04em;
+  }
+
+  .cover__w2 {
+    left: 34%;
+    top: 35%;
+    font-family: var(--f-grot);
+    font-weight: 900;
+    font-stretch: 75%;
+    font-size: 15vw;
+    line-height: 0.8;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  .cover__w3 {
+    left: 8%;
+    top: 53%;
+    font-family: var(--f-worn);
+    font-size: 18.5vw;
+    letter-spacing: -0.04em;
+  }
+
+  /* La frase va en minúsculas, ligera y suelta, como el meme */
+  .cover__sticker p {
+    font-weight: 500;
+    font-stretch: 100%;
+    text-transform: lowercase;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    rotate: 0deg;
+  }
+
+  .cover__sheet {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: clamp(12px, 1.6vw, 24px);
+    color: var(--tinta);
+  }
+
+  /* ── Texto ── */
+  .cover__kicker {
+    position: absolute;
+    left: 2.5%;
+    top: 9%;
+  }
+
+  .cover__intro {
+    position: absolute;
+    z-index: 6;
+    left: 2.5%;
+    top: 83%;
+    width: min(30vw, 420px);
+    display: grid;
+    gap: 18px;
+  }
+
+  .cover__lede {
+    font-size: clamp(1.02rem, 1.25vw, 1.2rem);
+    line-height: 1.45;
+  }
+
+  .cover__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem 1.6rem;
+  }
+
+  .cover__drag-note {
+    position: absolute;
+    z-index: 6;
+    left: 66%;
+    top: 89%;
+    rotate: -3deg;
+  }
+
+  .cover__meta {
+    position: absolute;
+    right: 2.5%;
+    top: 95%;
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .cover__drag-note { display: none; }
+  }
+
+  /* ── Móvil: otra composición ── */
+  @media (max-width: 900px) {
+    .cover {
+      height: 252vw;
+      margin-inline: 0;
+    }
+    .cover__kicker { left: 0; top: 7.5%; }
+    .cover__w1 { left: 0; top: 11%; font-size: 24vw; }
+    .cover__w2 { left: 0; top: 44.5%; font-size: 22vw; }
+    .cover__w3 { left: 0; top: 53%; font-size: 24vw; }
+    .cover__intro { left: 0; top: 79%; width: 100%; }
+    .cover__drag-note,
+    .cover__meta { display: none; }
+  }
+</style>
